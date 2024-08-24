@@ -1,0 +1,51 @@
+<div mat-dialog-title>
+    <h1>Student Group Form</h1>
+</div>
+
+<form [formGroup]="studentGroupForm" (ngSubmit)="onFormSubmit()">
+    <div mat-dialog-content class="content">
+
+        <mat-form-field appearance="outline">
+            <mat-label>Year</mat-label>
+            <mat-select formControlName="year">
+                <mat-option *ngFor="let val of year" [value]="val">{{val}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Name</mat-label>
+            <input matInput type="text" placeholder="AA" formControlName="name">
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Group</mat-label>
+            <input matInput type="text" placeholder="312 AA" formControlName="studentGroup">
+        </mat-form-field>
+
+        <br>
+
+        <mat-radio-group aria-label="Select an option" formControlName="semiGroup">
+            <mat-label><b>Semi Group</b></mat-label>
+            <mat-radio-button *ngFor="let val of semiGroups" [value]="val">{{val}}</mat-radio-button>
+        </mat-radio-group>
+
+        <br>
+        <p>SEMI_GROUP0 is for Master Students</p>
+        <br>
+
+        <mat-form-field appearance="outline">
+            <mat-label>No. Of Students</mat-label>
+            <input matInput type="number" placeholder="15" formControlName="numberOfStudents">
+        </mat-form-field>
+
+    </div>
+    <div mat-dialog-actions class="action">
+        <button mat-raised-button type="button" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button color="primary" type="submit">{{data ? 'Update': 'Save'}}</button>
+    </div>
+</form>

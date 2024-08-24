@@ -1,0 +1,33 @@
+<h2>Constraints</h2>
+
+<button mat-raised-button color="primary" class="constraintForm" (click)="openAddEditConstraintForm()">Add Constraint</button>
+
+<mat-table [dataSource]="dataSource" class="table">
+    <ng-container matColumnDef="description">
+        <mat-header-cell *matHeaderCellDef>Constraint Description</mat-header-cell>
+        <mat-cell *matCellDef="let constraint">{{ constraint.description }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="weight">
+        <mat-header-cell *matHeaderCellDef>Constraint Weight</mat-header-cell>
+        <mat-cell *matCellDef="let constraint">{{ constraint.weight }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let row">
+            <button mat-icon-button color="primary" (click)="openEditForm(row)">
+            <mat-icon>edit</mat-icon>
+          </button>
+            <button mat-icon-button color="warn" (click)="deleteConstraint(row.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-cell>
+    </ng-container>
+
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of constraints"></mat-paginator>

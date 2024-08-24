@@ -1,0 +1,97 @@
+<div class="confirmation-container">
+    <h1><b>Confirmation</b></h1>
+    <h3>Are you sure you want to generate the timetable?</h3>
+
+    <!-- Input field for algorithm duration -->
+    <div>
+        <label for="duration">Algorithm Duration (minutes): {{problemDuration}}</label>
+        <!-- <input type="number" id="duration" name="duration" [(ngModel)]="problemDuration" /> -->
+    </div>
+
+    <div class="mat-card">
+        <mat-card-title class="countCardTitle">At this time, you have added...</mat-card-title>
+        <div class="mat-card-content">
+            <mat-grid-list cols="2" rowHeight="100px">
+                <!-- Room Card -->
+                <mat-grid-tile>
+                    <mat-card class="entity-card">
+                        <mat-card-header>
+                            <mat-card-title>Rooms</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <h4>{{ roomCount }}</h4>
+                        </mat-card-content>
+                    </mat-card>
+                </mat-grid-tile>
+
+                <!-- Timeslot Card -->
+                <mat-grid-tile>
+                    <mat-card class="entity-card">
+                        <mat-card-header>
+                            <mat-card-title>Timeslots</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <h4>{{ timeslotCount }}</h4>
+                        </mat-card-content>
+                    </mat-card>
+                </mat-grid-tile>
+
+                <!-- Constraints Card -->
+                <mat-grid-tile>
+                    <mat-card class="entity-card">
+                        <mat-card-header>
+                            <mat-card-title>Constraints</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <h4>{{ constraintCount }}</h4>
+                        </mat-card-content>
+                    </mat-card>
+                </mat-grid-tile>
+
+                <!-- Teachers Card -->
+                <mat-grid-tile>
+                    <mat-card class="entity-card">
+                        <mat-card-header>
+                            <mat-card-title>Teachers</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <h4>{{ teacherCount }}</h4>
+                        </mat-card-content>
+                    </mat-card>
+                </mat-grid-tile>
+
+                <!-- Lessons Card -->
+                <mat-grid-tile>
+                    <mat-card class="entity-card">
+                        <mat-card-header>
+                            <mat-card-title>Lessons</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <h4>{{ lessonCount }}</h4>
+                        </mat-card-content>
+                    </mat-card>
+                </mat-grid-tile>
+
+                <!-- Student Groups Card -->
+                <mat-grid-tile>
+                    <mat-card class="entity-card">
+                        <mat-card-header>
+                            <mat-card-title>Student Groups</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <h4>{{ studentGroupCount }}</h4>
+                        </mat-card-content>
+                    </mat-card>
+                </mat-grid-tile>
+            </mat-grid-list>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <button mat-raised-button color="primary" (click)="generateTimetable()">Generate Timetable</button>
+        <div class="countdown-container" *ngIf="loading">
+            <app-countdown-timer [duration]="problemDuration"></app-countdown-timer>
+        </div>
+    </div>
+</div>

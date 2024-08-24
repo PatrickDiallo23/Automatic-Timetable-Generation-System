@@ -1,0 +1,54 @@
+<h2>Lessons</h2>
+
+<button mat-raised-button color="primary" class="lessonForm" (click)="openAddEditLessonForm()">Add Lesson</button>
+
+<mat-table [dataSource]="dataSource" class="table">
+    <ng-container matColumnDef="subject">
+        <mat-header-cell *matHeaderCellDef>Subject</mat-header-cell>
+        <mat-cell *matCellDef="let lesson">{{ lesson.subject }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="teacher">
+        <mat-header-cell *matHeaderCellDef>Teacher</mat-header-cell>
+        <mat-cell *matCellDef="let lesson">{{ lesson.teacher.name }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="studentGroup">
+        <mat-header-cell *matHeaderCellDef>Student Group</mat-header-cell>
+        <mat-cell *matCellDef="let lesson">{{ lesson.studentGroup.name }} - {{ lesson.studentGroup.studentGroup }} - {{ lesson.studentGroup.semiGroup }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="lessonType">
+        <mat-header-cell *matHeaderCellDef>Type</mat-header-cell>
+        <mat-cell *matCellDef="let lesson">{{ lesson.lessonType }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="year">
+        <mat-header-cell *matHeaderCellDef>Year</mat-header-cell>
+        <mat-cell *matCellDef="let lesson">{{ lesson.year }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="duration">
+        <mat-header-cell *matHeaderCellDef>Duration</mat-header-cell>
+        <mat-cell *matCellDef="let lesson">{{ lesson.duration }}</mat-cell>
+    </ng-container>
+
+
+    <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let row">
+            <button mat-icon-button color="primary" (click)="openEditForm(row)">
+            <mat-icon>edit</mat-icon>
+          </button>
+            <button mat-icon-button color="warn" (click)="deleteLesson(row.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-cell>
+    </ng-container>
+
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of lessons"></mat-paginator>

@@ -1,0 +1,10 @@
+.timeslotForm {
+    width: 150px!important;
+    min-width: unset!important;
+    margin-bottom: 20px;
+    margin-left: 20px;
+}
+
+h2 {
+    margin-left: 20px;
+}

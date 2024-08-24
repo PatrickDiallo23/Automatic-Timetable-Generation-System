@@ -1,0 +1,15 @@
+    h2 {
+        text-align: center;
+        color: #333;
+    }
+    
+    h3 {
+        text-align: center;
+        color: #333;
+    }
+    
+    .button-container {
+        margin-top: 30px;
+        display: flex;
+        justify-content: space-around;
+    }

@@ -1,0 +1,102 @@
+.mat-card {
+    /* border-radius: 8px; */
+    /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
+    margin-top: 20px;
+    /* transition: transform 0.3s ease-in-out; */
+}
+
+
+/* mat-card:hover {
+    transform: translateY(-5px);
+} */
+
+mat-grid-tile {
+    transition: transform 0.3s ease-in-out;
+}
+
+mat-grid-tile:hover {
+    transform: translateY(-5px);
+}
+
+mat-card-header {
+    background-color: #673ab7;
+    /* Apply !important */
+    color: white;
+}
+
+mat-card-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.countCardTitle {
+    margin-bottom: 15px;
+}
+
+.confirmation-container {
+    padding: 20px;
+}
+
+.entity-card {
+    width: 90%;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+}
+
+.entity-card mat-card-content {
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+}
+
+.countdown-container {
+    margin-top: 20px;
+    /* Adjust as needed */
+}
+
+
+/* CSS for adding the duration */
+
+.confirmation-container label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.confirmation-container input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+.confirmation-container input[type="number"]:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.confirmation-container input[type="number"]::-webkit-inner-spin-button,
+.confirmation-container input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.confirmation-container input[type="number"]::-webkit-input-placeholder {
+    color: #bbb;
+}
+
+.confirmation-container input[type="number"]:-ms-input-placeholder {
+    color: #bbb;
+}
+
+.confirmation-container input[type="number"]::placeholder {
+    color: #bbb;
+}

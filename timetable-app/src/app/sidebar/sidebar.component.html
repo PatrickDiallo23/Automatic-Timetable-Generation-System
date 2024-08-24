@@ -1,0 +1,36 @@
+<div *ngIf="isAdmin(user)">
+    <mat-sidenav-container class="sidebar-container">
+        <mat-sidenav mode="side" opened>
+            <mat-nav-list>
+                <a mat-list-item routerLink="/rooms">Rooms</a>
+                <a mat-list-item routerLink="/timeslots">Timeslots</a>
+                <a mat-list-item routerLink="/teachers">Teachers</a>
+                <a mat-list-item routerLink="/studentGroups">Student Groups</a>
+                <a mat-list-item routerLink="/lessons">Lessons</a>
+                <a mat-list-item routerLink="/constraints">Constraints</a>
+                <a mat-list-item routerLink="/confirmation">Timetable Generation</a>
+                <a mat-list-item routerLink="/timetable">Timetable View</a>
+            </mat-nav-list>
+            <!-- <mat-nav-list *ngIf="!isAdmin(user)">
+            <a mat-list-item routerLink="/timetable">Timetable View</a>
+        </mat-nav-list> -->
+        </mat-sidenav>
+        <mat-sidenav-content>
+            <router-outlet></router-outlet>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+</div>
+
+<!-- if user is USER -->
+<div *ngIf="!isAdmin(user)">
+    <mat-sidenav-container class="sidebar-container">
+        <mat-sidenav mode="side" (closed)="true">
+            <mat-nav-list>
+                <a mat-list-item routerLink="/timetable">Timetable View</a>
+            </mat-nav-list>
+        </mat-sidenav>
+        <mat-sidenav-content>
+            <router-outlet></router-outlet>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+</div>

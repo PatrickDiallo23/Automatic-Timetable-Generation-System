@@ -1,0 +1,80 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { LoginService } from './login/login.service';
+import { User } from './model/user';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css'],
+})
+export class AppComponent implements OnInit {
+
+  title = 'timetable-app';
+  showSidebar: boolean = false;
+  isLogged?: boolean;
+  user: User = {};
+  connectedUser: User = {};
+
+  constructor(private router: Router, private loginService: LoginService) {}
+  ngOnInit(): void {
+    //If we don't have user already
+    if (Object.keys(this.user).length == 0) {
+
+    this.loginService.isAuthenticated$.subscribe((isAuthenticated) => {
+      if (isAuthenticated) {
+        // User is authenticated, show the main content
+        // this.showSidebar = true;
+        this.loginService.getUserDetails().subscribe((userData) => {
+          this.user.email = userData.email;
+          this.user.role = userData.role;
+          this.loginService.setUser(this.user);
+        });
+      
+        this.isLogged = true;
+      
+      } else {
+        // User is not authenticated, show the login component
+        // this.showSidebar = false;
+        this.isLogged = false;
+      }
+    });
+  } else{
+    //if we have user
+    this.loginService.isAuthenticated$.subscribe(
+    (isAuthenticated) => {
+      if(isAuthenticated){
+        this.user.email = this.loginService.userConnected.email;
+        this.user.role = this.loginService.userConnected.role;
+        this.isLogged = true;
+      } else{
+        this.isLogged = false;
+      }
+    }
+      );
+  }
+  }
+  startProcess() {
+    console.log(this.showSidebar);
+    this.showSidebar = !this.showSidebar;
+    if (this.showSidebar == false) {
+      this.router.navigate(['/dashboard']);
+    } else {
+      // Redirect to the Rooms page
+      if (this.isAdmin(this.user)) {
+      this.router.navigate(['/rooms']);
+      }
+      else {
+        this.router.navigate(['/timetable'])
+      }
+    }
+  }
+
+  isAdmin(user: User): boolean {
+    if (user.role === 'ADMIN') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}

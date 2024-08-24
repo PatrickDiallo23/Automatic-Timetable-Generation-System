@@ -1,0 +1,70 @@
+<div mat-dialog-title>
+    <h1>Lesson Form</h1>
+</div>
+
+<form [formGroup]="lessonForm" (ngSubmit)="onFormSubmit()">
+    <div mat-dialog-content class="content">
+
+        <mat-form-field appearance="outline">
+            <mat-label>Lesson Subject</mat-label>
+            <input matInput type="text" placeholder="Programare Avansata In Java" formControlName="subject">
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Lesson Teacher</mat-label>
+            <input type="text" placeholder="Teacher" matInput formControlName="teacher" [matAutocomplete]="autoTeacher">
+            <mat-autocomplete #autoTeacher="matAutocomplete" [displayWith]="displayFnTeacher">
+                <mat-option *ngFor="let teacher of filteredTeachers | async" [value]="teacher">
+                    {{ teacher.name }}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Lesson Student Group</mat-label>
+            <input type="text" placeholder="Student Group" matInput formControlName="studentGroup" [matAutocomplete]="autoStudentGroup">
+            <mat-autocomplete #autoStudentGroup="matAutocomplete" [displayWith]="displayFnStudentGroup">
+                <mat-option *ngFor="let group of filteredStudentGroups | async" [value]="group">
+                    {{ group.studentGroup }} - {{ group.semiGroup }} - {{ group.year }}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Lesson Type</mat-label>
+            <mat-select formControlName="lessonType">
+                <mat-option *ngFor="let val of lessonType" [value]="val">{{val}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Lesson Year</mat-label>
+            <mat-select formControlName="year">
+                <mat-option *ngFor="let val of year" [value]="val">{{val}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Lesson Duration</mat-label>
+            <input matInput type="number" placeholder="2" formControlName="duration">
+        </mat-form-field>
+
+
+    </div>
+    <div mat-dialog-actions class="action">
+        <button mat-raised-button type="button" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button color="primary" type="submit">{{data ? 'Update': 'Save'}}</button>
+    </div>
+</form>

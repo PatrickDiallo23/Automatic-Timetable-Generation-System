@@ -1,0 +1,72 @@
+<h1>Dashboard</h1>
+<br>
+<h2>Hello {{user.email}} with role {{user.role}}</h2>
+<br>
+<br>
+<div *ngIf="isAdmin(user)">
+    <div class="card-container">
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title>All Timetables</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p>View all generated timetables.</p>
+            </mat-card-content>
+            <mat-card-actions>
+                <button mat-button color="primary">View Timetables</button>
+            </mat-card-actions>
+        </mat-card>
+
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title>Settings</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p>Update application settings.</p>
+            </mat-card-content>
+            <mat-card-actions>
+                <button mat-button color="primary">Go to Settings</button>
+            </mat-card-actions>
+        </mat-card>
+
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title>Profile</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p>View and manage your profile.</p>
+            </mat-card-content>
+            <mat-card-actions>
+                <button mat-button color="primary">Go to Profile</button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+    <br><br><br><br><br><br>
+    <h1>Press the
+        <mat-icon>event_available</mat-icon> to begin the Timetable Generation process</h1>
+    <br><br>
+    <h1>Press the
+        <mat-icon>arrow_forward</mat-icon> to go back to the Dashboard</h1>
+</div>
+
+<div *ngIf="!isAdmin(user)">
+    <div class="card-container">
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title>College Timetable</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <p>See the timetable for this year</p>
+            </mat-card-content>
+            <mat-card-actions>
+                <button mat-button color="primary">View Timetable</button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+    <br><br><br>
+    <h1>Press the
+        <mat-icon>event_available</mat-icon> to see the timetable</h1>
+    <br><br>
+    <h1>Press the
+        <mat-icon>arrow_forward</mat-icon> to go back to the Dashboard</h1>
+</div>

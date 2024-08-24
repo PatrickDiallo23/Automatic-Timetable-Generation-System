@@ -1,0 +1,35 @@
+<div mat-dialog-title>
+    <h1>Timeslot Form</h1>
+</div>
+
+<form [formGroup]="timeslotForm" (ngSubmit)="onFormSubmit()">
+    <div mat-dialog-content class="content">
+
+        <mat-form-field appearance="outline">
+            <mat-label>Timeslot Weekday</mat-label>
+            <mat-select formControlName="dayOfWeek">
+                <mat-option *ngFor="let key of bindedWeekdaysMapKeys" [value]="weekdaysMap.get(key)">{{key}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Timeslot Start Time</mat-label>
+            <input matInput type="time" placeholder="08:00" formControlName="startTime">
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Timeslot End Time</mat-label>
+            <input matInput type="time" placeholder="10:00" formControlName="endTime">
+        </mat-form-field>
+
+    </div>
+    <div mat-dialog-actions class="action">
+        <button mat-raised-button type="button" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button color="primary" type="submit">{{data ? 'Update': 'Save'}}</button>
+    </div>
+</form>

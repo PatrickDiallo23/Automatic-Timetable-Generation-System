@@ -1,0 +1,163 @@
+<h2>Timetable</h2>
+<h3>{{jobId}}</h3>
+<h4>{{score}}</h4>
+
+<br>
+<!-- ####Material Angular 1 variant#### -->
+<!-- <div id="filter">
+    <mat-form-field appearance="fill">
+        <mat-label>Select Student Group:</mat-label>
+        <mat-select [(value)]="selectedStudentGroup" (selectionChange)="filterTimetable()">
+            <mat-option *ngFor="let group of studentGroups" [value]="group">{{ group }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+        <mat-label>Select Student Subgroup:</mat-label>
+        <mat-select [(value)]="selectedSemiGroup" (selectionChange)="filterTimetable()">
+            <mat-option *ngFor="let subgroup of studentSubgroups" [value]="subgroup">{{ subgroup }}</mat-option> -->
+<!-- <mat-option value="SEMI_GROUP0">Semigroup 0</mat-option>
+            <mat-option value="SEMI_GROUP1">Semigroup 1</mat-option>
+            <mat-option value="SEMI_GROUP2">Semigroup 2</mat-option>
+        </mat-select>
+    </mat-form-field>
+</div> -->
+
+<!-- <div id="timetable">
+    <table mat-table [dataSource]="displayedTimetable" class="mat-elevation-z8">
+        <ng-container matColumnDef="subject">
+            <th mat-header-cell *matHeaderCellDef>Subject</th>
+            <td mat-cell *matCellDef="let lesson">{{ lesson.subject }} - {{ lesson.lessonType }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="teacher">
+            <th mat-header-cell *matHeaderCellDef>Teacher</th>
+            <td mat-cell *matCellDef="let lesson">{{ lesson.teacher.name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="dayTime">
+            <th mat-header-cell *matHeaderCellDef>Day and Time</th>
+            <td mat-cell *matCellDef="let lesson">{{ lesson.timeslot.dayOfWeek }} - {{lesson.timeslot.startTime}} - {{lesson.timeslot.endTime}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="room">
+            <th mat-header-cell *matHeaderCellDef>Room</th>
+            <td mat-cell *matCellDef="let lesson">{{ lesson.room.name }} - {{ lesson.room.building }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+</div> -->
+
+<!-- ####no Angular Material 2 variant#### -->
+<!-- <div id="filter">
+    <label>Select Student Group:</label>
+    <select [(ngModel)]="selectedStudentGroup" (change)="filterTimetable()">
+        <option *ngFor="let group of studentGroups" [value]="group">{{ group }}</option>
+    </select>
+
+    <label>Select Student Subgroup:</label>
+    <select [(ngModel)]="selectedSemiGroup" (change)="filterTimetable()">
+        <option value="SEMI_GROUP0">Subgroup 0</option>
+        <option value="SEMI_GROUP1">Subgroup 1</option>
+        <option value="SEMI_GROUP2">Subgroup 2</option>
+    </select>
+</div>
+
+<div id="timetable">
+    <table class="timetable-table">
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>Teacher</th>
+                <th>Day and Time</th>
+                <th>Room</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let lesson of displayedTimetable">
+                <td>{{ lesson.subject }} - {{ lesson.lessonType }}</td>
+                <td>{{ lesson.teacher.name }}</td>
+                <td>{{ lesson.timeslot?.dayOfWeek }} {{ lesson.timeslot?.startTime }} - {{ lesson.timeslot?.endTime }}</td>
+                <td>{{ lesson.room?.name }} - {{ lesson.room?.building }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div> -->
+
+<!-- 3rd variant that worked -->
+<div *ngIf="toggle == 'student'" id="filter">
+    <div class="filter-container">
+        <!-- <label for="studentGroup">Select Student Group:</label>
+    <select id="studentGroup" #studentGroup (change)="filterTimetable2(studentGroup.value, studentGroupSemiGroup.value)">
+    </select>
+
+    <label for="studentGroupSemiGroup">Select Student Subgroup:</label>
+    <select id="studentGroupSemiGroup" #studentGroupSemiGroup (change)="filterTimetable2(studentGroup.value, studentGroupSemiGroup.value)">
+        <option value="SEMI_GROUP0">Subgroup 0</option>
+        <option value="SEMI_GROUP1">Subgroup 1</option>
+        <option value="SEMI_GROUP2">Subgroup 2</option>
+    </select> -->
+
+        <form [formGroup]="studentGroupFormGroup">
+            <mat-form-field appearance="outline">
+                <mat-label>Select Student Group</mat-label>
+                <input type="text" placeholder="313 AA" #studentGroup matInput formControlName="studentGroupControl" [matAutocomplete]="autoStudent" (focus)="selectInput($event)">
+                <mat-autocomplete #autoStudent="matAutocomplete" (optionSelected)="filterTimetable2(studentGroup.value, studentGroupSemiGroup.value)">
+                    <mat-option *ngFor="let studentGroup of filteredStudentGroups | async" [value]="studentGroup">
+                        {{ studentGroup }}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </form>
+
+        <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Select Student Subgroup:</mat-label>
+            <mat-select #studentGroupSemiGroup (selectionChange)="filterTimetable2(studentGroup.value, studentGroupSemiGroup.value)">
+                <mat-option value="SEMI_GROUP0">Subgroup 0</mat-option>
+                <mat-option value="SEMI_GROUP1">Subgroup 1</mat-option>
+                <mat-option value="SEMI_GROUP2">Subgroup 2</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="toogle('teacher')">See Teacher Timetable</button>
+    </div>
+</div>
+
+
+<div *ngIf="toggle == 'teacher'" id="filter">
+    <div class="filter-container">
+
+        <!-- <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Select Teacher:</mat-label>
+        <mat-select #teacher (selectionChange)="filterTeachers(teacher.value)">
+            <mat-option *ngFor="let teacher of teachers" [value]="teacher">{{ teacher }}</mat-option>
+        </mat-select>
+    </mat-form-field> -->
+
+        <form [formGroup]="teacherFormGroup">
+            <mat-form-field appearance="outline">
+                <mat-label>Select Teacher:</mat-label>
+                <input type="text" placeholder="Fl.Pop" #teacher matInput formControlName="teacherControl" [matAutocomplete]="autoTeacher" (focus)="selectInput($event)">
+                <mat-autocomplete #autoTeacher="matAutocomplete" (optionSelected)="filterTeachers(teacher.value)">
+                    <mat-option *ngFor="let teacher of filteredTeachers | async" [value]="teacher">
+                        {{ teacher }}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </form>
+
+
+        <button mat-raised-button color="primary" (click)="toogle('student')">See Student Timetable</button>
+
+    </div>
+</div>
+
+<div id="timetable">
+    <!-- Timetable content will be dynamically added here using JavaScript -->
+</div>
+
+<div *ngIf="isAdmin(user)" class="button-container">
+    <button mat-raised-button color="primary">Print The Timetable</button>
+    <button mat-raised-button color="primary">Edit The Timetable</button>
+</div>

@@ -1,0 +1,38 @@
+<h2>Timeslots</h2>
+
+<button mat-raised-button color="primary" class="timeslotForm" (click)="openAddEditTimeslotForm()">Add Timeslot</button>
+
+<mat-table [dataSource]="dataSource" class="table">
+    <ng-container matColumnDef="dayOfWeek">
+        <mat-header-cell *matHeaderCellDef>Timeslot Week Day</mat-header-cell>
+        <mat-cell *matCellDef="let timeslot">{{ timeslot.dayOfWeek }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="startTime">
+        <mat-header-cell *matHeaderCellDef>Timeslot Start Time</mat-header-cell>
+        <mat-cell *matCellDef="let timeslot">{{ timeslot.startTime }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="endTime">
+        <mat-header-cell *matHeaderCellDef>Timeslot End Time</mat-header-cell>
+        <mat-cell *matCellDef="let timeslot">{{ timeslot.endTime }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let row">
+            <button mat-icon-button color="primary" (click)="openEditForm(row)">
+            <mat-icon>edit</mat-icon>
+          </button>
+            <button mat-icon-button color="warn" (click)="deleteTimeslot(row.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-cell>
+    </ng-container>
+
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of rooms"></mat-paginator>

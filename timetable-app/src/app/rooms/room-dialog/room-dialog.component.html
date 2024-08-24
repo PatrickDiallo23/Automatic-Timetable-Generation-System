@@ -1,0 +1,32 @@
+<div mat-dialog-title>
+    <h1>Room Form</h1>
+</div>
+
+<form [formGroup]="roomForm" (ngSubmit)="onFormSubmit()">
+    <div mat-dialog-content class="content">
+
+        <mat-form-field appearance="outline">
+            <mat-label>Room name</mat-label>
+            <input matInput type="text" placeholder="PR001" formControlName="name">
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Room Capacity</mat-label>
+            <input matInput type="number" placeholder="31" formControlName="capacity">
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Room Building</mat-label>
+            <input matInput type="text" placeholder="Precis" formControlName="building">
+        </mat-form-field>
+
+    </div>
+    <div mat-dialog-actions class="action">
+        <button mat-raised-button type="button" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button color="primary" type="submit">{{data ? 'Update': 'Save'}}</button>
+    </div>
+</form>

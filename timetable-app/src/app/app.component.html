@@ -1,0 +1,14 @@
+<app-login *ngIf="!isLogged"></app-login>
+
+<p *ngIf="isLogged">
+    <mat-toolbar color="primary">
+        <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon" (click)="startProcess()">
+    <mat-icon *ngIf="!showSidebar">event_available</mat-icon>
+    <mat-icon *ngIf="showSidebar">arrow_forward</mat-icon>
+  </button>
+        <span>Timetable Generation for Faculty</span>
+    </mat-toolbar>
+</p>
+
+<app-sidebar *ngIf="showSidebar && isLogged"></app-sidebar>
+<app-dashboard *ngIf="!showSidebar && isLogged"></app-dashboard>

@@ -1,0 +1,18 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# General
+*.log
+*.DS_Store
+*.env
+
+# Ignore IDE files
+.idea/
+.vscode/
+
+# Backend specific
+timetable-app-backend/target/
+
+# Frontend specific
+timetable-app/node_modules/
+timetable-app/dist/
+timetable-app/.angular/

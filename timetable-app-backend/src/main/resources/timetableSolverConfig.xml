@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver xmlns="https://timefold.ai/xsd/solver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://timefold.ai/xsd/solver https://timefold.ai/xsd/solver/solver.xsd">
+<!--    <environmentMode>FULL_ASSERT</environmentMode>-->
+<!--&lt;!&ndash;    <moveThreadCount>AUTO</moveThreadCount>&ndash;&gt;-->
+
+<!--    <solutionClass>com.timetablealgo.testingtimetablealgo.domain.Timetable</solutionClass>-->
+<!--    <entityClass>com.timetablealgo.testingtimetablealgo.domain.Lesson</entityClass>-->
+
+    <scoreDirectorFactory>
+        <constraintProviderClass>
+            com.patrick.timetableappbackend.solver.TimetableConstraintProvider
+        </constraintProviderClass>
+    <initializingScoreTrend>ONLY_DOWN/ONLY_DOWN/ANY</initializingScoreTrend>
+    </scoreDirectorFactory>
+
+<!--    <termination>-->
+<!--        <minutesSpentLimit>15</minutesSpentLimit>-->
+<!--    </termination>-->
+
+<!--  WEAKEST_FIT generic config -->
+    <constructionHeuristic>
+        <constructionHeuristicType>ALLOCATE_ENTITY_FROM_QUEUE</constructionHeuristicType>
+        <entitySorterManner>DECREASING_DIFFICULTY_IF_AVAILABLE</entitySorterManner>
+        <valueSorterManner>DECREASING_STRENGTH_IF_AVAILABLE</valueSorterManner>
+    </constructionHeuristic>
+
+    <!--    Late_Acceptance configuration-->
+    <localSearch>
+    <termination>
+        <minutesSpentLimit>280</minutesSpentLimit>
+    </termination>
+    <acceptor>
+        <lateAcceptanceSize>800</lateAcceptanceSize>
+    </acceptor>
+    <forager>
+        <acceptedCountLimit>5</acceptedCountLimit>
+    </forager>
+    </localSearch>
+
+    <!--    Tabu_Search configuration-->
+    <localSearch>
+<!--        <localSearchType>TABU_SEARCH</localSearchType>-->
+<!--        <termination>-->
+<!--            <minutesSpentLimit>220</minutesSpentLimit>-->
+<!--        </termination>-->
+        <acceptor>
+            <entityTabuSize>7</entityTabuSize>
+        </acceptor>
+        <forager>
+            <acceptedCountLimit>1000</acceptedCountLimit>
+        </forager>
+    </localSearch>
+
+</solver>

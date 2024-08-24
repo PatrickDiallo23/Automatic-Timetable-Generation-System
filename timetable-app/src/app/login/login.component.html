@@ -1,0 +1,21 @@
+<div class="app-container">
+    <mat-toolbar color="primary">
+        <span class="app-name">Timetable Generation for Faculty</span>
+    </mat-toolbar>
+
+    <div class="login-container">
+        <div class="login-content">
+            <h1>Login</h1>
+
+            <form (ngSubmit)="login()" #loginForm="ngForm">
+                <mat-form-field>
+                    <input matInput placeholder="Email" name="email" [(ngModel)]="email" required>
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput type="password" placeholder="Password" name="password" [(ngModel)]="password" required>
+                </mat-form-field>
+                <button mat-raised-button color="primary" type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+</div>

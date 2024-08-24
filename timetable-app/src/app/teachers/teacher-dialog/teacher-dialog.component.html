@@ -1,0 +1,29 @@
+<div mat-dialog-title>
+    <h1>Teacher Form</h1>
+</div>
+
+<form [formGroup]="teacherForm" (ngSubmit)="onFormSubmit()">
+    <div mat-dialog-content class="content">
+
+        <mat-form-field appearance="outline">
+            <mat-label>Teacher name</mat-label>
+            <input matInput type="text" placeholder="Fl.Pop" formControlName="name">
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Select Preferred Timeslots</mat-label>
+            <mat-select formControlName="timeslots" multiple>
+                <mat-option *ngFor="let timeslot of availableTimeslots" [value]="timeslot">
+                    {{ timeslot.dayOfWeek }} - {{ timeslot.startTime }} to {{ timeslot.endTime }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+    </div>
+    <div mat-dialog-actions class="action">
+        <button mat-raised-button type="button" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button color="primary" type="submit">{{data ? 'Update': 'Save'}}</button>
+    </div>
+</form>

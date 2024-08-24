@@ -1,0 +1,38 @@
+<h2>Rooms</h2>
+
+<button mat-raised-button color="primary" class="roomForm" (click)="openAddEditRoomForm()">Add Room</button>
+
+<mat-table [dataSource]="dataSource" class="table">
+    <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef>Room name</mat-header-cell>
+        <mat-cell *matCellDef="let room">{{ room.name }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="capacity">
+        <mat-header-cell *matHeaderCellDef>Capacity</mat-header-cell>
+        <mat-cell *matCellDef="let room">{{ room.capacity }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="building">
+        <mat-header-cell *matHeaderCellDef>Building</mat-header-cell>
+        <mat-cell *matCellDef="let room">{{ room.building }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let row">
+            <button mat-icon-button color="primary" (click)="openEditForm(row)">
+            <mat-icon>edit</mat-icon>
+          </button>
+            <button mat-icon-button color="warn" (click)="deleteRoom(row.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-cell>
+    </ng-container>
+
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of rooms"></mat-paginator>

@@ -1,0 +1,23 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* height: 100vh;
+    Set height to fill the viewport */
+}
+
+.countdown-timer {
+    display: inline-block;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.countdownTitle {
+    margin-bottom: 5px;
+}
+
+.countdown-timer span {
+    margin-right: 5px;
+    /* Adjust spacing between digits */
+}

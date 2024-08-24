@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>All Preferred Timeslots</h2>
+<mat-dialog-content>
+    <ul>
+        <li *ngFor="let timeslot of timeslots">
+            {{ timeslot.dayOfWeek }} - {{ timeslot.startTime }} to {{ timeslot.endTime }}
+        </li>
+    </ul>
+</mat-dialog-content>

@@ -1,0 +1,52 @@
+<h2>Teachers</h2>
+
+<button mat-raised-button color="primary" class="teacherForm" (click)="openAddEditTeacherForm()">Add Teacher</button>
+
+<mat-table [dataSource]="dataSource" class="table">
+    <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef>Teacher Name</mat-header-cell>
+        <mat-cell *matCellDef="let teacher">{{ teacher.name }}</mat-cell>
+    </ng-container>
+
+    <!-- To add slice logic + mini dialog -->
+    <ng-container matColumnDef="prefferedTimeslots">
+        <mat-header-cell *matHeaderCellDef>Teacher Preffered Timeslots</mat-header-cell>
+        <mat-cell *matCellDef="let teacher">
+            <ul>
+                <ng-container *ngFor="let timeslot of teacher.timeslots">
+                    <li *ngIf="timeslot">
+                        {{ timeslot.dayOfWeek }} - {{ timeslot.startTime }} to {{ timeslot.endTime }}
+                    </li>
+                    <li *ngIf="!timeslot">
+                        No preferences
+                    </li>
+                </ng-container>
+                <!-- <li *ngFor="let timeslot of teacher.timeslots">
+                    {{ timeslot.dayOfWeek }} - {{ timeslot.startTime }} to {{ timeslot.endTime }}
+                </li> -->
+                <!-- <li *ngIf="teacher.preferredTimeslot.length() > 3">
+                    <button mat-button (click)="openTimeslotsDialog(teacher.preferredTimeslot)">Show More</button>
+                </li> -->
+            </ul>
+        </mat-cell>
+    </ng-container>
+
+
+    <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let row">
+            <button mat-icon-button color="primary" (click)="openEditForm(row)">
+            <mat-icon>edit</mat-icon>
+          </button>
+            <button mat-icon-button color="warn" (click)="deleteTeacher(row.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-cell>
+    </ng-container>
+
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of teachers"></mat-paginator>
