@@ -10,8 +10,9 @@ import org.springframework.context.annotation.Bean;
 @TestConfiguration
 public class ConstraintConfig {
 
-    @Bean
-    public ConstraintVerifier<TimetableConstraintProvider, Timetable> buildConstraintVerifier() {
-        return ConstraintVerifier.build(new TimetableConstraintProvider(), Timetable.class, Lesson.class);
-    }
+  @Bean
+  public ConstraintVerifier<TimetableConstraintProvider, Timetable> buildConstraintVerifier() {
+    return ConstraintVerifier.build(
+        new TimetableConstraintProvider(), Timetable.class, Lesson.class);
+  }
 }

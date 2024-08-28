@@ -5,28 +5,33 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.3</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<version>3.3.3</version>
+		<relativePath/>
 	</parent>
+
 	<groupId>com.patrick</groupId>
 	<artifactId>timetable-app-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>timetable-app-backend</name>
 	<description>Demo project for Spring Boot</description>
+
 	<properties>
+		<commons-lang3.version>3.13.0</commons-lang3.version>
+		<google-javaformat.version>1.23.0</google-javaformat.version>
 		<java.version>21</java.version>
+		<json-webtoken.version>0.11.5</json-webtoken.version>
+		<modelmapper.version>3.2.0</modelmapper.version>
+		<spotless.version>2.44.0.BETA2</spotless.version>
+		<spring-boot.version>3.3.3</spring-boot.version>
 		<spring-cloud.version>2023.0.0</spring-cloud.version>
-		<timefold-solver.version>1.9.0</timefold-solver.version>
+		<timefold-solver.version>1.13.0</timefold-solver.version>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.cloud</groupId>-->
-<!--			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>-->
-<!--		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -40,39 +45,38 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>ai.timefold.solver.enterprise</groupId>
-			<artifactId>timefold-solver-enterprise-spring-boot-starter</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>ai.timefold.solver.enterprise</groupId>
-			<artifactId>timefold-solver-enterprise-core</artifactId>
-			<version>1.8.0</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>ai.timefold.solver</groupId>
-			<artifactId>timefold-solver-benchmark</artifactId>
-			<scope>test</scope>
+			<artifactId>timefold-solver-spring-boot-starter</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>ai.timefold.solver</groupId>
-			<artifactId>timefold-solver-test</artifactId>
-			<scope>test</scope>
+			<artifactId>timefold-solver-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
-			<version>3.2.0</version>
+			<version>${modelmapper.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>io.rest-assured</groupId>
-			<artifactId>rest-assured</artifactId>
-			<scope>test</scope>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons-lang3.version}</version>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.cloud</groupId>-->
-<!--			<artifactId>spring-cloud-starter-loadbalancer</artifactId>-->
-<!--		</dependency>-->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>${json-webtoken.version}</version>
+		</dependency>
 
+
+		<!--
+		 ! RUNTIME dependencies.
+		-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -85,9 +89,25 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-configuration-processor</artifactId>
-			<optional>true</optional>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>${json-webtoken.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>${json-webtoken.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!--
+		 ! TEST dependencies.
+		-->
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -95,69 +115,58 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-api</artifactId>
-			<version>0.11.5</version>
+			<groupId>ai.timefold.solver</groupId>
+			<artifactId>timefold-solver-benchmark</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-impl</artifactId>
-			<version>0.11.5</version>
-			<scope>runtime</scope>
+			<groupId>ai.timefold.solver</groupId>
+			<artifactId>timefold-solver-test</artifactId>
+			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-jackson</artifactId>
-			<version>0.11.5</version>
-			<scope>runtime</scope>
-		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-
-			<exclusions>
-				<exclusion>
-					<groupId>junit</groupId>
-					<artifactId>junit</artifactId>
-				</exclusion>
-			</exclusions>
+			<!--			<exclusions>-->
+			<!--				<exclusion>-->
+			<!--					<groupId>junit</groupId>-->
+			<!--					<artifactId>junit</artifactId>-->
+			<!--				</exclusion>-->
+			<!--			</exclusions>-->
 		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-api</artifactId>
-			<version>5.9.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.9.1</version>
-			<scope>test</scope>
-		</dependency>
+		<!--		<dependency>-->
+		<!--			<groupId>org.junit.jupiter</groupId>-->
+		<!--			<artifactId>junit-jupiter-api</artifactId>-->
+		<!--			<version>5.9.1</version>-->
+		<!--			<scope>test</scope>-->
+		<!--		</dependency>-->
+		<!--		<dependency>-->
+		<!--			<groupId>org.junit.jupiter</groupId>-->
+		<!--			<artifactId>junit-jupiter-engine</artifactId>-->
+		<!--			<version>5.9.1</version>-->
+		<!--			<scope>test</scope>-->
+		<!--		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.13.0</version>
-        </dependency>
-    </dependencies>
+
+	</dependencies>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud.version}</version>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring-boot.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
 			<dependency>
-				<groupId>ai.timefold.solver.enterprise</groupId>
-				<artifactId>timefold-solver-enterprise-bom</artifactId>
+				<groupId>ai.timefold.solver</groupId>
+				<artifactId>timefold-solver-bom</artifactId>
 				<version>${timefold-solver.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
@@ -180,6 +189,32 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<artifactId>spotless-maven-plugin</artifactId>
+				<configuration>
+					<java>
+						<googleJavaFormat>
+							<formatJavadoc>false</formatJavadoc>
+							<reflowLongStrings>true</reflowLongStrings>
+							<style>GOOGLE</style>
+							<version>${google-javaformat.version}</version>
+						</googleJavaFormat>
+						<removeUnusedImports>
+							<engine>google-java-format</engine>
+						</removeUnusedImports>
+					</java>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>apply</goal>
+						</goals>
+						<phase>compile</phase>
+					</execution>
+				</executions>
+				<groupId>com.diffplug.spotless</groupId>
+				<version>${spotless.version}</version>
+			</plugin>
+			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.2.5</version>
 			</plugin>
@@ -188,7 +223,7 @@
 
 	<repositories>
 		<repository>
-			<id>timefold-solver-enterprise</id>
+			<id>timefold-solver</id>
 			<name>Timefold Solver Enterprise Edition</name>
 			<url>https://timefold.jfrog.io/artifactory/releases/</url>
 		</repository>

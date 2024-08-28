@@ -1,5 +1,8 @@
 package com.patrick.timetableappbackend.model;
 
 public enum LessonType {
-    SEMINAR, COURSE, LABORATORY, PROJECT
+  SEMINAR,
+  COURSE,
+  LABORATORY,
+  PROJECT
 }

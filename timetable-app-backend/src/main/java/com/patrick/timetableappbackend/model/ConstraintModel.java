@@ -1,10 +1,9 @@
 package com.patrick.timetableappbackend.model;
 
 import jakarta.persistence.*;
+import java.util.Objects;
 import lombok.*;
 import org.hibernate.Hibernate;
-
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -15,23 +14,24 @@ import java.util.Objects;
 @NoArgsConstructor
 public class ConstraintModel {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true, updatable = false)
-    private Long id;
-    private String description;
-    private String weight;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id", nullable = false, unique = true, updatable = false)
+  private Long id;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        ConstraintModel that = (ConstraintModel) o;
-        return id != null && Objects.equals(id, that.id);
-    }
+  private String description;
+  private String weight;
 
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+    ConstraintModel that = (ConstraintModel) o;
+    return id != null && Objects.equals(id, that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return getClass().hashCode();
+  }
 }

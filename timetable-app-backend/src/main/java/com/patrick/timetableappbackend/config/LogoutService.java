@@ -14,18 +14,14 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class LogoutService implements LogoutHandler {
 
-    @Override
-    public void logout(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Authentication authentication
-    ) {
-        final String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return;
-        }
-        log.info("Logout Handler...");
-        SecurityContextHolder.clearContext();
-
+  @Override
+  public void logout(
+      HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    final String authHeader = request.getHeader("Authorization");
+    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+      return;
     }
+    log.info("Logout Handler...");
+    SecurityContextHolder.clearContext();
+  }
 }

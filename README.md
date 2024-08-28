@@ -1,8 +1,10 @@
 # Automatic-Timetable-Generation-System
 
-This project is designed to streamline and optimize the process of creating academic schedules, ensuring that resources such as time slots, faculty members,
+This project is designed to streamline and optimize the process of creating academic schedules, ensuring that resources
+such as time slots, faculty members,
 and rooms are utilized to their fullest potential. By automating the complex task of timetable generation,
-this system aims to reduce scheduling conflicts, enhance faculty and student satisfaction, and improve overall academic operations.
+this system aims to reduce scheduling conflicts, enhance faculty and student satisfaction, and improve overall academic
+operations.
 
 ## Table of Contents
 
@@ -23,28 +25,30 @@ this system aims to reduce scheduling conflicts, enhance faculty and student sat
 
 In educational institutions, the process of scheduling can be a daunting challenge, often leading to resource wastage,
 conflicts, and dissatisfaction among faculty and students.
-This project introduces a robust solution by implementing an Automated Timetable Generation System that leverages evolutionary algorithms and multi-objective optimization techniques.
+This project introduces a robust solution by implementing an Automated Timetable Generation System that leverages
+evolutionary algorithms and multi-objective optimization techniques.
 The system is designed to:
 
 - Maximize Resource Usage: Efficiently allocate available resources including classrooms, teachers, and time slots.
 - Minimize Conflicts: Prevent issues such as overlapping classes, double-booked faculty, and student timetable clashes.
-- Improve Satisfaction: Generate schedules that consider the preferences and availability of both faculty members and students,
-leading to a more harmonious academic environment.
+- Improve Satisfaction: Generate schedules that consider the preferences and availability of both faculty members and
+  students,
+  leading to a more harmonious academic environment.
 
 ## Architecture
 
 - **Frontend**: Angular
-   - Component-based architecture
-   - Reactive Forms and Services for state management
-   - Angular CLI for project scaffolding and build management
+    - Component-based architecture
+    - Reactive Forms and Services for state management
+    - Angular CLI for project scaffolding and build management
 
 - **Backend**: Spring Boot
-   - RESTful APIs for communication with the frontend
-   - JPA/Hibernate for database interactions
-   - Spring Security for authentication and authorization
+    - RESTful APIs for communication with the frontend
+    - JPA/Hibernate for database interactions
+    - Spring Security for authentication and authorization
 
 - **Database**: PostgresSQL
-   - Store data related to university/faculty (teachers, students, etc.)
+    - Store data related to university/faculty (teachers, students, etc.)
 
 ## Prerequisites
 
@@ -66,13 +70,15 @@ cd Automatic-Timetable-Generation-System
 ```
 
 ### 2.Set Up the Backend (Spring Boot)
+
 1. Navigate to the backend directory:
 
 ```bash
 cd timetable-app-backend
 ```
+
 2. Configure the database connection in src/main/resources/application.properties
-and provide the secrete key for JWT Token:
+   and provide the secrete key for JWT Token.
 
 ```bash
 spring.datasource.url=jdbc:postgresql://localhost:5432/your_database
@@ -86,7 +92,11 @@ timetableApp.secretKey=<YOUR_GENERATED_SECRET_KEY>
 
 **Note**: Make sure that you created some users with "ADMIN" or "USER" role before using the application.
 
+The project ships with a few defaults, supplied by [the readme in the postgresql directory](postgresql/README.md).
+The username is `admin` and the password is, well, `password`.
+
 3. Build the backend:
+
 ```bash
 mvn clean install
 ```
@@ -109,16 +119,17 @@ npm install
 
 ### 1.Run the Backend
 
-   Navigate to the backend directory and start the Spring Boot application:
+Navigate to the backend directory and start the Spring Boot application:
 
 ```bash
 mvn spring-boot:run
 ```
+
 The backend server will start on http://localhost:8200.
 
 ### 2. Run the Frontend
 
-   Navigate to the frontend directory and start the Angular application:
+Navigate to the frontend directory and start the Angular application:
 
 ```bash
 ng serve
@@ -175,14 +186,17 @@ ng e2e
 - Check that the backend server is running on http://localhost:8200.
 - Make sure Angular is running on http://localhost:4200.
 - To add Constraints in the Timetable Application copy the constraint's name (for example: "roomConflict").
-You can find the defined constraints in [TimetableConstraintConfiguration.java](./timetable-app-backend/src/main/java/com/patrick/timetableappbackend/solver/TimetableConstraintConfiguration.java) class.
+  You can find the defined constraints
+  in [TimetableConstraintConfiguration.java](./timetable-app-backend/src/main/java/com/patrick/timetableappbackend/solver/TimetableConstraintConfiguration.java)
+  class.
 - For some entities, the update method doesn't work properly because it will create a new entity instead of updating.
-It will be solved in a future version.
-- You can configure Timefold Solver .xml file (`timetableSolverConfig.xml`) and `application.properties` in any way you want. 
-Please refer to this [documentation](https://docs.timefold.ai/timefold-solver/latest/quickstart/overview).
-
+  It will be solved in a future version.
+- You can configure Timefold Solver .xml file (`timetableSolverConfig.xml`) and `application.properties` in any way you
+  want.
+  Please refer to this [documentation](https://docs.timefold.ai/timefold-solver/latest/quickstart/overview).
 
 ## Contributing
+
 Contributions are welcome! Please follow the standard GitHub workflow:
 
 1. Fork the repository.
@@ -194,17 +208,17 @@ Contributions are welcome! Please follow the standard GitHub workflow:
 
 Copyright 2024 Francis-Patrick Diallo
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
        http://www.apache.org/licenses/LICENSE-2.0
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 ## Notice
 
