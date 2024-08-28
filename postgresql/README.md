@@ -1,7 +1,13 @@
+Make sure a postgresql server is running, for instance via podman or docker.
+
+1. Start the server.
+
 ```shell
 podman volume create data
 podman-compose -f ./compose.yaml up
 ```
+
+2. Login to the postgresql instance.
 
 ```shell
 export POSTGRES_USERNAME=postgres
@@ -11,6 +17,8 @@ export PORT=5432
 export DATABASENAME=postgres
 psql postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${HOSTNAME}:${PORT}/${DATABASENAME}
 ```
+
+3. Create the user, schema and add the admin user
 
 ```sql
 create user timetable with password 'timetable';

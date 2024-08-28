@@ -71,14 +71,24 @@ cd Automatic-Timetable-Generation-System
 
 ### 2.Set Up the Backend (Spring Boot)
 
+#### 2.1 Use defaults as shipped
+
+**This is unwise for production use.**
+
+The project ships with a few defaults. The defaults can be applied by
+following [the readme in the postgresql directory](postgresql/README.md).
+The username is `admin` and the password is, well, `password`.
+
+#### 2.2 Overwrite the defaults
+
 1. Navigate to the backend directory:
 
 ```bash
 cd timetable-app-backend
 ```
 
-2. Configure the database connection in src/main/resources/application.properties
-   and provide the secrete key for JWT Token.
+2. Configure the database connection in `src/main/resources/application.properties`
+   and provide the secret key for JWT Token.
 
 ```bash
 spring.datasource.url=jdbc:postgresql://localhost:5432/your_database
@@ -91,9 +101,6 @@ timetableApp.secretKey=<YOUR_GENERATED_SECRET_KEY>
 ```
 
 **Note**: Make sure that you created some users with "ADMIN" or "USER" role before using the application.
-
-The project ships with a few defaults, supplied by [the readme in the postgresql directory](postgresql/README.md).
-The username is `admin` and the password is, well, `password`.
 
 3. Build the backend:
 
