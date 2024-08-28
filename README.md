@@ -213,3 +213,8 @@ libraries. For a list of software included in a bundle, refer to
 package.json, pom.xml and the list of dependencies.
 
 This project includes software/code developed at Timefold (https://timefold.ai/).
+
+This project is licensed under the Apache License 2.0.
+However, the author request that this software not be used for commercial purposes.
+This request is not legally binding and does not alter the terms of the Apache License 2.0.
+
