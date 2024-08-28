@@ -148,15 +148,15 @@ The frontend application will start on http://localhost:4200.
 
 ### Backend (Spring Boot)
 
-- src/main/java: Contains the Java source code (controllers, services, repositories, models, etc.).
-- src/main/resources: Configuration files (application.properties, static resources, etc.).
-- pom.xml: Maven configuration file.
+- `src/main/java`: Contains the Java source code (controllers, services, repositories, models, etc.).
+- `src/main/resources`: Configuration files (application.properties, static resources, etc.).
+- `pom.xml`: Maven configuration file.
 
 ### Frontend (Angular)
 
-- src/app: Contains the Angular components, services, and modules.
-- angular.json: Angular CLI configuration file.
-- package.json: Node.js dependencies and scripts.
+- `src/app`: Contains the Angular components, services, and modules.
+- `angular.json`: Angular CLI configuration file.
+- `package.json`: Node.js dependencies and scripts.
 
 ## API Documentation
 
