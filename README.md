@@ -2,7 +2,7 @@
 
 This project is designed to streamline and optimize the process of creating academic schedules, ensuring that resources such as time slots, faculty members,
 and rooms are utilized to their fullest potential. By automating the complex task of timetable generation,
-this system aims to reduce scheduling conflicts, enhance faculty and student satisfaction, and improve overall academic operations.
+this system aims to reduce scheduling conflicts, enhance faculty and student satisfaction, and improve overall academic operations. More details can be found in the published article [Optimizing the Scheduling of Teaching Activities in a Faculty](https://www.mdpi.com/2076-3417/14/20/9554).
 
 ## Table of Contents
 
