@@ -24,7 +24,7 @@ public class Timetable {
 //    private String name;
 
     @ProblemFactCollectionProperty
-    @ValueRangeProvider
+    // @ValueRangeProvider
     private List<Timeslot> timeslots;
     @ProblemFactCollectionProperty
     @ValueRangeProvider

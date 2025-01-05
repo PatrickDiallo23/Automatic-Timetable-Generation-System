@@ -1,7 +1,7 @@
 package com.patrick.timetableappbackend.service;
 
 import ai.timefold.solver.core.api.score.analysis.ScoreAnalysis;
-import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
+import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import ai.timefold.solver.core.api.solver.*;
 import ai.timefold.solver.core.config.solver.termination.TerminationConfig;
 import com.patrick.timetableappbackend.exception.TimetableSolverException;
@@ -36,7 +36,7 @@ public class TimetableService {
     private final LessonRepo lessonRepo;
     private final ConstraintRepo constraintRepo;
     private final SolverManager<Timetable, String> solverManager;
-    private final SolutionManager<Timetable, HardSoftScore> solutionManager;
+    private final SolutionManager<Timetable, HardMediumSoftScore> solutionManager;
     @Value("${timefold.solver.termination.spent-limit}")
     private String duration;
 
@@ -64,6 +64,7 @@ public class TimetableService {
     // How to integrate with Spring JPA to persist the Timetable solution
     // How to get the best solution
     public String solve(Timetable problem) {
+        problem.getLessons().forEach(lesson -> lesson.setTimetable(problem));
         final ConcurrentMap<String, Timetable> timetableSolution = new ConcurrentHashMap<>();
         String jobId = UUID.randomUUID().toString();
         jobIdToJob.put(jobId, Job.ofTimetable(problem));
@@ -84,7 +85,7 @@ public class TimetableService {
         return jobId;
     }
 
-    public ScoreAnalysis<HardSoftScore> analyze(Timetable problem, ScoreAnalysisFetchPolicy fetchPolicy) {
+    public ScoreAnalysis<HardMediumSoftScore> analyze(Timetable problem, ScoreAnalysisFetchPolicy fetchPolicy) {
         return fetchPolicy == null ? solutionManager.analyze(problem) : solutionManager.analyze(problem, fetchPolicy);
     }
 

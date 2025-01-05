@@ -1,7 +1,7 @@
 package com.patrick.timetableappbackend.controller;
 
 import ai.timefold.solver.core.api.score.analysis.ScoreAnalysis;
-import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
+import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import ai.timefold.solver.core.api.solver.*;
 import com.patrick.timetableappbackend.model.Timetable;
 import com.patrick.timetableappbackend.service.TimetableService;
@@ -45,7 +45,7 @@ public class TimetableController {
     }
 
     @PutMapping(value = "/analyze", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ScoreAnalysis<HardSoftScore> analyze(@RequestBody Timetable problem,
+    public ScoreAnalysis<HardMediumSoftScore> analyze(@RequestBody Timetable problem,
                                                 @RequestParam(name = "fetchPolicy", required = false) ScoreAnalysisFetchPolicy fetchPolicy) {
         return timetableService.analyze(problem, fetchPolicy);
     }

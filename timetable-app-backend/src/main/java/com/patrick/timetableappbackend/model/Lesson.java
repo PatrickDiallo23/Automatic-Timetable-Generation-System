@@ -2,8 +2,10 @@ package com.patrick.timetableappbackend.model;
 
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
+import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.patrick.timetableappbackend.utils.LessonStrengthComparator;
 import com.patrick.timetableappbackend.utils.RoomStrengthComparator;
 import com.patrick.timetableappbackend.utils.TimeslotStrengthComparator;
@@ -11,6 +13,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 
+import java.time.Duration;
+import java.util.List;
 import java.util.Objects;
 
 @PlanningEntity(difficultyComparatorClass = LessonStrengthComparator.class)
@@ -58,6 +62,10 @@ public class Lesson {
     @JoinColumn(name = "room_id")
     @PlanningVariable(strengthComparatorClass = RoomStrengthComparator.class)
     private Room room;
+
+    @JsonIgnore
+    @Transient
+    private Timetable timetable;
 
     public Lesson(long id, String subject, StudentGroup studentGroup){
         this.id = id;
@@ -151,5 +159,18 @@ public class Lesson {
     @Override
     public int hashCode() {
         return Objects.hash(id, subject, teacher, studentGroup, lessonType, year, duration);
+    }
+
+    @ValueRangeProvider
+    public List<Timeslot> getPossibleTimeslots() {
+        if (this.timetable == null || this.timetable.getTimeslots() == null) {
+            return List.of();
+        }
+        return this.timetable.getTimeslots().stream().filter(this::matchesTimeslot).toList();
+    }
+
+    private boolean matchesTimeslot(Timeslot timeslot) {
+        var timeslotDuration = Duration.between(timeslot.getStartTime(), timeslot.getEndTime());
+        return (timeslotDuration.abs().toHours() == duration);
     }
 }
