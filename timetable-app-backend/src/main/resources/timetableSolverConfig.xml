@@ -18,7 +18,7 @@
 <!--        <minutesSpentLimit>15</minutesSpentLimit>-->
 <!--    </termination>-->
 
-<!--  WEAKEST_FIT generic config -->
+<!--  STRONGEST FIT DECREASING generic config -->
     <constructionHeuristic>
         <constructionHeuristicType>ALLOCATE_ENTITY_FROM_QUEUE</constructionHeuristicType>
         <entitySorterManner>DECREASING_DIFFICULTY_IF_AVAILABLE</entitySorterManner>
