@@ -144,18 +144,22 @@ public class TimetableConstraintProviderTest {
     }
 
     @Test
-    void teacherPrefferences() {
+    void teacherPreferences() {
 
-        //we will use teacher's prefferences as the teacher's availability
+        // We will use teacher's preferences as the teacher's availability
         StudentGroup studentGroup = new StudentGroup(1L, "Group1", 30L);
         StudentGroup studentGroup2 = new StudentGroup(2L, "Group1", 30L);
         String repeatedSubject = "Subject1";
+        Timeslot timeslot1 = new Timeslot(3L, DayOfWeek.TUESDAY, LocalTime.of(8, 0), LocalTime.of(10, 0));
+        Timeslot timeslot3 = new Timeslot(4L, DayOfWeek.TUESDAY, LocalTime.of(14, 0), LocalTime.of(16, 0));
+        Timeslot teacherPreferredTimeslot1 = new Timeslot(5L, DayOfWeek.TUESDAY, LocalTime.of(9, 0), LocalTime.of(16, 0));
+        Timeslot teacherPreferredTimeslot2 = new Timeslot(6L, DayOfWeek.TUESDAY, LocalTime.of(10, 0), LocalTime.of(16, 0));
 
         Lesson mondayLesson = new Lesson(1, repeatedSubject, new Teacher(1L, "Teacher1", Set.of()), studentGroup, TIMESLOT1, ROOM1);
-        Lesson firstTuesdayLesson = new Lesson(2, repeatedSubject, new Teacher(2L, "Teacher2", Set.of(TIMESLOT3)), studentGroup, TIMESLOT2, ROOM1);
-        Lesson secondTuesdayLesson = new Lesson(3, repeatedSubject, new Teacher(3L, "Teacher3", Set.of(TIMESLOT3, TIMESLOT2)), studentGroup, TIMESLOT3, ROOM1);
-        Lesson thirdTuesdayLesson = new Lesson(4, repeatedSubject, new Teacher(3L, "Teacher3", Set.of(TIMESLOT3, TIMESLOT2)), studentGroup2, TIMESLOT2, ROOM1);
-        Lesson fourthTuesdayLesson = new Lesson(5, repeatedSubject, new Teacher(3L, "Teacher3", Set.of(TIMESLOT3, TIMESLOT2)), studentGroup2, TIMESLOT3, ROOM1);
+        Lesson firstTuesdayLesson = new Lesson(2, repeatedSubject, new Teacher(2L, "Teacher2", Set.of(teacherPreferredTimeslot1)), studentGroup, timeslot1, ROOM1);
+        Lesson secondTuesdayLesson = new Lesson(3, repeatedSubject, new Teacher(3L, "Teacher3", Set.of(teacherPreferredTimeslot2)), studentGroup, TIMESLOT2, ROOM1);
+        Lesson thirdTuesdayLesson = new Lesson(4, repeatedSubject, new Teacher(3L, "Teacher3", Set.of(teacherPreferredTimeslot2)), studentGroup2, timeslot3, ROOM1);
+        Lesson fourthTuesdayLesson = new Lesson(5, repeatedSubject, new Teacher(3L, "Teacher3", Set.of(teacherPreferredTimeslot2)), studentGroup2, TIMESLOT2, ROOM1);
 
         constraintVerifier.verifyThat(TimetableConstraintProvider::maximizePreferredTimeslotAssignments)
                 .given(mondayLesson, firstTuesdayLesson, secondTuesdayLesson, thirdTuesdayLesson, fourthTuesdayLesson)

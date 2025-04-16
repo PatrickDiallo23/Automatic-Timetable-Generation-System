@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
+import java.util.Set;
 
 import static ai.timefold.solver.core.api.score.stream.ConstraintCollectors.countDistinct;
 import static ai.timefold.solver.core.api.score.stream.ConstraintCollectors.sum;
@@ -263,7 +264,6 @@ public class TimetableConstraintProvider implements ConstraintProvider {
 
     Constraint maximizePreferredTimeslotAssignments(ConstraintFactory constraintFactory) {
 
-        //todo change the availability logic
         //Check if every lesson is assigned according to teacher's availability
         return constraintFactory.forEach(Lesson.class)
                 .filter(lesson -> {
@@ -271,8 +271,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                     LOGGER.info("lesson's Timeslot: {}", lesson.getTimeslot());
                     LOGGER.info("-------------------------------------------------");
                     return (lesson.getTeacher().getTimeslots() != null &&
-                            !lesson.getTeacher().getTimeslots().isEmpty()) &&
-                            !lesson.getTeacher().getTimeslots().contains(lesson.getTimeslot());
+                            !isTeacherAssignedToPreferredTimeslot(lesson));
                 })
 //                .penalize(HardSoftScore.ONE_HARD)
                 .penalizeConfigurable((lesson) -> {
@@ -647,5 +646,22 @@ public class TimetableConstraintProvider implements ConstraintProvider {
         Duration duration = Duration.between(timeslot.getStartTime(), timeslot.getEndTime());
         LOGGER.info("the duration of timeslot {} is: {}", timeslot, duration.abs().toHours());
         return duration.abs().toHours();
+    }
+
+    private boolean isTeacherAssignedToPreferredTimeslot(Lesson lesson) {
+        Timeslot timeslot = lesson.getTimeslot();
+        Set<Timeslot> preferredTimeslots = lesson.getTeacher().getTimeslots();
+        if (preferredTimeslots.isEmpty()) {
+            return true; // No preferred timeslots, so no penalty
+        }
+
+        for (Timeslot preferredTimeslot : preferredTimeslots) {
+            if (preferredTimeslot.getDayOfWeek().equals(timeslot.getDayOfWeek()) &&
+                    timeslot.getStartTime().compareTo(preferredTimeslot.getStartTime()) >= 0 &&
+                    timeslot.getEndTime().compareTo(preferredTimeslot.getEndTime()) <= 0) {
+                return true; // The lesson's timeslot is within the preferred timeslot
+            }
+        }
+        return false;
     }
 }
