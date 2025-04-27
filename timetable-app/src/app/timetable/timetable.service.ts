@@ -7,7 +7,7 @@ import { Timetable } from '../model/timetableEntities';
   providedIn: 'root',
 })
 export class TimetableService {
-  
+
   private apiUrl = 'http://localhost:8200/api/v1/timetables';
   private jobId = new BehaviorSubject('');
 
@@ -31,5 +31,9 @@ export class TimetableService {
 
   getTimetable(id: string): Observable<Timetable>{
     return this.http.get<Timetable>(`${this.apiUrl}/${id}`)
+  }
+
+  analyzeTimetableSolution(timetable: Timetable): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/analyze`, timetable);
   }
 }

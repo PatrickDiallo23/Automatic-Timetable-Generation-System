@@ -14,6 +14,7 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -164,7 +165,7 @@ public class Lesson {
     @ValueRangeProvider
     public List<Timeslot> getPossibleTimeslots() {
         if (this.timetable == null || this.timetable.getTimeslots() == null) {
-            return List.of();
+            return new ArrayList<>(List.of());
         }
         return this.timetable.getTimeslots().stream().filter(this::matchesTimeslot).toList();
     }

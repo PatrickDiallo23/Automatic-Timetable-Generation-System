@@ -1,11 +1,13 @@
-import { AfterViewInit, Component, ElementRef, Inject, OnInit, Renderer2, ViewChild, ViewEncapsulation, } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { User } from '../model/user';
 import { LoginService } from '../login/login.service';
 import { TimetableService } from './timetable.service';
 import { Data, HardMediumSoftScore, Lesson, Room, SemiGroup, Timeslot, Timetable } from '../model/timetableEntities';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Observable, map, startWith } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
+import { ScoreAnalysisDialogComponent } from './score-analysis-dialog/score-analysis-dialog.component';
 
 
 @Component({
@@ -54,7 +56,8 @@ export class TimetableComponent implements OnInit {
 
   constructor(
     private loginService: LoginService,
-    private timetableService: TimetableService
+    private timetableService: TimetableService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -77,11 +80,10 @@ export class TimetableComponent implements OnInit {
         this.score = this.timetableData.score;
         console.log(this.score);
         // Populate student groups
-        // this.populateStudentGroups();
         this.populateStudentGroups();
 
         // Filter timetable initially
-        this.filterTimetable2('', '');
+        this.filterTimetable('', '');
       });
     }
     this.filteredStudentGroups = this.studentGroupFormGroup.controls[
@@ -106,86 +108,7 @@ export class TimetableComponent implements OnInit {
     }
   }
 
-  // #### 1st variant ####
-  filterTimetable() {
-    this.displayedTimetable = [];
-    if (this.selectedStudentGroup && this.selectedSemiGroup) {
-      const filteredTimetable = this.timetableData?.lessons?.filter(
-        (lesson) =>
-          lesson.studentGroup.studentGroup === this.selectedStudentGroup &&
-          lesson.studentGroup.semiGroup === this.selectedSemiGroup
-      );
-      console.log('this is filteredTimetable');
-      console.log(filteredTimetable);
-
-      this.displayTimetable(filteredTimetable);
-    }
-  }
-
-  displayTimetable(lessons: Lesson[] | undefined) {
-    // Sort the displayed timetable
-    const dayOrder = {
-      MONDAY: 1,
-      TUESDAY: 2,
-      WEDNESDAY: 3,
-      THURSDAY: 4,
-      FRIDAY: 5,
-    };
-
-    const sortedTimetable = lessons?.sort((a, b) => {
-      const timeslotA = this.timetableData?.timeslots?.find(
-        (slot) => slot.id === a.timeslot
-      );
-      const timeslotB = this.timetableData?.timeslots?.find(
-        (slot) => slot.id === b.timeslot
-      );
-
-      if (timeslotA && timeslotB) {
-        const dayOrderA =
-          dayOrder[timeslotA.dayOfWeek as keyof typeof dayOrder];
-        console.log(dayOrderA);
-        const dayOrderB =
-          dayOrder[timeslotB.dayOfWeek as keyof typeof dayOrder];
-        console.log(dayOrderB);
-
-        if (dayOrderA !== dayOrderB) {
-          return dayOrderA - dayOrderB;
-        } else {
-          return (timeslotA.startTime ?? '').localeCompare(
-            timeslotB.startTime ?? ''
-          );
-        }
-      }
-      return 0; // Default return value if timeslots are not found
-    });
-    console.log('this is the sortedTimetable after sorting');
-    console.log(sortedTimetable);
-    // Assign timeslots and rooms to lessons
-    sortedTimetable?.forEach((lesson) => {
-      lesson.timeslot = this.timetableData?.timeslots?.find((slot) => {
-        console.log(slot);
-        console.log('slot.id===lesson.timeslot');
-        console.log(slot.id === lesson.timeslot);
-        return slot.id === lesson.timeslot;
-      });
-      lesson.room = this.timetableData?.rooms?.find((r) => {
-        console.log(r);
-        console.log('r.id === lesson.room');
-        console.log(r.id === lesson.room);
-        return r.id === lesson.room;
-      });
-      console.log('lesson.timeslot and lesson.room after assigning');
-      console.log(lesson.timeslot);
-      console.log(lesson.room);
-    });
-
-    this.displayedTimetable = sortedTimetable as Lesson[];
-    console.log('this is the displayed Timetable after assigning');
-    console.log(this.displayedTimetable);
-  }
-
-  // #### 2nd variant that worked###
-  filterTimetable2(studentGroup: string, studentSemiGroup: string) {
+  filterTimetable(studentGroup: string, studentSemiGroup: string) {
     if (studentGroup && studentSemiGroup) {
       const selectedStudentGroup = studentGroup;
 
@@ -201,11 +124,11 @@ export class TimetableComponent implements OnInit {
 
       console.log(filteredTimetable);
 
-      this.displayTimetable2(filteredTimetable);
+      this.displayTimetable(filteredTimetable);
     }
   }
 
-  displayTimetable2(lessons: Lesson[] | undefined) {
+  displayTimetable(lessons: Lesson[] | undefined) {
     const timetableContainer = document.getElementById('timetable');
     if (timetableContainer) timetableContainer.innerHTML = ''; // Clear previous content
 
@@ -269,50 +192,43 @@ export class TimetableComponent implements OnInit {
   }
 
   populateStudentGroups() {
-    if (this.timetableData.lessons) {
-      this.studentGroups = [
-        ...(new Set(
-          this.timetableData.lessons.map(
-            (lesson) => lesson.studentGroup!.studentGroup
-          )
-        ) as Set<string>),
-      ];
-      console.log(this.studentGroups);
+    const lessons = this.timetableData?.lessons;
+    if (!lessons) {
+      this.studentGroups = [];
+      return;
     }
-  }
 
-  // Function to populate the student group select element
-  // possible to be deleted in future
-  populateStudentGroups2() {
-    const selectElement = document.getElementById('studentGroup');
-    const uniqueGroups = [
-      ...new Set(
-        this.timetableData?.lessons?.map(
-          (lesson) => lesson.studentGroup.studentGroup
-        )
-      ),
-    ] as string[];
+    const groupSet = new Set<string>();
 
-    uniqueGroups.forEach((group) => {
-      const option = document.createElement('option');
-      if (option) {
-        option.value = group;
-        option.textContent = group;
-        selectElement?.appendChild(option);
+    lessons.forEach((lesson) => {
+      const groupName = lesson.studentGroup?.studentGroup;
+      if (groupName) {
+        groupSet.add(groupName);
       }
     });
+
+    this.studentGroups = Array.from(groupSet);
+    console.log(this.studentGroups);
   }
 
   populateTeachers() {
-    if (this.timetableData.lessons) {
-      this.teachers = [
-        ...(new Set(
-          this.timetableData.lessons.map((lesson) => lesson.teacher.name)
-        ) as Set<string>),
-      ];
-      this.teachers.sort((a, b) => a.localeCompare(b));
-      console.log(this.teachers);
+    const lessons = this.timetableData?.lessons;
+    if (!lessons) {
+      this.teachers = [];
+      return;
     }
+
+    const teacherSet = new Set<string>();
+
+    lessons.forEach((lesson) => {
+      const teacherName = lesson.teacher?.name;
+      if (teacherName) {
+        teacherSet.add(teacherName);
+      }
+    });
+
+    this.teachers = Array.from(teacherSet).sort((a, b) => a.localeCompare(b));
+    console.log(this.teachers);
   }
 
   filterTeachers(teacher: string) {
@@ -398,7 +314,7 @@ export class TimetableComponent implements OnInit {
 
     if (this.toggle === 'student') {
       if (timetableContainer) timetableContainer.innerHTML = '';
-      this.filterTimetable2('', '');
+      this.filterTimetable('', '');
       this.populateStudentGroups();
       this.studentGroupFormGroup.controls[
         'studentGroupControl'
@@ -433,6 +349,31 @@ export class TimetableComponent implements OnInit {
     const target = event.target as HTMLInputElement;
     target.select();
   }
+
+  openAnalysisDialog(): void {
+    if (
+      !this.timetableData ||
+      !this.timetableData.score ||
+      this.timetableData.score.initScore
+    ) {
+      alert('No score to analyze yet. Please first generate the timetable.');
+      return;
+    }
+
+    this.timetableService
+      .analyzeTimetableSolution(this.timetableData)
+      .subscribe({
+        next: (analysis : any) => {
+          this.dialog.open(ScoreAnalysisDialogComponent, {
+            width: '900px',
+            data: analysis,
+          });
+        },
+        error: (err) => {
+          console.error('Analyze failed', err);
+          alert('Analyze failed. See console for details.');
+        },
+      });
+  }
 }
 
-//todo refactoring + adding autocomplete feature (todo: check if autocompletion is implemented)...

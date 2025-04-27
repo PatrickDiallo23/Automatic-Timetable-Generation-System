@@ -1,0 +1,62 @@
+<h2 mat-dialog-title>Score Analysis</h2>
+<mat-dialog-content>
+    <div class="legend-container">
+        <h3>Legend</h3>
+        <ul class="legend-list">
+            <li>
+                <mat-icon color="warn">error</mat-icon>
+                <span>Constraint violated – negatively impacts the score (hard, medium, or soft)</span>
+            </li>
+            <li>
+                <mat-icon color="primary">stars</mat-icon>
+                <span>Soft constraint satisfied – improves the score</span>
+            </li>
+            <li>
+                <mat-icon color="primary">check_circle</mat-icon>
+                <span>Constraint satisfied – no violations found</span>
+            </li>
+        </ul>
+    </div>
+
+    <table mat-table [dataSource]="constraints" class="no-elevation full-width">
+        <ng-container matColumnDef="icon">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let element">
+                <mat-icon *ngIf="(element.type === 'hard' || element.type === 'medium' || element.type === 'soft') && element.implicitScore < 0 && element.weight < 0" color="warn">error</mat-icon>
+                <mat-icon *ngIf="element.type === 'soft' && element.implicitScore > 0 && element.weight > 0" color="primary">stars</mat-icon>
+                <mat-icon *ngIf="element.weight < 0 && element.matches?.length === 0" color="primary">check_circle</mat-icon>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Constraint</th>
+            <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef>Type</th>
+            <td mat-cell *matCellDef="let element">{{ element.type }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="matches">
+            <th mat-header-cell *matHeaderCellDef># Matches</th>
+            <td mat-cell *matCellDef="let element">{{ element.matches?.length }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="weight">
+            <th mat-header-cell *matHeaderCellDef>Weight</th>
+            <td mat-cell *matCellDef="let element">{{ element.weight }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="score">
+            <th mat-header-cell *matHeaderCellDef>Score</th>
+            <td mat-cell *matCellDef="let element">{{ element.implicitScore }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['icon', 'name', 'type', 'matches', 'weight', 'score']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['icon', 'name', 'type', 'matches', 'weight', 'score']"></tr>
+    </table>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>

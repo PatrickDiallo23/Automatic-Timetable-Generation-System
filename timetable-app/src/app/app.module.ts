@@ -45,6 +45,7 @@ import { PrefferedTimeslotsDialogComponent } from './teachers/preffered-timeslot
 import { LessonsComponent } from './lessons/lessons.component';
 import { LessonDialogComponent } from './lessons/lesson-dialog/lesson-dialog.component';
 import { CountdownTimerComponent } from './helpers/countdown-timer/countdown-timer.component';
+import { ScoreAnalysisDialogComponent } from './timetable/score-analysis-dialog/score-analysis-dialog.component';
 
 
 @NgModule({
@@ -69,6 +70,7 @@ import { CountdownTimerComponent } from './helpers/countdown-timer/countdown-tim
     LessonsComponent,
     LessonDialogComponent,
     CountdownTimerComponent,
+    ScoreAnalysisDialogComponent,
   ],
   imports: [
     BrowserModule,

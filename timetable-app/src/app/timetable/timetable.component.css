@@ -1,15 +1,41 @@
-    h2 {
-        text-align: center;
-        color: #333;
-    }
-    
-    h3 {
-        text-align: center;
-        color: #333;
-    }
-    
-    .button-container {
-        margin-top: 30px;
-        display: flex;
-        justify-content: space-around;
-    }
+.header-card {
+     margin: 25px;
+     padding: 17px;
+     text-align: center;
+     background: linear-gradient(135deg, #673ab7, #512da8);
+     color: white;
+ }
+
+ .page-title {
+     font-size: 2rem;
+     font-weight: bolder;
+ }
+
+ .page-subtitle {
+     font-size: 1.2rem;
+     margin-top: 8px;
+     font-weight: bold;
+     color: whitesmoke;
+ }
+
+ .description-text {
+     display: block;
+     text-align: center;
+     margin-top: 10px;
+     font-size: 0.9rem;
+     color: gray;
+ }
+
+ .button-container {
+     margin-top: 40px;
+     display: flex;
+     justify-content: space-evenly;
+     flex-wrap: wrap;
+     padding: 20px;
+     border-radius: 12px;
+     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+ }
+
+ .button-container button {
+     min-width: 180px;
+ }
