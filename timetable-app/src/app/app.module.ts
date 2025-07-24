@@ -18,6 +18,7 @@ import { TimetableComponent } from './timetable/timetable.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatButtonModule } from '@angular/material/button';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSortModule } from '@angular/material/sort';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -79,6 +80,7 @@ import { ScoreAnalysisDialogComponent } from './timetable/score-analysis-dialog/
     MatSidenavModule,
     MatListModule,
     MatCardModule,
+    MatChipsModule,
     MatFormFieldModule,
     MatTableModule,
     FormsModule,

@@ -14,6 +14,8 @@ export class LoginService {
   //remember to control the logged state in the app
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
+  private showSidebarSubject = new BehaviorSubject<boolean>(false);
+  showSidebar$ = this.showSidebarSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -41,6 +43,14 @@ export class LoginService {
 
   get userConnected(): User {
     return this.userSubject.value;
+  }
+
+  setShowSidebar(value: boolean) {
+    this.showSidebarSubject.next(value);
+  }
+
+  get showSidebar(): boolean {
+    return this.showSidebarSubject.value;
   }
 
   getUserDetails(): Observable<any> {

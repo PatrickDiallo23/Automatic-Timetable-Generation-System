@@ -1,21 +1,132 @@
-<div class="app-container">
-    <mat-toolbar color="primary">
-        <span class="app-name">Timetable Generation for Faculty</span>
-    </mat-toolbar>
-
-    <div class="login-container">
-        <div class="login-content">
-            <h1>Login</h1>
-
-            <form (ngSubmit)="login()" #loginForm="ngForm">
-                <mat-form-field>
-                    <input matInput placeholder="Email" name="email" [(ngModel)]="email" required>
-                </mat-form-field>
-                <mat-form-field>
-                    <input matInput type="password" placeholder="Password" name="password" [(ngModel)]="password" required>
-                </mat-form-field>
-                <button mat-raised-button color="primary" type="submit">Login</button>
-            </form>
-        </div>
+<div class="login-page">
+  <!-- Modern Toolbar -->
+  <mat-toolbar color="primary" class="modern-toolbar">
+    <div class="toolbar-content">
+      <div class="logo-section">
+        <mat-icon class="app-icon">schedule</mat-icon>
+        <span class="app-title">Timetable Generation</span>
+      </div>
+      <span class="subtitle">Faculty & College Management System</span>
     </div>
+  </mat-toolbar>
+
+  <!-- Main Login Container -->
+  <div class="login-wrapper">
+    <div class="login-container">
+      <!-- Welcome Section -->
+      <div class="welcome-section">
+        <div class="welcome-icon">
+          <mat-icon>account_circle</mat-icon>
+        </div>
+        <h1 class="welcome-title">Welcome</h1>
+        <p class="welcome-subtitle">Sign in to access your timetable dashboard</p>
+      </div>
+
+      <!-- Login Form Card -->
+      <mat-card class="login-card">
+        <mat-card-content>
+          <form (ngSubmit)="login()" #loginForm="ngForm" class="login-form">
+            <!-- Email Field -->
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Email Address</mat-label>
+              <input
+                matInput
+                type="email"
+                name="email"
+                [(ngModel)]="email"
+                required
+                email
+                #emailInput="ngModel">
+              <mat-icon matPrefix>email</mat-icon>
+              <mat-error *ngIf="emailInput.invalid && emailInput.touched">
+                <span *ngIf="emailInput.errors?.['required']">Email is required</span>
+                <span *ngIf="emailInput.errors?.['email']">Please enter a valid email</span>
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Password Field -->
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Password</mat-label>
+              <input
+                matInput
+                [type]="hidePassword ? 'password' : 'text'"
+                name="password"
+                [(ngModel)]="password"
+                required
+                #passwordInput="ngModel">
+              <mat-icon matPrefix>lock</mat-icon>
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                (click)="hidePassword = !hidePassword"
+                [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hidePassword">
+                <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+              <mat-error *ngIf="passwordInput.invalid && passwordInput.touched">
+                Password is required
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Error Message -->
+            <div class="error-message" *ngIf="loginError">
+              <mat-icon class="error-icon">error_outline</mat-icon>
+              <span class="error-text">{{loginError}}</span>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div class="loading-section" *ngIf="isLoading">
+              <mat-spinner diameter="24"></mat-spinner>
+              <span>Signing you in...</span>
+            </div>
+
+            <!-- Login Button -->
+            <button
+              mat-raised-button
+              color="primary"
+              type="submit"
+              class="login-button"
+              [disabled]="!loginForm.form.valid || isLoading">
+              <mat-icon *ngIf="!isLoading">login</mat-icon>
+              <span>{{isLoading ? 'Signing In...' : 'Sign In'}}</span>
+            </button>
+
+            <!-- Additional Options -->
+            <div class="additional-options">
+              <button mat-button type="button" class="forgot-password">
+                <mat-icon>help_outline</mat-icon>
+                Forgot Password?
+              </button>
+            </div>
+          </form>
+          <div class="login-footer-card">
+            <mat-divider></mat-divider>
+            <div class="help-message">
+              <mat-icon class="help-icon">support_agent</mat-icon>
+              <span>Need help? Contact your system administrator</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Footer Info -->
+      <div class="login-footer">
+        <div class="feature-highlights">
+          <div class="feature-item">
+            <mat-icon>schedule</mat-icon>
+            <span>Automated Scheduling</span>
+          </div>
+          <div class="feature-item">
+            <mat-icon>group</mat-icon>
+            <span>Multi-User Support</span>
+          </div>
+          <div class="feature-item">
+            <mat-icon>security</mat-icon>
+            <span>Secure Access</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -18,7 +18,11 @@ export class AppComponent implements OnInit {
 
   constructor(private router: Router, private loginService: LoginService) {}
   ngOnInit(): void {
-    //If we don't have user already
+    this.loginService.showSidebar$.subscribe((value) => {
+      this.showSidebar = value;
+    });
+
+    // If we don't have user already
     if (Object.keys(this.user).length == 0) {
 
     this.loginService.isAuthenticated$.subscribe((isAuthenticated) => {
@@ -30,24 +34,24 @@ export class AppComponent implements OnInit {
           this.user.role = userData.role;
           this.loginService.setUser(this.user);
         });
-      
+
         this.isLogged = true;
-      
+
       } else {
         // User is not authenticated, show the login component
         // this.showSidebar = false;
         this.isLogged = false;
       }
     });
-  } else{
-    //if we have user
+  } else {
+    // if we have user
     this.loginService.isAuthenticated$.subscribe(
     (isAuthenticated) => {
-      if(isAuthenticated){
+      if (isAuthenticated) {
         this.user.email = this.loginService.userConnected.email;
         this.user.role = this.loginService.userConnected.role;
         this.isLogged = true;
-      } else{
+      } else {
         this.isLogged = false;
       }
     }
@@ -55,8 +59,8 @@ export class AppComponent implements OnInit {
   }
   }
   startProcess() {
-    console.log(this.showSidebar);
-    this.showSidebar = !this.showSidebar;
+    // console.log(this.showSidebar);
+    this.loginService.setShowSidebar(!this.showSidebar);
     if (this.showSidebar == false) {
       this.router.navigate(['/dashboard']);
     } else {

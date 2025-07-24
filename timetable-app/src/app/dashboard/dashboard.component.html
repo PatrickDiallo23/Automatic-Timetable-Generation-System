@@ -1,72 +1,213 @@
-<h1>Dashboard</h1>
-<br>
-<h2>Hello {{user.email}} with role {{user.role}}</h2>
-<br>
-<br>
-<div *ngIf="isAdmin(user)">
-    <div class="card-container">
-        <mat-card>
-            <mat-card-header>
-                <mat-card-title>All Timetables</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-                <p>View all generated timetables.</p>
-            </mat-card-content>
-            <mat-card-actions>
-                <button mat-button color="primary">View Timetables</button>
-            </mat-card-actions>
-        </mat-card>
-
-        <mat-card>
-            <mat-card-header>
-                <mat-card-title>Settings</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-                <p>Update application settings.</p>
-            </mat-card-content>
-            <mat-card-actions>
-                <button mat-button color="primary">Go to Settings</button>
-            </mat-card-actions>
-        </mat-card>
-
-        <mat-card>
-            <mat-card-header>
-                <mat-card-title>Profile</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-                <p>View and manage your profile.</p>
-            </mat-card-content>
-            <mat-card-actions>
-                <button mat-button color="primary">Go to Profile</button>
-            </mat-card-actions>
-        </mat-card>
+<div class="dashboard-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="welcome-card">
+      <div class="user-avatar">
+        <mat-icon>account_circle</mat-icon>
+      </div>
+      <div class="welcome-content">
+        <h1 class="welcome-title">{{getGreeting()}} and Welcome!</h1>
+        <p class="user-info">{{user.email}}</p>
+        <mat-chip-listbox>
+          <mat-chip [ngClass]="{'admin-chip': isAdmin(user), 'user-chip': !isAdmin(user)}">
+            <mat-icon matChipAvatar>{{isAdmin(user) ? 'admin_panel_settings' : 'person'}}</mat-icon>
+            {{user.role}}
+          </mat-chip>
+        </mat-chip-listbox>
+      </div>
     </div>
-    <br><br><br><br><br><br>
-    <h1>Press the
-        <mat-icon>event_available</mat-icon> to begin the Timetable Generation process</h1>
-    <br><br>
-    <h1>Press the
-        <mat-icon>arrow_forward</mat-icon> to go back to the Dashboard</h1>
-</div>
+  </div>
+  <br>
 
-<div *ngIf="!isAdmin(user)">
-    <div class="card-container">
-        <mat-card>
-            <mat-card-header>
-                <mat-card-title>College Timetable</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-                <p>See the timetable for this year</p>
-            </mat-card-content>
-            <mat-card-actions>
-                <button mat-button color="primary">View Timetable</button>
-            </mat-card-actions>
-        </mat-card>
+  <!-- Quick Actions Section -->
+  <div class="quick-actions-section" *ngIf="isAdmin(user)">
+    <h2 class="section-title">Quick Actions</h2>
+    <div class="action-buttons">
+      <button mat-fab extended class="primary-action" color="primary" (click)="startTimetableGenerationProcess()">
+        <mat-icon>event_available</mat-icon>
+        Generate Timetable
+      </button>
+      <button mat-stroked-button class="secondary-action" (click)="viewTimetableGenerationProcess()">
+        <mat-icon>visibility</mat-icon>
+        View Timetable
+      </button>
     </div>
-    <br><br><br>
-    <h1>Press the
-        <mat-icon>event_available</mat-icon> to see the timetable</h1>
-    <br><br>
-    <h1>Press the
-        <mat-icon>arrow_forward</mat-icon> to go back to the Dashboard</h1>
+  </div>
+
+  <div class="quick-actions-section" *ngIf="!isAdmin(user)">
+    <h2 class="section-title">Your Timetable</h2>
+    <div class="action-buttons">
+      <button mat-fab extended class="primary-action" color="primary" (click)="viewTimetableGenerationProcess()">
+        <mat-icon>event_available</mat-icon>
+        View My Timetable
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content Cards -->
+  <div class="main-content">
+    <h2 class="section-title">{{isAdmin(user) ? 'Admin Tools' : 'Available Services'}}</h2>
+
+    <div class="cards-grid" *ngIf="isAdmin(user)">
+      <mat-card class="feature-card" matRipple>
+        <div class="card-icon admin-icon">
+          <mat-icon>schedule</mat-icon>
+        </div>
+        <mat-card-header>
+          <mat-card-title>All Timetables</mat-card-title>
+          <mat-card-subtitle>Manage and view generated schedules</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>Access all generated timetables, review schedules, and manage academic planning across all departments.</p>
+          <div class="card-stats">
+            <span class="stat-item">
+              <mat-icon>timeline</mat-icon>
+              Active Schedules
+            </span>
+          </div>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-button color="primary">
+            <mat-icon>visibility</mat-icon>
+            View All
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <mat-card class="feature-card" matRipple>
+        <div class="card-icon settings-icon">
+          <mat-icon>settings</mat-icon>
+        </div>
+        <mat-card-header>
+          <mat-card-title>System Settings</mat-card-title>
+          <mat-card-subtitle>Configure application preferences</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>Update system configurations, manage user permissions, and customize application behavior.</p>
+          <div class="card-stats">
+            <span class="stat-item">
+              <mat-icon>tune</mat-icon>
+              Configuration
+            </span>
+          </div>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-button color="primary">
+            <mat-icon>settings</mat-icon>
+            Configure
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <mat-card class="feature-card" matRipple>
+        <div class="card-icon profile-icon">
+          <mat-icon>person</mat-icon>
+        </div>
+        <mat-card-header>
+          <mat-card-title>Profile Management</mat-card-title>
+          <mat-card-subtitle>Update your account information</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>Manage your personal information, security settings, and notification preferences.</p>
+          <div class="card-stats">
+            <span class="stat-item">
+              <mat-icon>verified_user</mat-icon>
+              Account Settings
+            </span>
+          </div>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-button color="primary">
+            <mat-icon>edit</mat-icon>
+            Manage
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+
+    <div class="cards-grid" *ngIf="!isAdmin(user)">
+      <mat-card class="feature-card large-card" matRipple>
+        <div class="card-icon student-icon">
+          <mat-icon>school</mat-icon>
+        </div>
+        <mat-card-header>
+          <mat-card-title>My College Timetable</mat-card-title>
+          <mat-card-subtitle>Current academic year schedule</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>View your personalized class schedule, upcoming events, and important academic dates for this semester.</p>
+          <div class="card-stats">
+            <span class="stat-item">
+              <mat-icon>today</mat-icon>
+              Today's Classes
+            </span>
+            <span class="stat-item">
+              <mat-icon>event_note</mat-icon>
+              This Week
+            </span>
+          </div>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-button color="primary">
+            <mat-icon>calendar_view_week</mat-icon>
+            View Schedule
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <mat-card class="feature-card large-card" matRipple>
+        <div class="card-icon profile-icon">
+          <mat-icon>person</mat-icon>
+        </div>
+        <mat-card-header>
+          <mat-card-title>My Profile</mat-card-title>
+          <mat-card-subtitle>Personal details and preferences</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>Update your personal information, change your password, and manage your notification settings easily.</p>
+          <div class="card-stats">
+      <span class="stat-item">
+        <mat-icon>edit</mat-icon>
+        Edit Info
+      </span>
+            <span class="stat-item">
+        <mat-icon>notifications_active</mat-icon>
+        Notifications
+      </span>
+          </div>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-button color="primary">
+            <mat-icon>manage_accounts</mat-icon>
+            Update Profile
+          </button>
+        </mat-card-actions>
+      </mat-card>
+      <mat-card class="feature-card large-card" matRipple>
+        <div class="card-icon help-icon">
+          <mat-icon>help</mat-icon>
+        </div>
+        <mat-card-header>
+          <mat-card-title>Help & Support</mat-card-title>
+          <mat-card-subtitle>Get assistance with your timetable</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>Access FAQs, contact support, and find resources to help you navigate your academic journey.</p>
+          <div class="card-stats">
+            <span class="stat-item">
+              <mat-icon>support_agent</mat-icon>
+              Contact Support
+            </span>
+          </div>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-button color="primary">
+            <mat-icon>help_outline</mat-icon>
+            Get Help
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+
 </div>
