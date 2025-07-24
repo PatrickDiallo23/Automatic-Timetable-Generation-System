@@ -58,5 +58,9 @@
     </table>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
+    <button mat-button (click)="downloadReportFile(constraints, 'score-analysis')" [disabled]="isDownloading">
+    <mat-icon>{{ isDownloading ? 'hourglass_empty' : 'download' }}</mat-icon>
+    {{ isDownloading ? 'Exporting...' : 'Export Report Data' }}
+    </button>
     <button mat-button mat-dialog-close>Close</button>
 </mat-dialog-actions>
