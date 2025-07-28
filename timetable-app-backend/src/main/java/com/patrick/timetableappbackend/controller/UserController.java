@@ -6,6 +6,15 @@ import com.patrick.timetableappbackend.dto.AuthenticationResponse;
 import com.patrick.timetableappbackend.model.User;
 import com.patrick.timetableappbackend.repository.UserRepo;
 import com.patrick.timetableappbackend.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,6 +31,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/auth")
+@Tag(name = "User Management", description = "Operations related to user management and authentication")
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
@@ -32,6 +42,13 @@ public class UserController {
     private final JwtService jwtService; // todo delete in future (good for testing)
     private final UserDetailsService userDetailsService; //todo delete in future
 
+    @Operation(summary = "Publicly accessible endpoint",
+            description = "This endpoint is publicly accessible with authentication"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully accessed the endpoint", content = @Content(mediaType = "text/plain")),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content),
+    })
     @GetMapping("/welcome")
     public String goHome() {
         return "this is publicly accessible with authentication";
@@ -41,16 +58,51 @@ public class UserController {
 
     //Receive jwt token (Auth Bearer Token)
     //authentication with mail and password
+    @Operation(summary = "Authenticate user",
+            description = "This endpoint allows users to authenticate with their email and password"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Authentication successful",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthenticationResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+    })
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
+            @Parameter(description = "Authentication request containing email and password", required = true)
             @RequestBody AuthenticationRequest request
     ) {
         return ResponseEntity.ok(userService.authenticate(request));
     }
 
+    @Operation(
+            summary = "Get all users",
+            description = "Returns a list of all users. Requires a valid JWT token with ADMIN authority."
+            //security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully retrieved the list of users",
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Unauthorized – token missing or invalid",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error",
+                    content = @Content
+            )
+    })
     @GetMapping("/users/all")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<?> getAllUsers(@RequestHeader(value = "Authorization", required = false) String token) {
+    public ResponseEntity<?> getAllUsers(
+            @Parameter(description = "JWT token for authentication")
+            @RequestHeader(value = "Authorization", required = false) String token
+    ) {
         //test the jwtToken
         log.info(token + " this is the token from getAllUsers method");
         if (token == null) {
@@ -72,6 +124,27 @@ public class UserController {
     }
 
     //todo simplify this in future
+    @Operation(
+            summary = "Get user details",
+            description = "Returns the details of the currently logged-in user."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully retrieved user details",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "User not found",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error",
+                    content = @Content
+            )
+    })
     @GetMapping("/users/single")
     @PreAuthorize("hasAuthority('ADMIN') OR hasAuthority('USER')")
     public ResponseEntity<Object> getMyDetails() {

@@ -114,7 +114,7 @@ npm install
 ```bash
 mvn spring-boot:run
 ```
-The backend server will start on http://localhost:8200.
+The backend server will start on http://localhost:8200. The SWAGGER UI will be available at http://localhost:8200/swagger-ui.html.
 
 ### 2. Run the Frontend
 

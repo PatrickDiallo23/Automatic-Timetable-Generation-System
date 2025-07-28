@@ -1,5 +1,6 @@
 package com.patrick.timetableappbackend.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,9 +13,14 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Schema(description = "Data Transfer Object for Timeslot entity, containing ID, day of the week, start time, and end time.")
 public class TimeslotDTO {
+    @Schema(description = "Unique identifier for the timeslot", example = "1")
     private Long id;
+    @Schema(description = "Day of the week for the timeslot", example = "MONDAY")
     private DayOfWeek dayOfWeek;
+    @Schema(description = "Start time of the timeslot", example = "08:00")
     private LocalTime startTime;
+    @Schema(description = "End time of the timeslot", example = "10:00")
     private LocalTime endTime;
 }
