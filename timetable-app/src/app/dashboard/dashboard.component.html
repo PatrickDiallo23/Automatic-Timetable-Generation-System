@@ -31,6 +31,15 @@
         <mat-icon>visibility</mat-icon>
         View Timetable
       </button>
+      <button mat-raised-button color="accent" class="import-action" [disabled]="isImporting" (click)="importFile()">
+        <mat-icon>upload_file</mat-icon>
+        <span *ngIf="!isImporting">Import Timetable (JSON/Excel)</span>
+        <span *ngIf="isImporting" class="importing-content">
+                    <div class="loading-spinner"></div>
+                    Importing...
+                </span>
+      </button>
+      <input #fileInput type="file" accept=".json,.xlsx,.xls" style="display: none;" (change)="onFileSelected($event)">
     </div>
   </div>
 

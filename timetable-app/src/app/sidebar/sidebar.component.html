@@ -1,36 +1,85 @@
 <div *ngIf="isAdmin(user)">
-    <mat-sidenav-container class="sidebar-container">
-        <mat-sidenav mode="side" opened>
-            <mat-nav-list>
-                <a mat-list-item routerLink="/rooms">Rooms</a>
-                <a mat-list-item routerLink="/timeslots">Timeslots</a>
-                <a mat-list-item routerLink="/teachers">Teachers</a>
-                <a mat-list-item routerLink="/studentGroups">Student Groups</a>
-                <a mat-list-item routerLink="/lessons">Lessons</a>
-                <a mat-list-item routerLink="/constraints">Constraints</a>
-                <a mat-list-item routerLink="/confirmation">Timetable Generation</a>
-                <a mat-list-item routerLink="/timetable">Timetable View</a>
-            </mat-nav-list>
-            <!-- <mat-nav-list *ngIf="!isAdmin(user)">
-            <a mat-list-item routerLink="/timetable">Timetable View</a>
-        </mat-nav-list> -->
-        </mat-sidenav>
-        <mat-sidenav-content>
-            <router-outlet></router-outlet>
-        </mat-sidenav-content>
-    </mat-sidenav-container>
+  <mat-sidenav-container class="sidebar-container">
+    <mat-sidenav *ngIf="!showDataDialog" mode="side" opened class="enhanced-sidebar">
+
+      <!-- Grouped navigation items with section headers -->
+      <div class="nav-section">
+        <h4 class="section-header">
+          <mat-icon class="section-icon">storage</mat-icon>
+          Data Management
+        </h4>
+        <mat-nav-list class="nav-group">
+          <a mat-list-item routerLink="/rooms" class="nav-item" routerLinkActive="active-nav-item">
+            <mat-icon matListItemIcon class="nav-icon">meeting_room</mat-icon>
+            <span matListItemTitle>Rooms</span>
+          </a>
+          <a mat-list-item routerLink="/timeslots" class="nav-item" routerLinkActive="active-nav-item">
+            <mat-icon matListItemIcon class="nav-icon">access_time</mat-icon>
+            <span matListItemTitle>Timeslots</span>
+          </a>
+          <a mat-list-item routerLink="/teachers" class="nav-item" routerLinkActive="active-nav-item">
+            <mat-icon matListItemIcon class="nav-icon">person</mat-icon>
+            <span matListItemTitle>Teachers</span>
+          </a>
+          <a mat-list-item routerLink="/studentGroups" class="nav-item" routerLinkActive="active-nav-item">
+            <mat-icon matListItemIcon class="nav-icon">groups</mat-icon>
+            <span matListItemTitle>Student Groups</span>
+          </a>
+          <a mat-list-item routerLink="/lessons" class="nav-item" routerLinkActive="active-nav-item">
+            <mat-icon matListItemIcon class="nav-icon">school</mat-icon>
+            <span matListItemTitle>Lessons</span>
+          </a>
+          <a mat-list-item routerLink="/constraints" class="nav-item" routerLinkActive="active-nav-item">
+            <mat-icon matListItemIcon class="nav-icon">rule</mat-icon>
+            <span matListItemTitle>Constraints</span>
+          </a>
+        </mat-nav-list>
+      </div>
+
+      <!-- divider between sections -->
+      <mat-divider class="section-divider"></mat-divider>
+
+      <!-- Separate section for timetable operations -->
+      <div class="nav-section">
+        <h4 class="section-header">
+          <mat-icon class="section-icon">event</mat-icon>
+          Timetable Operations
+        </h4>
+        <mat-nav-list class="nav-group">
+          <a mat-list-item routerLink="/confirmation" class="nav-item" routerLinkActive="active-nav-item">
+            <mat-icon matListItemIcon class="nav-icon">settings</mat-icon>
+            <span matListItemTitle>Timetable Generation</span>
+          </a>
+          <a mat-list-item routerLink="/timetable" class="nav-item" routerLinkActive="active-nav-item">
+            <mat-icon matListItemIcon class="nav-icon">calendar_view_week</mat-icon>
+            <span matListItemTitle>Timetable View</span>
+          </a>
+        </mat-nav-list>
+      </div>
+
+    </mat-sidenav>
+
+    <!-- If Dialog is opened, then close the sidebar -->
+    <mat-sidenav *ngIf="showDataDialog" (closed)="true"></mat-sidenav>
+
+    <mat-sidenav-content class="main-content">
+      <div class="content-wrapper">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 </div>
 
-<!-- if user is USER -->
+<!-- REGULAR USER SIDEBAR - IMPROVED VERSION -->
 <div *ngIf="!isAdmin(user)">
-    <mat-sidenav-container class="sidebar-container">
-        <mat-sidenav mode="side" (closed)="true">
-            <mat-nav-list>
-                <a mat-list-item routerLink="/timetable">Timetable View</a>
-            </mat-nav-list>
-        </mat-sidenav>
-        <mat-sidenav-content>
-            <router-outlet></router-outlet>
-        </mat-sidenav-content>
-    </mat-sidenav-container>
+  <mat-sidenav-container class="sidebar-container">
+    <mat-sidenav mode="side" (closed)="true">
+      <mat-nav-list>
+        <a mat-list-item routerLink="/timetable">Timetable View</a>
+      </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 </div>

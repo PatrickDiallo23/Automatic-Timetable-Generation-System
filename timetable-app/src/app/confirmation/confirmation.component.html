@@ -1,97 +1,267 @@
 <div class="confirmation-container">
-    <h1><b>Confirmation</b></h1>
-    <h3>Are you sure you want to generate the timetable?</h3>
+  <div class="confirmation-header">
+    <h1>Timetable Generation Confirmation</h1>
+    <h3>Review your configuration and proceed with generation</h3>
+  </div>
 
-    <!-- Input field for algorithm duration -->
-    <div>
-        <label for="duration">Algorithm Duration (minutes): {{problemDuration}}</label>
-        <!-- <input type="number" id="duration" name="duration" [(ngModel)]="problemDuration" /> -->
+  <div *ngIf="isImportMode" class="import-mode-banner">
+    <div class="banner-content">
+      <div class="banner-info">
+        <mat-icon class="banner-icon">upload_file</mat-icon>
+        <span><strong>Import Mode:</strong> Using data from imported {{ importType.toUpperCase() }} file</span>
+      </div>
+      <button mat-button class="back-button" (click)="goBackToDashboard()">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Dashboard
+      </button>
     </div>
+  </div>
 
-    <div class="mat-card">
-        <mat-card-title class="countCardTitle">At this time, you have added...</mat-card-title>
-        <div class="mat-card-content">
-            <mat-grid-list cols="2" rowHeight="100px">
-                <!-- Room Card -->
-                <mat-grid-tile>
-                    <mat-card class="entity-card">
-                        <mat-card-header>
-                            <mat-card-title>Rooms</mat-card-title>
-                        </mat-card-header>
-                        <mat-card-content>
-                            <h4>{{ roomCount }}</h4>
-                        </mat-card-content>
-                    </mat-card>
-                </mat-grid-tile>
+  <div *ngIf="isImportMode" class="data-summary">
+    <h3>Data Source Information</h3>
+    <p><strong>Source:</strong> Imported {{ importType.toUpperCase() }} file</p>
+    <p *ngIf="importType === 'excel'" class="excel-info">
+      <mat-icon class="info-icon">info</mat-icon>
+      Data was processed from multiple Excel sheets and converted to timetable format
+    </p>
+  </div>
 
-                <!-- Timeslot Card -->
-                <mat-grid-tile>
-                    <mat-card class="entity-card">
-                        <mat-card-header>
-                            <mat-card-title>Timeslots</mat-card-title>
-                        </mat-card-header>
-                        <mat-card-content>
-                            <h4>{{ timeslotCount }}</h4>
-                        </mat-card-content>
-                    </mat-card>
-                </mat-grid-tile>
+  <div *ngIf="!isImportMode" class="data-summary">
+    <h3>Data Source Information</h3>
+    <p><strong>Source:</strong> Current database</p>
+  </div>
 
-                <!-- Constraints Card -->
-                <mat-grid-tile>
-                    <mat-card class="entity-card">
-                        <mat-card-header>
-                            <mat-card-title>Constraints</mat-card-title>
-                        </mat-card-header>
-                        <mat-card-content>
-                            <h4>{{ constraintCount }}</h4>
-                        </mat-card-content>
-                    </mat-card>
-                </mat-grid-tile>
+  <div class="duration-section">
+    <p class="duration-label">Algorithm Duration</p>
+    <p class="duration-value" color="primary">{{problemDuration}} minutes</p>
+  </div>
 
-                <!-- Teachers Card -->
-                <mat-grid-tile>
-                    <mat-card class="entity-card">
-                        <mat-card-header>
-                            <mat-card-title>Teachers</mat-card-title>
-                        </mat-card-header>
-                        <mat-card-content>
-                            <h4>{{ teacherCount }}</h4>
-                        </mat-card-content>
-                    </mat-card>
-                </mat-grid-tile>
+  <div class="entities-summary">
+    <h2 class="entities-title">Configuration Summary</h2>
+    <p class="entities-subtitle">
+      At this time, you have configured the following entities:
+      <span class="click-hint">Click on any card to view details</span>
+    </p>
 
-                <!-- Lessons Card -->
-                <mat-grid-tile>
-                    <mat-card class="entity-card">
-                        <mat-card-header>
-                            <mat-card-title>Lessons</mat-card-title>
-                        </mat-card-header>
-                        <mat-card-content>
-                            <h4>{{ lessonCount }}</h4>
-                        </mat-card-content>
-                    </mat-card>
-                </mat-grid-tile>
-
-                <!-- Student Groups Card -->
-                <mat-grid-tile>
-                    <mat-card class="entity-card">
-                        <mat-card-header>
-                            <mat-card-title>Student Groups</mat-card-title>
-                        </mat-card-header>
-                        <mat-card-content>
-                            <h4>{{ studentGroupCount }}</h4>
-                        </mat-card-content>
-                    </mat-card>
-                </mat-grid-tile>
-            </mat-grid-list>
+    <div class="entities-grid">
+      <div class="entity-card clickable-card" (click)="handleEntityCardClick('rooms')">
+        <mat-icon class="entity-icon">meeting_room</mat-icon>
+        <h3 class="entity-card-title">Rooms</h3>
+        <p class="entity-card-count">{{ roomCount }}</p>
+        <!-- ADDED: Click indicator -->
+        <div class="card-action-indicator">
+          <mat-icon class="action-icon">
+            {{ isImportMode ? 'visibility' : 'open_in_new' }}
+          </mat-icon>
         </div>
-    </div>
+      </div>
 
-
-    <div class="container">
-        <button mat-raised-button color="primary" (click)="generateTimetable()">Generate Timetable</button>
-        <div class="countdown-container" *ngIf="loading">
-            <app-countdown-timer [duration]="problemDuration"></app-countdown-timer>
+      <div class="entity-card clickable-card" (click)="handleEntityCardClick('timeslots')">
+        <mat-icon class="entity-icon">schedule</mat-icon>
+        <h3 class="entity-card-title">Timeslots</h3>
+        <p class="entity-card-count">{{ timeslotCount }}</p>
+        <div class="card-action-indicator">
+          <mat-icon class="action-icon">
+            {{ isImportMode ? 'visibility' : 'open_in_new' }}
+          </mat-icon>
         </div>
+      </div>
+
+      <div class="entity-card clickable-card" (click)="handleEntityCardClick('constraints')">
+        <mat-icon class="entity-icon">rule</mat-icon>
+        <h3 class="entity-card-title">Constraints</h3>
+        <p class="entity-card-count">{{ constraintCount }}</p>
+        <div class="card-action-indicator">
+          <mat-icon class="action-icon">
+            {{ isImportMode ? 'visibility' : 'open_in_new' }}
+          </mat-icon>
+        </div>
+      </div>
+
+      <div class="entity-card clickable-card" (click)="handleEntityCardClick('teachers')">
+        <mat-icon class="entity-icon">person</mat-icon>
+        <h3 class="entity-card-title">Teachers</h3>
+        <p class="entity-card-count">{{ teacherCount }}</p>
+        <div class="card-action-indicator">
+          <mat-icon class="action-icon">
+            {{ isImportMode ? 'visibility' : 'open_in_new' }}
+          </mat-icon>
+        </div>
+      </div>
+
+      <div class="entity-card clickable-card" (click)="handleEntityCardClick('lessons')">
+        <mat-icon class="entity-icon">book</mat-icon>
+        <h3 class="entity-card-title">Lessons</h3>
+        <p class="entity-card-count">{{ lessonCount }}</p>
+        <div class="card-action-indicator">
+          <mat-icon class="action-icon">
+            {{ isImportMode ? 'visibility' : 'open_in_new' }}
+          </mat-icon>
+        </div>
+      </div>
+
+      <div class="entity-card clickable-card" (click)="handleEntityCardClick('studentGroups')">
+        <mat-icon class="entity-icon">groups</mat-icon>
+        <h3 class="entity-card-title">Student Groups</h3>
+        <p class="entity-card-count">{{ studentGroupCount }}</p>
+        <div class="card-action-indicator">
+          <mat-icon class="action-icon">
+            {{ isImportMode ? 'visibility' : 'open_in_new' }}
+          </mat-icon>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <div class="action-container">
+    <button mat-raised-button class="generate-button" color="primary" (click)="generateTimetable()" [disabled]="loading">
+      <mat-icon *ngIf="!loading">play_arrow</mat-icon>
+      <mat-icon *ngIf="loading">schedule</mat-icon>
+      <span *ngIf="!loading">Generate Timetable</span>
+      <span *ngIf="loading">Generating...</span>
+    </button>
+
+    <div class="countdown-container" *ngIf="loading">
+      <div class="countdown-content">
+        <mat-icon class="countdown-icon">schedule</mat-icon>
+        <div class="countdown-text">
+          <p class="countdown-title">Generation in Progress</p>
+          <p class="countdown-subtitle">Please wait while we create your timetable...</p>
+        </div>
+      </div>
+      <app-countdown-timer [duration]="problemDuration"></app-countdown-timer>
+    </div>
+  </div>
+</div>
+
+<div class="dialog-overlay" *ngIf="showDataDialog" (click)="closeDataDialog()">
+  <div class="dialog-container" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h2>{{ currentEntityType | titlecase }} Data</h2>
+      <button mat-icon-button (click)="closeDataDialog()" class="close-button">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="dialog-content">
+      <div class="data-info">
+        <p class="data-count">Total {{ currentEntityType }}: {{ currentEntityData.length || 0 }}</p>
+      </div>
+
+      <div class="data-list" *ngIf="currentEntityData && currentEntityData.length > 0">
+        <!-- Rooms Display -->
+        <div *ngIf="currentEntityType === 'rooms'" class="entity-list">
+          <div *ngFor="let room of currentEntityData; let i = index" class="entity-item">
+            <div class="entity-item-header">
+              <mat-icon class="item-icon">meeting_room</mat-icon>
+              <span class="item-name">{{ room.name || 'Room ' + (i + 1) }}</span>
+            </div>
+            <div class="entity-item-details" *ngIf="room.capacity">
+              <span class="detail-label">Capacity:</span>
+              <span class="detail-value">{{ room.capacity }}</span>
+            </div>
+            <div class="entity-item-details" *ngIf="room.building">
+              <span class="detail-label">Building:</span>
+              <span class="detail-value">{{ room.building }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timeslots Display -->
+        <div *ngIf="currentEntityType === 'timeslots'" class="entity-list">
+          <div *ngFor="let timeslot of currentEntityData; let i = index" class="entity-item">
+            <div class="entity-item-header">
+              <mat-icon class="item-icon">schedule</mat-icon>
+              <span class="item-name">{{ timeslot.dayOfWeek }} {{ timeslot.startTime }} - {{ timeslot.endTime }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Teachers Display -->
+        <div *ngIf="currentEntityType === 'teachers'" class="entity-list">
+          <div *ngFor="let teacher of currentEntityData; let i = index" class="entity-item">
+            <div class="entity-item-header">
+              <mat-icon class="item-icon">person</mat-icon>
+              <span class="item-name">{{ teacher.name || teacher || 'Teacher ' + (i + 1) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lessons Display -->
+        <div *ngIf="currentEntityType === 'lessons'" class="entity-list">
+          <div *ngFor="let lesson of currentEntityData; let i = index" class="entity-item">
+            <div class="entity-item-header">
+              <mat-icon class="item-icon">book</mat-icon>
+              <span class="item-name">{{ lesson.subject || 'Lesson ' + (i + 1) }}</span>
+            </div>
+            <div class="entity-item-details">
+              <span class="detail-label">Teacher:</span>
+              <span class="detail-value">{{ lesson.teacher?.name || 'N/A' }}</span>
+            </div>
+            <div class="entity-item-details" *ngIf="lesson.studentGroup">
+              <span class="detail-label">Group:</span>
+              <span class="detail-value">{{ lesson.studentGroup.name || lesson.studentGroup.id }}</span>
+            </div>
+            <div class="entity-item-details">
+              <span class="detail-label">Type:</span>
+              <span class="detail-value">{{ lesson.lessonType }}</span>
+            </div>
+            <div class="entity-item-details">
+              <span class="detail-label">Duration:</span>
+              <span class="detail-value">{{ lesson.duration }} hours</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Student Groups Display -->
+        <div *ngIf="currentEntityType === 'studentGroups'" class="entity-list">
+          <div *ngFor="let group of currentEntityData; let i = index" class="entity-item">
+            <div class="entity-item-header">
+              <mat-icon class="item-icon">groups</mat-icon>
+              <span class="item-name">{{ group.name || group.id || 'Group ' + (i + 1) }}</span>
+            </div>
+            <div class="entity-item-details" *ngIf="group.numberOfStudents">
+              <span class="detail-label">Students:</span>
+              <span class="detail-value">{{ group.numberOfStudents }}</span>
+            </div>
+            <div class="entity-item-details" *ngIf="group.year">
+              <span class="detail-label">Year:</span>
+              <span class="detail-value">{{ group.year }}</span>
+            </div>
+            <div class="entity-item-details" *ngIf="group.semiGroup">
+              <span class="detail-label">Semi Group:</span>
+              <span class="detail-value">{{ group.semiGroup }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Constraints Display -->
+        <div *ngIf="currentEntityType === 'constraints'" class="entity-list">
+          <div *ngFor="let constraint of currentEntityData" class="entity-item">
+            <div class="entity-item-header">
+              <mat-icon class="item-icon">rule</mat-icon>
+              <span class="item-name">{{ constraint.name }}</span>
+            </div>
+            <div class="entity-item-details">
+              <span class="detail-label">Hard:</span>
+              <span class="detail-value">{{ constraint.hard }}</span>
+            </div>
+            <div class="entity-item-details">
+              <span class="detail-label">Medium:</span>
+              <span class="detail-value">{{ constraint.medium }}</span>
+            </div>
+            <div class="entity-item-details">
+              <span class="detail-label">Soft:</span>
+              <span class="detail-value">{{ constraint.soft }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!currentEntityData || currentEntityData.length === 0" class="no-data">
+        <mat-icon class="no-data-icon">inbox</mat-icon>
+        <p>No {{ currentEntityType }} data available</p>
+      </div>
+    </div>
+  </div>
 </div>

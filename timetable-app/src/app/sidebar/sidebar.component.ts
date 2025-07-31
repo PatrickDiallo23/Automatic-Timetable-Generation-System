@@ -8,12 +8,16 @@ import { LoginService } from '../login/login.service';
   styleUrls: ['./sidebar.component.css'],
 })
 export class SidebarComponent implements OnInit {
-  
+
   user: User = {};
+  showDataDialog: boolean = false;
 
   constructor(private loginService: LoginService) {}
 
   ngOnInit(): void {
+    this.loginService.showEntityDialog$.subscribe((value) => {
+      this.showDataDialog = value;
+    });
     if (Object.keys(this.user).length == 0) {
     this.loginService.getUserDetails().subscribe((userData) => {
       this.user.email = userData.email;

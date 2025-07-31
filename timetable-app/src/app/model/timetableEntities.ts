@@ -2,9 +2,9 @@ export interface Timetable {
   timeslots?: Timeslot[];
   rooms?: Room[];
   lessons?: Lesson[];
-//   timetableConstraintConfiguration?: TimetableConstraintConfiguration; - check if it is needed
-  score?: HardMediumSoftScore;
-  solverStatus?: SolverStatus;
+  timetableConstraintConfiguration?: any // TimetableConstraintConfiguration; - check if it is needed
+  score?: HardMediumSoftScore | null;
+  solverStatus?: SolverStatus | null;
   duration?: number;
 }
 

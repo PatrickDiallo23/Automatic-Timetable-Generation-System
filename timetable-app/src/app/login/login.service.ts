@@ -16,6 +16,8 @@ export class LoginService {
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
   private showSidebarSubject = new BehaviorSubject<boolean>(false);
   showSidebar$ = this.showSidebarSubject.asObservable();
+  private showEntityDialogSubject = new BehaviorSubject<boolean>(false);
+  showEntityDialog$ = this.showEntityDialogSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -51,6 +53,14 @@ export class LoginService {
 
   get showSidebar(): boolean {
     return this.showSidebarSubject.value;
+  }
+
+  setShowEntityDialog(value: boolean) {
+    this.showEntityDialogSubject.next(value);
+  }
+
+  get showEntityDialog(): boolean {
+    return this.showEntityDialogSubject.value;
   }
 
   getUserDetails(): Observable<any> {

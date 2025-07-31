@@ -1,70 +1,248 @@
-<mat-card class="header-card">
-  <mat-card-header>
-    <mat-card-title class="page-title">📅 Timetable Overview</mat-card-title>
-    <mat-card-subtitle class="page-subtitle">Score: {{score}}</mat-card-subtitle>
-  </mat-card-header>
-</mat-card>
+<div class="timetable-container">
+  <mat-card class="header-card" elevation="3">
+    <mat-card-header>
+      <div mat-card-avatar class="header-avatar">
+        <mat-icon>schedule</mat-icon>
+      </div>
+      <mat-card-title class="page-title">Timetable Management Overview</mat-card-title>
+      <mat-card-subtitle *ngIf="isAdmin(user)" class="page-subtitle">
+        View and manage academic schedules
+      </mat-card-subtitle>
+      <mat-card-subtitle *ngIf="!isAdmin(user)" class="page-subtitle">
+        View academic schedule
+      </mat-card-subtitle>
+    </mat-card-header>
 
-<small class="description-text">Manage and view generated timetable for students and faculty teachers here.</small>
-<br>
-<mat-divider></mat-divider>
-<br>
+    <!-- Score Display with Visual Indicators -->
+    <mat-card-content class="score-section" *ngIf="isAdmin(user) && score !== null">
+      <div class="score-display">
+        <div class="score-item">
+          <mat-icon class="score-icon hard">error</mat-icon>
+          <span class="score-label">Hard Score</span>
+          <span class="score-value hard">{{score?.hardScore}}</span>
+        </div>
+        <div class="score-item">
+          <mat-icon class="score-icon medium">warning</mat-icon>
+          <span class="score-label">Medium Score</span>
+          <span class="score-value medium">{{score?.mediumScore}}</span>
+        </div>
+        <div class="score-item">
+          <mat-icon class="score-icon soft">info</mat-icon>
+          <span class="score-label">Soft Score</span>
+          <span class="score-value soft">{{score?.softScore}}</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
-<div *ngIf="toggle == 'student'" id="filter">
-    <div class="filter-container">
+  <mat-card class="filter-card" elevation="2">
+    <mat-card-header>
+      <mat-card-title class="filter-title">
+        <mat-icon>filter_list</mat-icon>
+        Filter Options
+      </mat-card-title>
+    </mat-card-header>
 
-        <form [formGroup]="studentGroupFormGroup">
-            <mat-form-field appearance="outline">
-                <mat-label>Select Student Group</mat-label>
-                <input type="text" placeholder="313 AA" #studentGroup matInput formControlName="studentGroupControl" [matAutocomplete]="autoStudent" (focus)="selectInput($event)">
-                <mat-autocomplete #autoStudent="matAutocomplete" (optionSelected)="filterTimetable(studentGroup.value, studentGroupSemiGroup.value)">
-                    <mat-option *ngFor="let studentGroup of filteredStudentGroups | async" [value]="studentGroup">
-                        {{ studentGroup }}
-                    </mat-option>
-                </mat-autocomplete>
-            </mat-form-field>
-        </form>
+    <mat-card-content>
+      <!-- Toggle Buttons for View Type -->
+      <div class="view-toggle-section">
+        <mat-button-toggle-group
+          [value]="toggle"
+          (change)="toogle($event.value)"
+          class="view-toggle">
+          <mat-button-toggle value="student" class="toggle-option">
+            <mat-icon>groups</mat-icon>
+            Student View
+          </mat-button-toggle>
+          <mat-button-toggle value="teacher" class="toggle-option">
+            <mat-icon>person</mat-icon>
+            Teacher View
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
 
-        <mat-form-field appearance="outline" class="filter-field">
-            <mat-label>Select Student Subgroup:</mat-label>
-            <mat-select #studentGroupSemiGroup (selectionChange)="filterTimetable(studentGroup.value, studentGroupSemiGroup.value)">
-                <mat-option value="SEMI_GROUP0">Subgroup 0</mat-option>
-                <mat-option value="SEMI_GROUP1">Subgroup 1</mat-option>
-                <mat-option value="SEMI_GROUP2">Subgroup 2</mat-option>
+      <!-- Student Filter Section -->
+      <div *ngIf="toggle == 'student'" class="filter-section">
+        <div class="filter-row">
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Student Group</mat-label>
+            <mat-icon matPrefix>groups</mat-icon>
+            <div [formGroup]="studentGroupFormGroup">
+              <input
+                type="text"
+                placeholder="e.g., 313 AA"
+                #studentGroup
+                matInput
+                formControlName="studentGroupControl"
+                [matAutocomplete]="autoStudent"
+                (focus)="selectInput($event)">
+            </div>
+            <mat-autocomplete #autoStudent="matAutocomplete"
+                              (optionSelected)="filterTimetable(studentGroup.value, studentGroupSemiGroup.value)">
+              <mat-option *ngFor="let group of filteredStudentGroups | async" [value]="group">
+                <mat-icon>group</mat-icon>
+                {{ group }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Subgroup</mat-label>
+            <mat-icon matPrefix>people</mat-icon>
+            <mat-select #studentGroupSemiGroup
+                        (selectionChange)="filterTimetable(studentGroup.value, studentGroupSemiGroup.value)">
+              <mat-option value="SEMI_GROUP0">
+                <mat-icon>exposure_zero</mat-icon>
+                Subgroup 0
+              </mat-option>
+              <mat-option value="SEMI_GROUP1">
+                <mat-icon>looks_one</mat-icon>
+                Subgroup 1
+              </mat-option>
+              <mat-option value="SEMI_GROUP2">
+                <mat-icon>looks_two</mat-icon>
+                Subgroup 2
+              </mat-option>
             </mat-select>
-        </mat-form-field>
-        <button mat-raised-button color="primary" (click)="toogle('teacher')">See Teacher Timetable</button>
-    </div>
-</div>
+          </mat-form-field>
+        </div>
+      </div>
 
+      <!-- Teacher Filter Section -->
+      <div *ngIf="toggle == 'teacher'" class="filter-section">
+        <div class="filter-row">
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Teacher Name</mat-label>
+            <mat-icon matPrefix>person</mat-icon>
+            <div [formGroup]="teacherFormGroup">
+            <input
+              type="text"
+              placeholder="e.g., Prof. Smith"
+              #teacher
+              matInput
+              formControlName="teacherControl"
+              [matAutocomplete]="autoTeacher"
+              (focus)="selectInput($event)">
+            </div>
+            <mat-autocomplete #autoTeacher="matAutocomplete"
+                              (optionSelected)="filterTeachers(teacher.value)">
+              <mat-option *ngFor="let teacherName of filteredTeachers | async" [value]="teacherName">
+                <mat-icon>account_circle</mat-icon>
+                {{ teacherName }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
-<div *ngIf="toggle == 'teacher'" id="filter">
-    <div class="filter-container">
+  <mat-card class="timetable-card" elevation="2">
+    <mat-card-header>
+      <mat-card-title class="timetable-title">
+        <mat-icon>calendar_view_week</mat-icon>
+        {{ toggle === 'student' ? 'Student' : 'Teacher' }} Schedule
+      </mat-card-title>
+      <div class="timetable-actions">
+        <!-- Quick action buttons in header -->
+        <button mat-icon-button matTooltip="Refresh" (click)="refreshTimetable()">
+          <mat-icon>refresh</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Print" (click)="printTimetable()">
+          <mat-icon>print</mat-icon>
+        </button>
+      </div>
+    </mat-card-header>
 
-        <form [formGroup]="teacherFormGroup">
-            <mat-form-field appearance="outline">
-                <mat-label>Select Teacher:</mat-label>
-                <input type="text" placeholder="Fl.Pop" #teacher matInput formControlName="teacherControl" [matAutocomplete]="autoTeacher" (focus)="selectInput($event)">
-                <mat-autocomplete #autoTeacher="matAutocomplete" (optionSelected)="filterTeachers(teacher.value)">
-                    <mat-option *ngFor="let teacher of filteredTeachers | async" [value]="teacher">
-                        {{ teacher }}
-                    </mat-option>
-                </mat-autocomplete>
-            </mat-form-field>
-        </form>
+    <mat-card-content class="timetable-content">
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading timetable...</p>
+      </div>
 
+      <!-- Empty State -->
+      <div *ngIf="!isLoading && displayedTimetable.length === 0" class="empty-state">
+        <mat-icon class="empty-icon">event_busy</mat-icon>
+        <h3>No Schedule Found</h3>
+        <p>Please select a {{ toggle === 'student' ? 'student group and subgroup' : 'teacher' }} to view the timetable.</p>
+      </div>
 
-        <button mat-raised-button color="primary" (click)="toogle('student')">See Student Timetable</button>
+      <!-- Timetable Container -->
+      <div id="timetable" class="timetable-wrapper">
+        <!-- Dynamic content will be inserted here -->
+      </div>
+    </mat-card-content>
+  </mat-card>
 
-    </div>
-</div>
+  <mat-card *ngIf="isAdmin(user)" class="admin-actions-card" elevation="2">
+    <mat-card-header>
+      <mat-card-title class="admin-title">
+        <mat-icon>admin_panel_settings</mat-icon>
+        Administrative Actions
+      </mat-card-title>
+    </mat-card-header>
 
-<div id="timetable">
-    <!-- Timetable content will be dynamically added here using JavaScript -->
-</div>
+    <mat-card-content>
+      <div class="admin-actions">
+        <button mat-raised-button color="primary" class="action-button" (click)="exportTimetable()">
+          <mat-icon>download</mat-icon>
+          Export Timetable
+        </button>
 
-<div *ngIf="isAdmin(user)" class="button-container">
-    <button mat-raised-button color="primary">Print The Timetable</button>
-    <button mat-raised-button color="primary">Edit The Timetable</button>
-    <button mat-raised-button color="primary" (click)="openAnalysisDialog()">Analyze Solution</button>
+        <button mat-raised-button color="accent" class="action-button">
+          <mat-icon>edit</mat-icon>
+          Edit Timetable
+        </button>
+
+        <button mat-raised-button color="warn" class="action-button" (click)="openAnalysisDialog()">
+          <mat-icon>analytics</mat-icon>
+          Analyze Solution
+        </button>
+
+        <button mat-stroked-button class="action-button">
+          <mat-icon>history</mat-icon>
+          View History
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Quick Stats Section -->
+  <mat-card class="stats-card" elevation="1" *ngIf="isAdmin(user) && timetableData?.lessons">
+    <mat-card-header>
+      <mat-card-title class="stats-title">
+        <mat-icon>insights</mat-icon>
+        Quick Statistics
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <mat-icon class="stat-icon">class</mat-icon>
+          <span class="stat-number">{{ timetableData.lessons?.length || 0 }}</span>
+          <span class="stat-label">Total Lessons</span>
+        </div>
+
+        <div class="stat-item">
+          <mat-icon class="stat-icon">meeting_room</mat-icon>
+          <span class="stat-number">{{ timetableData.rooms?.length || 0 }}</span>
+          <span class="stat-label">Rooms</span>
+        </div>
+
+        <div class="stat-item">
+          <mat-icon class="stat-icon">access_time</mat-icon>
+          <span class="stat-number">{{ timetableData.timeslots?.length || 0 }}</span>
+          <span class="stat-label">Time Slots</span>
+        </div>
+
+        <div class="stat-item">
+          <mat-icon class="stat-icon">groups</mat-icon>
+          <span class="stat-number">{{ studentGroups.length || 0 }}</span>
+          <span class="stat-label">Student Groups</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
 </div>
