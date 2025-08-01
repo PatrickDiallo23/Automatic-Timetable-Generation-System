@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { LoginService } from './login/login.service';
 import { User } from './model/user';
@@ -15,8 +16,11 @@ export class AppComponent implements OnInit {
   isLogged?: boolean;
   user: User = {};
   connectedUser: User = {};
+  @ViewChild('logoutDialog') logoutDialog!: TemplateRef<any>;
+  dialogRef!: MatDialogRef<any>;
 
-  constructor(private router: Router, private loginService: LoginService) {}
+  constructor(private dialog: MatDialog, private router: Router, private loginService: LoginService) {}
+
   ngOnInit(): void {
     this.loginService.showSidebar$.subscribe((value) => {
       this.showSidebar = value;
@@ -58,6 +62,7 @@ export class AppComponent implements OnInit {
       );
   }
   }
+
   startProcess() {
     // console.log(this.showSidebar);
     this.loginService.setShowSidebar(!this.showSidebar);
@@ -81,4 +86,22 @@ export class AppComponent implements OnInit {
       return false;
     }
   }
+
+  logout(): void {
+      this.dialogRef = this.dialog.open(this.logoutDialog, {
+        width: '300px',
+        disableClose: true
+      });
+
+      this.dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.loginService.logout();
+          localStorage.removeItem('currentUser');
+          this.loginService.setAuthenticated(false);
+          this.loginService.setUser({});
+          this.isLogged = false;
+          this.router.navigate(['/login']);
+        }
+      });
+    }
 }

@@ -2,12 +2,28 @@
 
 <p *ngIf="isLogged">
   <mat-toolbar color="primary">
-    <button *ngIf="showSidebar" mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon" (click)="startProcess()">
+    <button *ngIf="showSidebar" mat-icon-button class="example-icon" aria-label="Back" (click)="startProcess()">
       <mat-icon>arrow_backward</mat-icon>
     </button>
-    <span>Timetable Generation for Faculty</span>
+    <span class="toolbar-title">Timetable Generation for Faculty</span>
+
+    <span class="spacer"></span>
+
+    <button mat-button aria-label="Log out" (click)="logout()" class="logout-button">
+      <mat-icon>logout</mat-icon>
+      <span class="logout-text">Log Out</span>
+    </button>
   </mat-toolbar>
 </p>
+
+<ng-template #logoutDialog>
+  <h2 mat-dialog-title>Confirm Logout</h2>
+  <mat-dialog-content>Are you sure you want to log out?</mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="dialogRef.close(false)">Cancel</button>
+    <button mat-raised-button color="primary" (click)="dialogRef.close(true)">Log Out</button>
+  </mat-dialog-actions>
+</ng-template>
 
 <app-sidebar *ngIf="showSidebar && isLogged"></app-sidebar>
 <app-dashboard *ngIf="!showSidebar && isLogged"></app-dashboard>

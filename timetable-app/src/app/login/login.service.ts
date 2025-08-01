@@ -26,9 +26,14 @@ export class LoginService {
     return this.http.post(`${this.apiUrl}/authenticate`, body);
   }
 
-  logout() {
-    // remove user from local storage to log user out
-    localStorage.removeItem('currentUser');
+  logout() : Observable<any> {
+    const currentUser = localStorage.getItem('currentUser');
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${currentUser ? JSON.parse(currentUser).access_token : ''}`,
+    });
+    return this.http.post(`${this.apiUrl}/logout`, {}, { headers });
+
   }
 
   setAuthenticated(value: boolean) {

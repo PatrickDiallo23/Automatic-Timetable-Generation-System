@@ -84,7 +84,7 @@ export class LoginComponent implements OnInit {
     this.snackBar.open('Login successful!', 'Close', {
       duration: 3000, // 3 seconds
       horizontalPosition: 'center',
-      verticalPosition: 'top',
+      verticalPosition: 'bottom',
       panelClass: ['snackbar-success']
     });
     console.log('Login successful!');
