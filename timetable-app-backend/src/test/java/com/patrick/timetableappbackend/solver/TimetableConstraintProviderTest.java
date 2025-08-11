@@ -152,8 +152,8 @@ public class TimetableConstraintProviderTest {
         String repeatedSubject = "Subject1";
         Timeslot timeslot1 = new Timeslot(3L, DayOfWeek.TUESDAY, LocalTime.of(8, 0), LocalTime.of(10, 0));
         Timeslot timeslot3 = new Timeslot(4L, DayOfWeek.TUESDAY, LocalTime.of(14, 0), LocalTime.of(16, 0));
-        Timeslot teacherPreferredTimeslot1 = new Timeslot(5L, DayOfWeek.TUESDAY, LocalTime.of(9, 0), LocalTime.of(16, 0));
-        Timeslot teacherPreferredTimeslot2 = new Timeslot(6L, DayOfWeek.TUESDAY, LocalTime.of(10, 0), LocalTime.of(16, 0));
+        TeacherTimeslot teacherPreferredTimeslot1 = new TeacherTimeslot(DayOfWeek.TUESDAY, LocalTime.of(9, 0), LocalTime.of(16, 0));
+        TeacherTimeslot teacherPreferredTimeslot2 = new TeacherTimeslot(DayOfWeek.TUESDAY, LocalTime.of(10, 0), LocalTime.of(16, 0));
 
         Lesson mondayLesson = new Lesson(1, repeatedSubject, new Teacher(1L, "Teacher1", Set.of()), studentGroup, TIMESLOT1, ROOM1);
         Lesson firstTuesdayLesson = new Lesson(2, repeatedSubject, new Teacher(2L, "Teacher2", Set.of(teacherPreferredTimeslot1)), studentGroup, timeslot1, ROOM1);
@@ -174,16 +174,17 @@ public class TimetableConstraintProviderTest {
 
         Timeslot timeslot = new Timeslot(8L, DayOfWeek.MONDAY, LocalTime.NOON.plusHours(2));
         Timeslot timeslot8 = new Timeslot(8L, DayOfWeek.TUESDAY, LocalTime.NOON.plusHours(11));
+        TeacherTimeslot preferredTimeslot = new TeacherTimeslot(DayOfWeek.TUESDAY, LocalTime.NOON.plusMinutes(150));
 
         Lesson mondayLesson = new Lesson(1, "subject1", new Teacher(1L, "Teacher1", null), studentGroup, 2, TIMESLOT1, ROOM1);
         Lesson secondLesson = new Lesson(11, "subject1", new Teacher(1L, "Teacher1", null), studentGroup, 2, timeslot, ROOM1);
-        Lesson firstTuesdayLesson = new Lesson(2, "subject2", new Teacher(2L, "Teacher2", Set.of(TIMESLOT3)), studentGroup, 2, TIMESLOT2, ROOM1);
+        Lesson firstTuesdayLesson = new Lesson(2, "subject2", new Teacher(2L, "Teacher2", Set.of(preferredTimeslot)), studentGroup, 2, TIMESLOT2, ROOM1);
         Lesson tuesdayLesson = new Lesson(3, "subject3", new Teacher(3L, "Teacher3", null), studentGroup2, 2, TIMESLOT3, ROOM1);
         Lesson secondTuesdayLesson = new Lesson(4, "subject1", new Teacher(1L, "Teacher1", null), studentGroup, 2, TIMESLOT3, ROOM1);
-        Lesson thirdTuesdayLesson = new Lesson(5, "subject2", new Teacher(2L, "Teacher2", Set.of(TIMESLOT3)), studentGroup, 2, TIMESLOT4, ROOM1);
+        Lesson thirdTuesdayLesson = new Lesson(5, "subject2", new Teacher(2L, "Teacher2", Set.of(preferredTimeslot)), studentGroup, 2, TIMESLOT4, ROOM1);
         Lesson tuesdayLesson1 = new Lesson(6, "subject3", new Teacher(3L, "Teacher3", null), studentGroup2, 2, TIMESLOT4, ROOM1);
         Lesson fourthTuesdayLesson = new Lesson(7, "subject1", new Teacher(1L, "Teacher1", null), studentGroup, 2, TIMESLOT5, ROOM1);
-        Lesson tuesdayLesson2 = new Lesson(8, "subject2", new Teacher(2L, "Teacher2", Set.of(TIMESLOT3)), studentGroup2, 2, TIMESLOT2, ROOM1);
+        Lesson tuesdayLesson2 = new Lesson(8, "subject2", new Teacher(2L, "Teacher2", Set.of(preferredTimeslot)), studentGroup2, 2, TIMESLOT2, ROOM1);
         Lesson fifthTuesdayLesson = new Lesson(9, "subject3", new Teacher(3L, "Teacher3", null), studentGroup, 2, TIMESLOT6, ROOM1);
         Lesson sixthTuesdayLesson = new Lesson(10, "subject4", new Teacher(3L, "Teacher3", null), studentGroup, 2, TIMESLOT7, ROOM1);
 

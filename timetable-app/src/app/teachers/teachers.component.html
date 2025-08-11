@@ -8,28 +8,21 @@
         <mat-cell *matCellDef="let teacher">{{ teacher.name }}</mat-cell>
     </ng-container>
 
-    <!-- To add slice logic + mini dialog -->
-    <ng-container matColumnDef="prefferedTimeslots">
-        <mat-header-cell *matHeaderCellDef>Teacher Preffered Timeslots</mat-header-cell>
-        <mat-cell *matCellDef="let teacher">
-            <ul>
-                <ng-container *ngFor="let timeslot of teacher.timeslots">
-                    <li *ngIf="timeslot">
-                        {{ timeslot.dayOfWeek }} - {{ timeslot.startTime }} to {{ timeslot.endTime }}
-                    </li>
-                    <li *ngIf="!timeslot">
-                        No preferences
-                    </li>
-                </ng-container>
-                <!-- <li *ngFor="let timeslot of teacher.timeslots">
-                    {{ timeslot.dayOfWeek }} - {{ timeslot.startTime }} to {{ timeslot.endTime }}
-                </li> -->
-                <!-- <li *ngIf="teacher.preferredTimeslot.length() > 3">
-                    <button mat-button (click)="openTimeslotsDialog(teacher.preferredTimeslot)">Show More</button>
-                </li> -->
-            </ul>
-        </mat-cell>
-    </ng-container>
+  <ng-container matColumnDef="prefferedTimeslots">
+    <mat-header-cell *matHeaderCellDef>Teacher Preferred Timeslots</mat-header-cell>
+    <mat-cell *matCellDef="let teacher">
+      <ul>
+        <ng-container *ngFor="let timeslot of teacher.preferredTimeslots">
+          <li *ngIf="timeslot">
+            {{ timeslot.dayOfWeek }} - {{ timeslot.startTime }} to {{ timeslot.endTime }}
+          </li>
+          <li *ngIf="!timeslot">
+            No preferences
+          </li>
+        </ng-container>
+      </ul>
+    </mat-cell>
+  </ng-container>
 
 
     <ng-container matColumnDef="action">

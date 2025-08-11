@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface TeacherRepo extends JpaRepository<Teacher,Long> {
     public List<Teacher> findAllByOrderByIdAsc();
-    @Query("SELECT t FROM Teacher t LEFT JOIN FETCH t.timeslots ORDER BY t.id")
-    public List<Teacher> findAllTeachersWithTimeslotsOrderedById();
+    @Query("SELECT DISTINCT t FROM Teacher t " +
+            "LEFT JOIN FETCH t.preferredTimeslots " +
+            "ORDER BY t.id")
+    List<Teacher> findAllTeachersOrderedById();
 }

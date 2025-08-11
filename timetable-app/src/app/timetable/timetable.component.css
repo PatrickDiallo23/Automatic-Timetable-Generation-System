@@ -81,6 +81,7 @@
 .score-icon.hard { color: #f44336; }
 .score-icon.medium { color: #ff9800; }
 .score-icon.soft { color: #4caf50; }
+.score-icon.uninitialized { color: #90a4ae; } /* Blue Grey 400 */
 
 .score-label {
   font-size: 0.85rem;
@@ -96,6 +97,7 @@
 .score-value.hard { color: #ffcdd2; }
 .score-value.medium { color: #ffe0b2; }
 .score-value.soft { color: #c8e6c9; }
+.score-value.uninitialized { color: #cfd8dc; } /* Blue Grey 100 */
 
 /* Filter Card */
 .filter-card {

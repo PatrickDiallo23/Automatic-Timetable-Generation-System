@@ -4,7 +4,7 @@ import { ConfirmationService } from './confirmation.service';
 import { TimetableService } from '../timetable/timetable.service';
 import { CoreService } from '../core/core.service';
 import { forkJoin } from 'rxjs';
-import { Timetable } from '../model/timetableEntities';
+import { Teacher, Timetable } from '../model/timetableEntities';
 import { JsonImportService } from '../core/json-import.service';
 import { LoginService } from '../login/login.service';
 import { ExcelImportService } from '../core/excel-import.service';
@@ -254,16 +254,40 @@ export class ConfirmationComponent implements OnInit, OnDestroy {
         break;
       case 'teachers':
         // Extract unique teachers from lessons
-        const teacherSet = new Set<string>();
+        const teacherMap = new Map<string, Teacher>();
         this.data.lessons?.forEach((lesson) => {
-          if (lesson.teacher?.name) {
-            teacherSet.add(lesson.teacher.name);
-          }
-        });
-        this.currentEntityData = Array.from(teacherSet).map((name) => ({
-          name,
-        }));
-        break;
+            if (lesson.teacher) {
+              const key: string =
+                lesson.teacher?.id !== undefined
+                  ? String(lesson.teacher.id)
+                  : lesson.teacher?.name ?? `unknown_${Math.random()}`;
+              if (!teacherMap.has(key)) {
+                teacherMap.set(key, {
+                  name: lesson.teacher.name,
+                  preferredTimeslots: lesson.teacher.preferredTimeslots ? [...lesson.teacher.preferredTimeslots] : []
+                });
+              } else {
+                const existing = teacherMap.get(key)!;
+
+                // Merge preferred timeslots
+                if (lesson.teacher.preferredTimeslots?.length) {
+                  lesson.teacher.preferredTimeslots.forEach(slot => {
+                    const alreadyExists = existing.preferredTimeslots?.some(
+                      s => s.dayOfWeek === slot.dayOfWeek &&
+                           s.startTime === slot.startTime &&
+                           s.endTime === slot.endTime
+                    );
+                    if (!alreadyExists) {
+                      existing.preferredTimeslots?.push(slot);
+                    }
+                  });
+                }
+              }
+            }
+          });
+
+          this.currentEntityData = Array.from(teacherMap.values());
+          break;
       case 'lessons':
         this.currentEntityData = this.data.lessons || [];
         break;

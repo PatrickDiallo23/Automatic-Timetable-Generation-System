@@ -8,18 +8,55 @@
         <mat-form-field appearance="outline">
             <mat-label>Teacher name</mat-label>
             <input matInput type="text" placeholder="Fl.Pop" formControlName="name">
+            <mat-error *ngIf="teacherForm.get('name')?.hasError('required')">
+              Teacher name is required
+            </mat-error>
         </mat-form-field>
 
         <br>
 
-        <mat-form-field appearance="outline">
-            <mat-label>Select Preferred Timeslots</mat-label>
-            <mat-select formControlName="timeslots" multiple>
-                <mat-option *ngFor="let timeslot of availableTimeslots" [value]="timeslot">
-                    {{ timeslot.dayOfWeek }} - {{ timeslot.startTime }} to {{ timeslot.endTime }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
+      <div class="timeslots-section">
+        <h3>Preferred Timeslots</h3>
+        <button type="button" mat-raised-button color="accent" (click)="addTimeslot()">
+          Add Timeslot
+        </button>
+
+        <div formArrayName="preferredTimeslots" class="timeslots-list">
+          <div *ngFor="let timeslot of preferredTimeslots.controls; let i = index"
+               [formGroupName]="i" class="timeslot-form">
+
+            <mat-card class="timeslot-card">
+              <mat-card-content>
+                <div class="timeslot-fields">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Day of Week</mat-label>
+                    <mat-select formControlName="dayOfWeek">
+                      <mat-option *ngFor="let day of daysOfWeek" [value]="day">
+                        {{ day }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline">
+                    <mat-label>Start Time</mat-label>
+                    <input matInput type="time" formControlName="startTime">
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline">
+                    <mat-label>End Time</mat-label>
+                    <input matInput type="time" formControlName="endTime">
+                  </mat-form-field>
+
+                  <button type="button" mat-icon-button color="warn"
+                          (click)="removeTimeslot(i)" class="remove-btn">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </div>
 
     </div>
     <div mat-dialog-actions class="action">

@@ -463,6 +463,32 @@
     font-size: 0.9rem;
 }
 
+.timeslots {
+    margin-left: 28px;
+    /* indent under name */
+    margin-top: 4px;
+}
+
+.timeslot {
+    display: flex;
+    align-items: center;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.slot-icon {
+    font-size: 16px;
+    margin-right: 4px;
+}
+
+.timeslot-empty {
+    margin-left: 28px;
+    font-size: 0.85em;
+    color: #888;
+    display: flex;
+    align-items: center;
+}
+
 .detail-label {
     color: #7f8c8d;
     font-weight: 500;

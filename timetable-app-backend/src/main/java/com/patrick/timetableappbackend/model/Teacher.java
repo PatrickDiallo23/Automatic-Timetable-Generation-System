@@ -1,6 +1,7 @@
 package com.patrick.timetableappbackend.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -22,16 +23,15 @@ public class Teacher {
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
     private String name;
-    @JsonIdentityReference
-    @ManyToMany()
-    @JoinTable(
-            name = "teacher_timeslot",
-            joinColumns = @JoinColumn(name = "teacher_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "timeslot_id", referencedColumnName = "id")
+    // Preferred timeslots that belong only to this teacher
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "teacher_preferred_timeslots",
+            joinColumns = @JoinColumn(name = "teacher_id")
     )
+    @Builder.Default
     @ToString.Exclude
-    private Set<Timeslot> timeslots = new HashSet<>(); //teacher preffered Timeslots
-    //todo: replace timeslots with periods (9AM to 4PM)
+    private Set<TeacherTimeslot> preferredTimeslots = new HashSet<>();
 
     //should I add a @OneToMany/@ManyToMany relationship with Lessons and make it optional?
 
@@ -46,5 +46,19 @@ public class Teacher {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    //  Helper method to get all timeslots (both types)
+    @JsonIgnore
+    public Set<Object> getAllTimeslots() {
+        Set<Object> allTimeslots = new HashSet<>();
+        allTimeslots.addAll(this.preferredTimeslots);
+        return allTimeslots;
+    }
+
+    // Helper method to check if teacher has any custom timeslots
+    @JsonIgnore
+    public boolean hasPreferredTimeslots() {
+        return preferredTimeslots != null && !preferredTimeslots.isEmpty();
     }
 }

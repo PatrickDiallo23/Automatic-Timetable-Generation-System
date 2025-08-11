@@ -1,14 +1,46 @@
 .content {
-    padding-top: 10px;
+  min-width: 500px;
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
-.mat-form-field {
-    width: 100%;
+.timeslots-section {
+  margin-top: 20px;
+}
+
+.timeslots-list {
+  margin-top: 15px;
+}
+
+.timeslot-card {
+  margin: 10px 0;
+  background-color: #f5f5f5;
+}
+
+.timeslot-fields {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.timeslot-fields mat-form-field {
+  flex: 1;
+  min-width: 120px;
+}
+
+.remove-btn {
+  flex-shrink: 0;
 }
 
 .action {
-    padding: 0px 25px 20px;
-    button {
-        flex: 1;
-    }
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@media (max-width: 600px) {
+  .timeslot-fields {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }

@@ -267,10 +267,10 @@ public class TimetableConstraintProvider implements ConstraintProvider {
         //Check if every lesson is assigned according to teacher's availability
         return constraintFactory.forEach(Lesson.class)
                 .filter(lesson -> {
-                    LOGGER.info("lesson's teacher get preferred Timeslot: {}", lesson.getTeacher().getTimeslots());
+                    LOGGER.info("lesson's teacher get preferred Timeslot: {}", lesson.getTeacher().getPreferredTimeslots());
                     LOGGER.info("lesson's Timeslot: {}", lesson.getTimeslot());
                     LOGGER.info("-------------------------------------------------");
-                    return (lesson.getTeacher().getTimeslots() != null &&
+                    return (lesson.getTeacher().getPreferredTimeslots() != null &&
                             !isTeacherAssignedToPreferredTimeslot(lesson));
                 })
 //                .penalize(HardSoftScore.ONE_HARD)
@@ -650,12 +650,12 @@ public class TimetableConstraintProvider implements ConstraintProvider {
 
     private boolean isTeacherAssignedToPreferredTimeslot(Lesson lesson) {
         Timeslot timeslot = lesson.getTimeslot();
-        Set<Timeslot> preferredTimeslots = lesson.getTeacher().getTimeslots();
+        Set<TeacherTimeslot> preferredTimeslots = lesson.getTeacher().getPreferredTimeslots();
         if (preferredTimeslots.isEmpty()) {
             return true; // No preferred timeslots, so no penalty
         }
 
-        for (Timeslot preferredTimeslot : preferredTimeslots) {
+        for (TeacherTimeslot preferredTimeslot : preferredTimeslots) {
             if (preferredTimeslot.getDayOfWeek().equals(timeslot.getDayOfWeek()) &&
                     timeslot.getStartTime().compareTo(preferredTimeslot.getStartTime()) >= 0 &&
                     timeslot.getEndTime().compareTo(preferredTimeslot.getEndTime()) <= 0) {

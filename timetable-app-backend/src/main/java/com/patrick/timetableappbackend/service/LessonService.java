@@ -5,6 +5,7 @@ import com.patrick.timetableappbackend.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,18 +19,21 @@ public class LessonService {
     private final TeacherRepo teacherRepo;
     private final StudentGroupRepo studentGroupRepo;
 
+    @Transactional(readOnly = true)
     public List<Lesson> getAllLessons() {
-        return lessonRepo.findAllByOrderByIdAsc();
+        return lessonRepo.findAllLessonsOrderedById();
     }
 
+    @Transactional(readOnly = true)
     public Optional<Lesson> getLessonById(Long id) {
-        return lessonRepo.findById(id);
+        return lessonRepo.findLessonsById(id);
     }
 
     public Long getLessonCount() {
         return lessonRepo.count();
     }
 
+    @Transactional
     public Lesson createLesson(Lesson lesson) {
 //        Lesson createdLesson = Lesson.builder()
 //                .id(lesson.getId())
@@ -45,6 +49,7 @@ public class LessonService {
 //        return lessonRepo.save(createdLesson);
     }
 
+    @Transactional
     public Lesson updateLesson(Long id, Lesson updatedLesson) {
         //check if we need timeslot and room in update method
         //todo: solve update method
@@ -64,6 +69,7 @@ public class LessonService {
         }
     }
 
+    @Transactional
     public void deleteLesson(Long id) {
         lessonRepo.deleteById(id);
     }

@@ -60,10 +60,16 @@ export interface Room {
   building?: string;
 }
 
+export interface TeacherTimeslot {
+  dayOfWeek: string;
+  startTime: string;
+  endTime: string;
+}
+
 export interface Teacher {
   id?: number;
   name?: string;
-  timeslots?: Timeslot[];
+  preferredTimeslots?: TeacherTimeslot[];
 }
 
 export interface StudentGroup {

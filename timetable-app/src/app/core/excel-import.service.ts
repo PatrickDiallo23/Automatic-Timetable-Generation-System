@@ -9,6 +9,7 @@ import {
   SemiGroup,
   StudentGroup,
   Teacher,
+  TeacherTimeslot,
   Timeslot,
   Timetable,
   Year,
@@ -312,19 +313,18 @@ export class ExcelImportService {
           return;
         }
 
-        // Parse available timeslots (comma-separated IDs)
-        let timeslots: any[] = [];
-        if (this.hasValue(row.availableTimeslots)) {
-          timeslots = String(row.availableTimeslots)
-            .split(',')
-            .map((id) => Number(id.trim()))
-            .filter((id) => !isNaN(id));
-        }
+        // Parse preferred timeslots
+        const preferredTimeslots: TeacherTimeslot[] =
+          this.parsePreferredTimeslots(
+            row.preferredTimeslots,
+            index + 2,
+            errors
+          );
 
         teachers.push({
           id: Number(row.id),
-          name: String(row.name),
-          timeslots: timeslots as unknown as Timeslot[],
+          name: String(row.name).trim(),
+          preferredTimeslots: preferredTimeslots,
         });
       } catch (error) {
         errors.push(
@@ -580,8 +580,156 @@ export class ExcelImportService {
     return String(timeValue);
   }
 
+  private parsePreferredTimeslots(
+    timeslotsString: any,
+    rowNumber: number,
+    errors: string[]
+  ): TeacherTimeslot[] {
+    if (!this.hasValue(timeslotsString)) {
+      return [];
+    }
+
+    const timeslots: TeacherTimeslot[] = [];
+    const timeslotStrings = String(timeslotsString).split('|');
+
+    timeslotStrings.forEach((timeslotStr: string, index: number) => {
+      const trimmed = timeslotStr.trim();
+      if (!trimmed) return;
+
+      try {
+        // Expected format: DAY/START_TIME-END_TIME
+        // Example: MONDAY/08:00-12:00
+        const parts = trimmed.split('/');
+        if (parts.length !== 2) {
+          errors.push(
+            `Teachers sheet row ${rowNumber}, timeslot ${
+              index + 1
+            }: Invalid format '${trimmed}'. Expected format: DAY/START_TIME-END_TIME`
+          );
+          return;
+        }
+
+        const dayOfWeek = parts[0].trim().toUpperCase();
+        const timeParts = parts[1].split('-');
+
+        if (timeParts.length !== 2) {
+          errors.push(
+            `Teachers sheet row ${rowNumber}, timeslot ${
+              index + 1
+            }: Invalid time format '${
+              parts[1]
+            }'. Expected format: START_TIME-END_TIME`
+          );
+          return;
+        }
+
+        const startTime = this.normalizeTime(timeParts[0].trim());
+        const endTime = this.normalizeTime(timeParts[1].trim());
+
+        // Validate day of week
+        const validDays = [
+          'MONDAY',
+          'TUESDAY',
+          'WEDNESDAY',
+          'THURSDAY',
+          'FRIDAY',
+          'SATURDAY',
+          'SUNDAY',
+        ];
+        if (!validDays.includes(dayOfWeek)) {
+          errors.push(
+            `Teachers sheet row ${rowNumber}, timeslot ${
+              index + 1
+            }: Invalid day '${dayOfWeek}'. Must be one of: ${validDays.join(
+              ', '
+            )}`
+          );
+          return;
+        }
+
+        // Validate time format
+        if (
+          !this.isValidTimeFormat(startTime) ||
+          !this.isValidTimeFormat(endTime)
+        ) {
+          errors.push(
+            `Teachers sheet row ${rowNumber}, timeslot ${
+              index + 1
+            }: Invalid time format. Use HH:MM format (e.g., 08:00, 14:30)`
+          );
+          return;
+        }
+
+        timeslots.push({
+          dayOfWeek: dayOfWeek,
+          startTime: startTime,
+          endTime: endTime,
+        });
+      } catch (error) {
+        errors.push(
+          `Teachers sheet row ${rowNumber}, timeslot ${index + 1}: ${
+            (error as Error).message
+          }`
+        );
+      }
+    });
+
+    return timeslots;
+  }
+
+  private normalizeTime(time: string): string {
+    // Handle different time formats and normalize to HH:MM:SS
+    time = time.trim();
+
+    // If already in HH:MM:SS format, return as is
+    if (/^\d{2}:\d{2}:\d{2}$/.test(time)) {
+      return time;
+    }
+
+    // If in HH:MM format, add seconds
+    if (/^\d{1,2}:\d{2}$/.test(time)) {
+      const parts = time.split(':');
+      const hours = parts[0].padStart(2, '0');
+      const minutes = parts[1];
+      return `${hours}:${minutes}:00`;
+    }
+
+    // If in H:MM format, pad hours
+    if (/^\d:\d{2}$/.test(time)) {
+      return `0${time}:00`;
+    }
+
+    return time;
+  }
+
+  private isValidTimeFormat(time: string): boolean {
+    // Check if time is in HH:MM:SS format and is valid
+    const timeRegex = /^([0-1]?\d|2[0-3]):([0-5]?\d):([0-5]?\d)$/;
+    if (!timeRegex.test(time)) {
+      return false;
+    }
+
+    const parts = time.split(':');
+    const hours = parseInt(parts[0]);
+    const minutes = parseInt(parts[1]);
+    const seconds = parseInt(parts[2]);
+
+    return (
+      hours >= 0 &&
+      hours <= 23 &&
+      minutes >= 0 &&
+      minutes <= 59 &&
+      seconds >= 0 &&
+      seconds <= 59
+    );
+  }
+
   // Helper method to check if a value exists and is not empty
   private hasValue(value: any): boolean {
-    return value !== undefined && value !== null && value !== '';
+    return (
+      value !== undefined &&
+      value !== null &&
+      (value !== '' || String(value).trim() !== '')
+    );
   }
 }

@@ -17,6 +17,11 @@
     <mat-card-content class="score-section" *ngIf="isAdmin(user) && score !== null">
       <div class="score-display">
         <div class="score-item">
+          <mat-icon class="score-icon uninitialized">pending</mat-icon>
+          <span class="score-label">Init Score</span>
+          <span class="score-value uninitialized">{{score?.initScore}}</span>
+        </div>
+        <div class="score-item">
           <mat-icon class="score-icon hard">error</mat-icon>
           <span class="score-label">Hard Score</span>
           <span class="score-value hard">{{score?.hardScore}}</span>

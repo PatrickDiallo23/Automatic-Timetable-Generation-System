@@ -18,6 +18,6 @@ public class TeacherDTO {
     private Long id;
     @Schema(description = "Name of the teacher", example = "John Doe")
     private String name;
-    @Schema(description = "Set of timeslots associated with the teacher")
-    private Set<TimeslotDTO> timeslots;
+    @Schema(description = "Set of preferred timeslots associated with the teacher")
+    private Set<TeacherTimeslotDTO> preferredTimeslots;
 }

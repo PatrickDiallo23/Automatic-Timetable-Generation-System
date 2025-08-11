@@ -184,6 +184,22 @@
               <mat-icon class="item-icon">person</mat-icon>
               <span class="item-name">{{ teacher.name || teacher || 'Teacher ' + (i + 1) }}</span>
             </div>
+
+            <!-- Preferred Timeslots -->
+            <div class="timeslots" *ngIf="teacher.preferredTimeslots?.length > 0; else noTimeslots">
+              <div *ngFor="let slot of teacher.preferredTimeslots" class="timeslot">
+                <mat-icon class="slot-icon">schedule</mat-icon>
+                {{ slot.dayOfWeek }}: {{ slot.startTime }} - {{ slot.endTime }}
+              </div>
+            </div>
+
+            <!-- Fallback if empty -->
+            <ng-template #noTimeslots>
+              <div class="timeslot-empty">
+                <mat-icon class="slot-icon">event_busy</mat-icon>
+                No preferred timeslots
+              </div>
+            </ng-template>
           </div>
         </div>
 

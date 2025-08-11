@@ -21,7 +21,7 @@ import java.util.Objects;
 @PlanningEntity(difficultyComparatorClass = LessonStrengthComparator.class)
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"timetable"})
 @Entity
 @Builder
 @AllArgsConstructor
