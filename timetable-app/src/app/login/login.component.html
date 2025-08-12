@@ -33,6 +33,7 @@
                 matInput
                 type="email"
                 name="email"
+                autocomplete="username"
                 [(ngModel)]="email"
                 required
                 email
@@ -51,6 +52,7 @@
                 matInput
                 [type]="hidePassword ? 'password' : 'text'"
                 name="password"
+                autocomplete="current-password"
                 [(ngModel)]="password"
                 required
                 #passwordInput="ngModel">
