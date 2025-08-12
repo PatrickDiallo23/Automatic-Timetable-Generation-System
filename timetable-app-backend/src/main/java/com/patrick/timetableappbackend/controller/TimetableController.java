@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.security.access.prepost.PreAuthorize;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -47,6 +48,7 @@ public class TimetableController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @GetMapping("/list")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Collection<String> list() {
         return timetableService.getJobIds();
     }
@@ -62,6 +64,7 @@ public class TimetableController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Timetable> generateTimetableData() {
         Timetable timetable = timetableService.getTimetableData();
         return new ResponseEntity<>(timetable, HttpStatus.OK);
@@ -78,6 +81,7 @@ public class TimetableController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Map<String, String>> solve(
             @Parameter(description = "Timetable problem to be solved", required = true)
             @RequestBody Timetable problem) {
@@ -104,6 +108,7 @@ public class TimetableController {
                     schema = @Schema(type = "string", allowableValues = {"FETCH_ALL", "FETCH_MATCH_COUNT (for >= 1.16.0 versions)", "FETCH_SHALLOW"})),
             @Parameter(name = "problem", description = "Timetable problem to analyze", required = true, schema = @Schema(implementation = Timetable.class))
     })
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ScoreAnalysis<HardMediumSoftScore> analyze(@RequestBody Timetable problem,
                                                       @RequestParam(name = "fetchPolicy", required = false) ScoreAnalysisFetchPolicy fetchPolicy) {
         return timetableService.analyze(problem, fetchPolicy);
@@ -120,6 +125,7 @@ public class TimetableController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @GetMapping(value = "/{jobId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN') OR hasAuthority('USER')")
     public Timetable getTimeTable(
             @Parameter(description = "ID of the job to retrieve the timetable for", required = true)
             @PathVariable("jobId") String jobId) {
@@ -137,6 +143,7 @@ public class TimetableController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @GetMapping(value = "/{jobId}/status", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Timetable getStatus(
             @Parameter(description = "ID of the job to retrieve the status for", required = true)
             @PathVariable("jobId") String jobId) {
@@ -154,6 +161,7 @@ public class TimetableController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @DeleteMapping(value = "/{jobId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Timetable terminateSolving(
             @Parameter(description = "ID of the job to terminate", required = true)
             @PathParam("jobId") String jobId) {
