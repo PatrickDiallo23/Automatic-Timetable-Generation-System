@@ -10,15 +10,15 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./timeslot-dialog.component.css'],
 })
 export class TimeslotDialogComponent implements OnInit {
-  
+
   timeslotForm: FormGroup;
 
-  //TODO: solve Timeslot
+  // TODO: provide a better solution for updating Timeslot
   weekdays: string[] = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
   weekdaysMap: Map<string,number>;
-bindedWeekdaysMapKeys: string[];
+  bindedWeekdaysMapKeys: string[];
 
-  
+
 
   constructor(
     private fb: FormBuilder,
@@ -28,11 +28,11 @@ bindedWeekdaysMapKeys: string[];
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.weekdaysMap = new Map()
-.set("MONDAY", 1)
-.set("TUESDAY", 2)
-.set("WEDNESDAY", 3)
-.set("THURSDAY", 4)
-.set("FRIDAY", 5);
+.set("MONDAY", 0)
+.set("TUESDAY", 1)
+.set("WEDNESDAY", 2)
+.set("THURSDAY", 3)
+.set("FRIDAY", 4);
  this.bindedWeekdaysMapKeys = Array.from(this.weekdaysMap.keys());
     this.timeslotForm = this.fb.group({
       dayOfWeek: '',
