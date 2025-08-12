@@ -3,7 +3,7 @@ package com.patrick.timetableappbackend.service;
 import ai.timefold.solver.core.api.score.analysis.ScoreAnalysis;
 import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import ai.timefold.solver.core.api.solver.*;
-import ai.timefold.solver.core.config.solver.termination.TerminationConfig;
+// import ai.timefold.solver.core.config.solver.termination.TerminationConfig;
 import com.patrick.timetableappbackend.exception.TimetableSolverException;
 import com.patrick.timetableappbackend.model.*;
 import com.patrick.timetableappbackend.repository.ConstraintRepo;
@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
@@ -47,6 +48,7 @@ public class TimetableService {
         return jobIdToJob.keySet();
     }
 
+    @Transactional(readOnly = true)
     public Timetable getTimetableData() {
 
         Long problemDuration = Long.parseLong(this.duration.substring(0, this.duration.length() - 1));

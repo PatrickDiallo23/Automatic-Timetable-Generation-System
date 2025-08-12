@@ -2,10 +2,7 @@ package com.patrick.timetableappbackend.service;
 
 import com.patrick.timetableappbackend.dto.TeacherDTO;
 import com.patrick.timetableappbackend.dto.TeacherTimeslotDTO;
-import com.patrick.timetableappbackend.dto.TimeslotDTO;
 import com.patrick.timetableappbackend.model.Teacher;
-import com.patrick.timetableappbackend.model.TeacherTimeslot;
-import com.patrick.timetableappbackend.model.Timeslot;
 import com.patrick.timetableappbackend.repository.TeacherRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +46,6 @@ public class TeacherService {
         return teacherRepo.save(teacher);
     }
 
-    //todo: to solve update Teacher - it creates a new teacher instead of updating the teacher
     @Transactional
     public Teacher updateTeacher(Long id, Teacher updatedTeacher) {
         return teacherRepo.findById(id)

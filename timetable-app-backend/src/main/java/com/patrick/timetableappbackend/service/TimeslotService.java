@@ -5,6 +5,7 @@ import com.patrick.timetableappbackend.repository.TimeslotRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,10 +17,12 @@ public class TimeslotService {
 
     private final TimeslotRepo timeslotRepo;
 
+    @Transactional(readOnly = true)
     public List<Timeslot> getAllTimeslots() {
         return timeslotRepo.findAllByOrderByIdAsc();
     }
 
+    @Transactional(readOnly = true)
     public Optional<Timeslot> getTimeslotById(Long id) {
         return timeslotRepo.findById(id);
     }
@@ -28,24 +31,24 @@ public class TimeslotService {
         return timeslotRepo.count();
     }
 
+    @Transactional
     public Timeslot createTimeslot(Timeslot timeslot) {
         return this.timeslotRepo.save(timeslot);
     }
 
+    @Transactional
     public Timeslot updateTimeslot(Long id, Timeslot updatedTimeslot) {
-        if (timeslotRepo.existsById(id)) {
-            updatedTimeslot = Timeslot.builder()
-                    .id(updatedTimeslot.getId())
-                    .dayOfWeek(updatedTimeslot.getDayOfWeek())
-                    .startTime(updatedTimeslot.getStartTime())
-                    .endTime(updatedTimeslot.getEndTime())
-                    .build();
-            return timeslotRepo.save(updatedTimeslot);
-        } else {
-            throw new RuntimeException("Timeslot not found with id: " + id);
-        }
+        return timeslotRepo.findById(id)
+                .map(existingTimeslot -> {
+                    existingTimeslot.setDayOfWeek(updatedTimeslot.getDayOfWeek());
+                    existingTimeslot.setStartTime(updatedTimeslot.getStartTime());
+                    existingTimeslot.setEndTime(updatedTimeslot.getEndTime());
+                    return timeslotRepo.save(existingTimeslot);
+                })
+                .orElseThrow(() -> new RuntimeException("No timeslot found with id " + id));
     }
 
+    @Transactional
     public void deleteTimeslot(Long id) {
         timeslotRepo.deleteById(id);
     }

@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +28,7 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
 
 
+    @Transactional
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         log.info("Authenticating the user...");
         authenticationManager.authenticate(
