@@ -14,41 +14,45 @@
     <initializingScoreTrend>ONLY_DOWN/ONLY_DOWN/ANY</initializingScoreTrend>
     </scoreDirectorFactory>
 
-<!--    <termination>-->
-<!--        <minutesSpentLimit>15</minutesSpentLimit>-->
-<!--    </termination>-->
-
 <!--  STRONGEST FIT DECREASING generic config -->
     <constructionHeuristic>
         <constructionHeuristicType>ALLOCATE_ENTITY_FROM_QUEUE</constructionHeuristicType>
         <entitySorterManner>DECREASING_DIFFICULTY_IF_AVAILABLE</entitySorterManner>
         <valueSorterManner>DECREASING_STRENGTH_IF_AVAILABLE</valueSorterManner>
+        <!--        <forager>-->
+        <!--            <pickEarlyType>FIRST_FEASIBLE_SCORE_OR_NON_DETERIORATING_HARD</pickEarlyType>-->
+        <!--        </forager>-->
     </constructionHeuristic>
 
     <!--    Late_Acceptance configuration-->
     <localSearch>
-    <termination>
-        <minutesSpentLimit>280</minutesSpentLimit>
-    </termination>
-    <acceptor>
-        <lateAcceptanceSize>800</lateAcceptanceSize>
-    </acceptor>
-    <forager>
-        <acceptedCountLimit>5</acceptedCountLimit>
-    </forager>
+        <termination>
+            <minutesSpentLimit>10</minutesSpentLimit>
+        </termination>
+        <acceptor>
+            <!-- Set the lateAcceptanceSize to 15% - 25% of the number of planning entities.-->
+            <lateAcceptanceSize>1200</lateAcceptanceSize>
+        </acceptor>
+        <forager>
+            <!--    <pickEarlyType>FIRST_BEST_SCORE_IMPROVING</pickEarlyType> <!- or FIRST_LAST_STEP_SCORE_IMPROVING -->
+            <acceptedCountLimit>3</acceptedCountLimit>  <!-- should use low acceptedCountLimit -->
+            <finalistPodiumType>HIGHEST_SCORE</finalistPodiumType>
+        </forager>
     </localSearch>
 
     <!--    Tabu_Search configuration-->
     <localSearch>
-<!--        <localSearchType>TABU_SEARCH</localSearchType>-->
-<!--        <termination>-->
-<!--            <minutesSpentLimit>220</minutesSpentLimit>-->
-<!--        </termination>-->
         <acceptor>
-            <entityTabuSize>7</entityTabuSize>
+            <entityTabuRatio>0.03</entityTabuRatio>
+            <valueTabuSize>50</valueTabuSize>
+            <moveTabuSize>10</moveTabuSize>
+            <undoMoveTabuSize>10</undoMoveTabuSize>
         </acceptor>
         <forager>
-            <acceptedCountLimit>1000</acceptedCountLimit>
+            <!--    <pickEarlyType>FIRST_BEST_SCORE_IMPROVING</pickEarlyType>  <!- or FIRST_LAST_STEP_SCORE_IMPROVING -->
+            <acceptedCountLimit>1500</acceptedCountLimit> <!-- or -->
+            <finalistPodiumType>HIGHEST_SCORE</finalistPodiumType>
+            <breakTieRandomly>true</breakTieRandomly>
         </forager>
     </localSearch>
 

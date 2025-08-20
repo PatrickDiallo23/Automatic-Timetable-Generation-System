@@ -18,14 +18,17 @@ public class TimetableConstraintConfiguration {
 
     //todo to implement a benchmark if possible
     //hard
-    @ConstraintWeight("roomConflict")
-    private HardMediumSoftScore roomConflict = HardMediumSoftScore.ZERO;
+//    @ConstraintWeight("roomConflict")
+//    private HardMediumSoftScore roomConflict = HardMediumSoftScore.ZERO;
+//
+//    @ConstraintWeight("teacherConflict")
+//    private HardMediumSoftScore teacherConflict = HardMediumSoftScore.ZERO;
+//
+//    @ConstraintWeight("studentGroupConflict")
+//    private HardMediumSoftScore studentGroupConflict = HardMediumSoftScore.ZERO;
 
-    @ConstraintWeight("teacherConflict")
-    private HardMediumSoftScore teacherConflict = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("studentGroupConflict")
-    private HardMediumSoftScore studentGroupConflict = HardMediumSoftScore.ZERO;
+    @ConstraintWeight("studentGroupConflictAdvanced")
+    private HardMediumSoftScore studentGroupConflictWithGroupBy = HardMediumSoftScore.ZERO;
 
     @ConstraintWeight("capacityRoomConflict")
     private HardMediumSoftScore capacityRoomConflict = HardMediumSoftScore.ZERO;
@@ -39,6 +42,9 @@ public class TimetableConstraintConfiguration {
     @ConstraintWeight("labsStudentsGroupedInTheSameRoom")
     private HardMediumSoftScore labsStudentsGroupedInTheSameRoom = HardMediumSoftScore.ZERO;
 
+//    @ConstraintWeight("seminarAndLabStudentsGroupedInTheSameRoom")
+//    private HardMediumSoftScore seminarAndLabStudentsGroupedInTheSameRoom = HardMediumSoftScore.ZERO;
+
     @ConstraintWeight("roomConflictUniversity")
     private HardMediumSoftScore roomConflictUniversity = HardMediumSoftScore.ZERO;
 
@@ -47,9 +53,6 @@ public class TimetableConstraintConfiguration {
 
     @ConstraintWeight("overlappingTimeslot")
     private HardMediumSoftScore overlappingTimeslot = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("sportLessonInSportRoom")
-    private HardMediumSoftScore sportLessonInSportRoom = HardMediumSoftScore.ZERO;
 
     @ConstraintWeight("lessonDurationConflict")
     private HardMediumSoftScore lessonDurationConflict = HardMediumSoftScore.ZERO;
@@ -65,6 +68,9 @@ public class TimetableConstraintConfiguration {
     @ConstraintWeight("seminarsGroupedInTheSameTimeslot")
     private HardMediumSoftScore seminarsGroupedInTheSameTimeslot = HardMediumSoftScore.ZERO;
 
+//    @ConstraintWeight("labsAndSeminarsGroupedInTheSameTimeslot")
+//    private HardMediumSoftScore labsAndSeminarsGroupedInTheSameTimeslot = HardMediumSoftScore.ZERO;
+
     @ConstraintWeight("maximmumCoursesTeached")
     private HardMediumSoftScore maximmumCoursesTeached = HardMediumSoftScore.ZERO;
 
@@ -78,8 +84,8 @@ public class TimetableConstraintConfiguration {
     @ConstraintWeight("teacherTimeEfficiency")
     private HardMediumSoftScore teacherTimeEfficiency = HardMediumSoftScore.ZERO;
 
-    @ConstraintWeight("studentGroupVariety")
-    private HardMediumSoftScore studentGroupVariety = HardMediumSoftScore.ZERO;
+//    @ConstraintWeight("studentGroupVariety")
+//    private HardMediumSoftScore studentGroupVariety = HardMediumSoftScore.ZERO;
 
     @ConstraintWeight("gapsLongerThan4Hours")
     private HardMediumSoftScore gapsLongerThan4Hours = HardMediumSoftScore.ZERO;
@@ -90,24 +96,25 @@ public class TimetableConstraintConfiguration {
     @ConstraintWeight("coursesInTheSameBuilding")
     private HardMediumSoftScore coursesInTheSameBuilding = HardMediumSoftScore.ZERO;
 
-    @ConstraintWeight("labAfterSeminar")
-    private HardMediumSoftScore labAfterSeminar = HardMediumSoftScore.ZERO;
+//    @ConstraintWeight("labAfterSeminar")
+//    private HardMediumSoftScore labAfterSeminar = HardMediumSoftScore.ZERO;
 
     public TimetableConstraintConfiguration(List<ConstraintModel> constraintList) {
         constraintList.forEach((constraint) -> {
             switch (constraint.getDescription()) {
                 //hard
-                case "roomConflict" -> roomConflict = mapStringToHardMediumSoftScore(constraint.getWeight());
-                case "teacherConflict" -> teacherConflict = mapStringToHardMediumSoftScore(constraint.getWeight());
-                case "studentGroupConflict" -> studentGroupConflict = mapStringToHardMediumSoftScore(constraint.getWeight());
+//                case "roomConflict" -> roomConflict = mapStringToHardMediumSoftScore(constraint.getWeight());
+//                case "teacherConflict" -> teacherConflict = mapStringToHardMediumSoftScore(constraint.getWeight());
+//                case "studentGroupConflict" -> studentGroupConflict = mapStringToHardMediumSoftScore(constraint.getWeight());
+                case "studentGroupConflictAdvanced" -> studentGroupConflictWithGroupBy = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "capacityRoomConflict" -> capacityRoomConflict = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "courseStudentsGroupedInTheSameRoom" -> courseStudentsGroupedInTheSameRoom = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "seminarStudentsGroupedInTheSameRoom" -> seminarStudentsGroupedInTheSameRoom = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "labsStudentsGroupedInTheSameRoom" -> labsStudentsGroupedInTheSameRoom = mapStringToHardMediumSoftScore(constraint.getWeight());
+//                case "seminarAndLabStudentsGroupedInTheSameRoom" -> seminarAndLabStudentsGroupedInTheSameRoom = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "roomConflictUniversity" -> roomConflictUniversity = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "teacherConflictUniversity" -> teacherConflictUniversity = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "overlappingTimeslot" -> overlappingTimeslot = mapStringToHardMediumSoftScore(constraint.getWeight());
-                case "sportLessonInSportRoom" -> sportLessonInSportRoom = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "lessonDurationConflict" -> lessonDurationConflict = mapStringToHardMediumSoftScore(constraint.getWeight());
 
                 //medium
@@ -116,15 +123,16 @@ public class TimetableConstraintConfiguration {
                 case "maximizePreferredTimeslotAssignments" -> maximizePreferredTimeslotAssignments = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "coursesGroupedInTheSameTimeslot" -> coursesGroupedInTheSameTimeslot = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "seminarsGroupedInTheSameTimeslot" -> seminarsGroupedInTheSameTimeslot = mapStringToHardMediumSoftScore(constraint.getWeight());
+//                case "labsAndSeminarsGroupedInTheSameTimeslot" -> labsAndSeminarsGroupedInTheSameTimeslot = mapStringToHardMediumSoftScore(constraint.getWeight());
 
                 //soft
                 case "teacherRoomStability" -> teacherRoomStability = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "teacherTimeEfficiency" -> teacherTimeEfficiency = mapStringToHardMediumSoftScore(constraint.getWeight());
-                case "studentGroupVariety" -> studentGroupVariety = mapStringToHardMediumSoftScore(constraint.getWeight());
+//                case "studentGroupVariety" -> studentGroupVariety = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "gapsLongerThan4Hours" -> gapsLongerThan4Hours = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "labsGroupedInTheSameTimeslot" -> labsGroupedInTheSameTimeslot = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "coursesInTheSameBuilding" -> coursesInTheSameBuilding = mapStringToHardMediumSoftScore(constraint.getWeight());
-                case "labAfterSeminar" -> labAfterSeminar = mapStringToHardMediumSoftScore(constraint.getWeight());
+//                case "labAfterSeminar" -> labAfterSeminar = mapStringToHardMediumSoftScore(constraint.getWeight());
                 // Add more cases for other constraints if needed
             }
         });

@@ -104,9 +104,10 @@ export interface Constraint {
 }
 
 export interface TimetableConstraintConfiguration {
-  roomConflict: HardMediumSoftScore;
-  teacherConflict: HardMediumSoftScore;
-  studentGroupConflict: HardMediumSoftScore;
+//   roomConflict: HardMediumSoftScore;
+//   teacherConflict: HardMediumSoftScore;
+//   studentGroupConflict: HardMediumSoftScore;
+  studentGroupConflictAdvanced: HardMediumSoftScore;
   capacityRoomConflict: HardMediumSoftScore;
   courseStudentsGroupedInTheSameRoom: HardMediumSoftScore;
   seminarStudentsGroupedInTheSameRoom: HardMediumSoftScore;
@@ -114,7 +115,6 @@ export interface TimetableConstraintConfiguration {
   roomConflictUniversity: HardMediumSoftScore;
   teacherConflictUniversity: HardMediumSoftScore;
   overlappingTimeslot: HardMediumSoftScore;
-  sportLessonInSportRoom: HardMediumSoftScore;
   lessonDurationConflict: HardMediumSoftScore;
   maximumCoursesForStudents: HardMediumSoftScore;
   maximmumCoursesTeached: HardMediumSoftScore;
@@ -123,9 +123,8 @@ export interface TimetableConstraintConfiguration {
   seminarsGroupedInTheSameTimeslot: HardMediumSoftScore;
   teacherRoomStability: HardMediumSoftScore;
   teacherTimeEfficiency: HardMediumSoftScore;
-  studentGroupVariety: HardMediumSoftScore;
+//   studentGroupVariety: HardMediumSoftScore;
   gapsLongerThan4Hours: HardMediumSoftScore;
   labsGroupedInTheSameTimeslot: HardMediumSoftScore;
   coursesInTheSameBuilding: HardMediumSoftScore;
-  labAfterSeminar: HardMediumSoftScore;
 }
