@@ -64,75 +64,108 @@
 
 /* Quick Actions Section */
 
-/* .quick-actions-section {
-    margin-bottom: 32px;
-    text-align: center;
-}
-*/
-
 .action-buttons {
     display: flex;
-    gap: 16px;
+    gap: 20px;
     justify-content: center;
     flex-wrap: wrap;
     align-items: center;
+    padding: 16px;
+    background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+    border-radius: 16px;
+    border: 1px solid #e0e0e0;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Improved Quick Actions Section */
+
+.quick-actions-section {
+    margin-bottom: 32px;
+    animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .section-title {
-    font-size: 1.5rem;
-    font-weight: 500;
+    font-size: 1.6rem;
+    font-weight: 600;
     margin-bottom: 24px;
-    color: #333;
-    text-align: left;
+    color: #2c3e50;
+    text-align: center;
+    position: relative;
+    padding-bottom: 12px;
 }
 
-.action-buttons {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-    flex-wrap: wrap;
-    align-items: center;
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(45deg, #6a1b9a, #3f51b5);
+    border-radius: 2px;
 }
+
+
+/* Enhanced other action buttons to complement the new benchmark button */
 
 .primary-action {
-    background: linear-gradient(45deg, #2196f3, #21cbf3);
+    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
     color: white;
     font-weight: 500;
-    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
-    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     height: 48px;
     min-width: 200px;
+    border-radius: 24px;
 }
 
 .primary-action:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4);
+    background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
 }
 
 .secondary-action {
-    border-color: #2196f3;
-    color: #2196f3;
+    border: 2px solid #1976d2;
+    color: #1976d2;
     font-weight: 500;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     height: 48px;
     min-width: 200px;
+    border-radius: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
+    background: white;
 }
 
 .secondary-action:hover {
-    background-color: #e3f2fd;
-    transform: translateY(-1px);
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    transform: translateY(-1px) scale(1.02);
+    border-color: #1565c0;
+    color: #0d47a1;
 }
 
 .import-action {
-    background: linear-gradient(45deg, #ff9800, #f57c00) !important;
+    background: linear-gradient(135deg, #ff8f00 0%, #f57c00 100%) !important;
     color: white !important;
     font-weight: 500;
-    box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
-    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 143, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     height: 48px;
     min-width: 200px;
     border: none !important;
@@ -146,16 +179,93 @@
 }
 
 .import-action:hover:not([disabled]) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
-    background: linear-gradient(45deg, #f57c00, #ef6c00) !important;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(255, 143, 0, 0.4);
+    background: linear-gradient(135deg, #f57c00 0%, #ef6c00 100%) !important;
 }
 
-.import-action[disabled] {
-    opacity: 0.8;
+.benchmark-action {
+    background: linear-gradient(135deg, #6a1b9a 0%, #4a148c 50%, #311b92 100%) !important;
+    color: white !important;
+    font-weight: 500;
+    box-shadow: 0 6px 20px rgba(106, 27, 154, 0.4);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 48px;
+    min-width: 200px;
+    border: none !important;
+    border-radius: 24px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+    /* transform: scale(1); */
+}
+
+.benchmark-action::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%);
+    transition: left 0.6s ease;
+}
+
+.benchmark-action:hover:not([disabled]) {
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 8px 30px rgba(106, 27, 154, 0.6);
+    background: linear-gradient(135deg, #7b1fa2 0%, #5e35b1 50%, #3f51b5 100%) !important;
+}
+
+.benchmark-action:hover:not([disabled])::before {
+    left: 100%;
+}
+
+.benchmark-action:active {
+    transform: scale(0.98) translateY(0px);
+    transition: all 0.1s ease;
+}
+
+.benchmark-action[disabled] {
+    opacity: 0.6;
     cursor: not-allowed;
     transform: none !important;
-    box-shadow: 0 2px 8px rgba(255, 152, 0, 0.2);
+    box-shadow: 0 3px 10px rgba(106, 27, 154, 0.2);
+}
+
+.benchmark-action mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+.benchmark-action span {
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+
+/* Pulse animation for emphasis */
+
+@keyframes benchmark-pulse {
+    0% {
+        box-shadow: 0 6px 20px rgba(106, 27, 154, 0.4);
+    }
+    50% {
+        box-shadow: 0 6px 25px rgba(106, 27, 154, 0.6);
+    }
+    100% {
+        box-shadow: 0 6px 20px rgba(106, 27, 154, 0.4);
+    }
+}
+
+.benchmark-action:not(:hover):not([disabled]) {
+    animation: benchmark-pulse 3s infinite;
 }
 
 .loading-spinner {
@@ -346,11 +456,13 @@ mat-card-actions button {
     .action-buttons {
         flex-direction: column;
         align-items: center;
+        gap: 16px;
     }
+    .benchmark-action,
     .primary-action,
     .secondary-action,
     .import-action {
         width: 100%;
-        max-width: 300px;
+        max-width: 280px;
     }
 }

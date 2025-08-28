@@ -6,6 +6,8 @@ import { AppComponent } from '../app.component';
 import { JsonImportService, ValidationResult } from '../core/json-import.service';
 import { CoreService } from '../core/core.service';
 import { ExcelImportService, ExcelValidationResult } from '../core/excel-import.service';
+import { MatDialog } from '@angular/material/dialog';
+import { BenchmarkDialogComponent } from './benchmark-dialog/benchmark-dialog.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -25,11 +27,11 @@ export class DashboardComponent implements OnInit {
     private loginService: LoginService,
     private jsonImportService: JsonImportService,
     private excelImportService: ExcelImportService,
-    private coreService: CoreService
+    private coreService: CoreService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
-    this.loginService.setShowSidebar(false);
     if (Object.keys(this.user).length == 0) {
       this.loginService.getUserDetails().subscribe({
         next: (userData) => {
@@ -207,5 +209,11 @@ export class DashboardComponent implements OnInit {
     this.isImporting = false;
     console.error(`Error processing ${fileType} file:`, error);
     this.coreService.openSnackBar(`Error reading ${fileType} file`);
+  }
+
+  openBenchmarkDialog() {
+    this.dialog.open(BenchmarkDialogComponent, {
+      disableClose: true
+    });
   }
 }

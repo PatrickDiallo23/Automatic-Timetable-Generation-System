@@ -48,6 +48,7 @@ import { LessonsComponent } from './lessons/lessons.component';
 import { LessonDialogComponent } from './lessons/lesson-dialog/lesson-dialog.component';
 import { CountdownTimerComponent } from './helpers/countdown-timer/countdown-timer.component';
 import { ScoreAnalysisDialogComponent } from './timetable/score-analysis-dialog/score-analysis-dialog.component';
+import { BenchmarkDialogComponent } from './dashboard/benchmark-dialog/benchmark-dialog.component';
 
 
 @NgModule({
@@ -73,6 +74,7 @@ import { ScoreAnalysisDialogComponent } from './timetable/score-analysis-dialog/
     LessonDialogComponent,
     CountdownTimerComponent,
     ScoreAnalysisDialogComponent,
+    BenchmarkDialogComponent,
   ],
   imports: [
     BrowserModule,

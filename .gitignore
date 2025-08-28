@@ -11,6 +11,7 @@
 
 # Backend specific
 timetable-app-backend/target/
+timetable-app-backend/local/
 
 # Frontend specific
 timetable-app/node_modules/

@@ -40,6 +40,11 @@
                 </span>
       </button>
       <input #fileInput type="file" accept=".json,.xlsx,.xls" style="display: none;" (change)="onFileSelected($event)">
+      <button mat-raised-button color="warn" class="benchmark-action" (click)="openBenchmarkDialog()">
+        <mat-icon>analytics</mat-icon>
+        <span>Run Benchmark</span>
+      </button>
+
     </div>
   </div>
 
@@ -179,7 +184,7 @@
         <mat-icon>edit</mat-icon>
         Edit Info
       </span>
-            <span class="stat-item">
+      <span class="stat-item">
         <mat-icon>notifications_active</mat-icon>
         Notifications
       </span>

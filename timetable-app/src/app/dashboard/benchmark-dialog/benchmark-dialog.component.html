@@ -1,0 +1,120 @@
+<div class="benchmark-dialog">
+  <h1 mat-dialog-title class="dialog-title">
+    <mat-icon class="title-icon">analytics</mat-icon>
+    Benchmark Performance Analysis
+  </h1>
+
+  <div mat-dialog-content class="dialog-content">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="loading-content">
+        <mat-spinner diameter="40" color="primary"></mat-spinner>
+        <h4 class="loading-title">Processing...</h4>
+        <p class="loading-description">{{ currentOperation }}</p>
+        <div class="loading-tips">
+          <p>
+            <mat-icon>info</mat-icon>
+            This may take some time depending on data complexity
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Completion State -->
+    <div *ngIf="isCompleted" class="completion-container">
+      <div class="completion-content">
+        <div class="completion-icon-container">
+          <mat-icon class="completion-icon">check_circle</mat-icon>
+        </div>
+        <h4 class="completion-title">{{ completionMessage }}</h4>
+
+        <!-- Show link if URL is available -->
+        <div *ngIf="reportUrl" class="report-link-container">
+          <p class="report-description">Your detailed report is ready:</p>
+          <button mat-raised-button class="report-link-btn" (click)="openReport()">
+            <mat-icon>open_in_new</mat-icon>
+            <span>Open Benchmark Report</span>
+          </button>
+        </div>
+
+        <!-- Show message if no URL (for aggregate without URL) -->
+        <div *ngIf="!reportUrl && completionType === 'aggregate'" class="completion-info">
+          <p class="aggregate-info">
+            <mat-icon>info</mat-icon>
+            The aggregate analysis has been completed and results have been processed.
+          </p>
+        </div>
+
+        <div class="completion-actions">
+          <button mat-stroked-button class="secondary-action-btn" (click)="runAnother()">
+            <mat-icon>refresh</mat-icon>
+            Run Another Analysis
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div *ngIf="!isLoading && !isCompleted" class="main-content">
+      <p class="intro-text">
+        Choose your data source and analysis type:
+      </p>
+
+      <div class="options-container">
+        <!-- Data Source Options -->
+        <div class="option-group">
+          <h5 class="group-title">
+            <mat-icon>source</mat-icon>
+            Data Source
+          </h5>
+          <div class="option-buttons">
+            <button mat-raised-button class="option-btn database-btn" (click)="runBenchmark(false)" [disabled]="isLoading">
+              <mat-icon>storage</mat-icon>
+              <span>Database</span>
+            </button>
+
+            <button mat-raised-button class="option-btn upload-btn" (click)="triggerFileSelect()" [disabled]="isLoading">
+              <mat-icon>upload_file</mat-icon>
+              <span>Upload JSON</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Analysis Type Options -->
+        <div class="option-group">
+          <h5 class="group-title">
+            <mat-icon>analytics</mat-icon>
+            Analysis Type
+          </h5>
+          <div class="option-buttons">
+            <button mat-raised-button class="option-btn aggregate-btn" (click)="runAggregateBenchmark()" [disabled]="isLoading">
+              <mat-icon>assessment</mat-icon>
+              <span>Aggregate Analysis</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-panel" *ngIf="!isLoading && !isCompleted">
+    <mat-icon class="info-icon">lightbulb</mat-icon>
+    <div class="info-content">
+      <h5>Pro Tips</h5>
+      <ul>
+        <li>Database analysis uses your current system data</li>
+        <li>Upload analysis allows testing with custom datasets</li>
+        <li>Aggregate analysis provides comprehensive insights across all data</li>
+      </ul>
+    </div>
+  </div>
+
+  <div mat-dialog-actions class="dialog-actions">
+    <button mat-stroked-button (click)="close()" class="cancel-btn">
+      {{ isCompleted ? 'Close' : 'Cancel' }}
+    </button>
+  </div>
+
+  <!-- Hidden file input -->
+  <input #fileInput type="file" accept=".json" style="display: none" (change)="onFileSelected($event)" />
+</div>

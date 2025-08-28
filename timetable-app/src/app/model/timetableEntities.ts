@@ -128,3 +128,12 @@ export interface TimetableConstraintConfiguration {
   labsGroupedInTheSameTimeslot: HardMediumSoftScore;
   coursesInTheSameBuilding: HardMediumSoftScore;
 }
+
+export interface BenchmarkRequest {
+  source: 'imported' | 'database';
+  timetable?: Timetable;
+}
+
+export interface BenchmarkResponse {
+  reportUrl: string;
+}
