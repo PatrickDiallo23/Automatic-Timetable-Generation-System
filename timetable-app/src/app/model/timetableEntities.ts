@@ -137,3 +137,22 @@ export interface BenchmarkRequest {
 export interface BenchmarkResponse {
   reportUrl: string;
 }
+
+export interface AggregationResponse {
+  status: string;
+  message: string;
+  reportPath?: string;
+  reportFileName?: string;
+  selectedDirectories?: string[];
+}
+
+export interface AvailableBenchmarksResponse {
+  status: string;
+  directories: string[];
+  count: number;
+}
+
+export interface BenchmarkDirectory {
+  name: string;
+  selected: boolean;
+}

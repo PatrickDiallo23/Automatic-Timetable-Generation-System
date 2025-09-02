@@ -6,7 +6,7 @@
 
   <div mat-dialog-content class="dialog-content">
     <!-- Loading State -->
-    <div *ngIf="isLoading" class="loading-container">
+    <div *ngIf="currentView === 'loading'" class="loading-container">
       <div class="loading-content">
         <mat-spinner diameter="40" color="primary"></mat-spinner>
         <h4 class="loading-title">Processing...</h4>
@@ -21,7 +21,7 @@
     </div>
 
     <!-- Completion State -->
-    <div *ngIf="isCompleted" class="completion-container">
+    <div *ngIf="currentView === 'completed'" class="completion-container">
       <div class="completion-content">
         <div class="completion-icon-container">
           <mat-icon class="completion-icon">check_circle</mat-icon>
@@ -30,19 +30,11 @@
 
         <!-- Show link if URL is available -->
         <div *ngIf="reportUrl" class="report-link-container">
-          <p class="report-description">Your detailed report is ready:</p>
+          <p class="report-description">{{ completionType === 'aggregate' ? 'Your aggregate analysis report is ready:' : ' Your detailed report is ready:' }}</p>
           <button mat-raised-button class="report-link-btn" (click)="openReport()">
             <mat-icon>open_in_new</mat-icon>
             <span>Open Benchmark Report</span>
           </button>
-        </div>
-
-        <!-- Show message if no URL (for aggregate without URL) -->
-        <div *ngIf="!reportUrl && completionType === 'aggregate'" class="completion-info">
-          <p class="aggregate-info">
-            <mat-icon>info</mat-icon>
-            The aggregate analysis has been completed and results have been processed.
-          </p>
         </div>
 
         <div class="completion-actions">
@@ -54,8 +46,55 @@
       </div>
     </div>
 
+    <div *ngIf="currentView === 'selectBenchmarksForAggregation'" class="selection-container">
+      <div class="selection-header">
+        <button mat-icon-button class="back-button" (click)="goBackToMain()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h4 class="selection-title">Select Benchmarks to Aggregate</h4>
+      </div>
+
+      <div class="selection-content">
+        <div *ngIf="availableDirectories.length === 0" class="no-benchmarks">
+          <mat-icon class="no-benchmarks-icon">folder_off</mat-icon>
+          <p>No benchmark results found in the benchmark directory.</p>
+          <p class="hint">Run some benchmarks first to see them here.</p>
+        </div>
+
+        <div *ngIf="availableDirectories.length > 0" class="benchmarks-list">
+          <div class="selection-controls">
+            <button mat-stroked-button class="select-all-btn" (click)="selectAllDirectories()">
+              <mat-icon>{{ isAllSelected() ? 'deselect' : 'select_all' }}</mat-icon>
+              {{ isAllSelected() ? 'Deselect All' : 'Select All' }}
+            </button>
+            <span class="selection-count">
+                            {{ getSelectedCount() }} of {{ availableDirectories.length }} selected
+                        </span>
+          </div>
+
+          <div class="directories-container">
+            <div *ngFor="let directory of availableDirectories; trackBy: trackByDirectoryName" class="directory-item" [class.selected]="directory.selected" (click)="toggleDirectorySelection(directory)">
+              <mat-checkbox [checked]="directory.selected" (click)="$event.stopPropagation()" (change)="toggleDirectorySelection(directory)">
+              </mat-checkbox>
+              <div class="directory-info">
+                <span class="directory-name">{{ directory.name }}</span>
+                <span class="directory-hint">Benchmark results directory</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="selection-actions">
+            <button mat-raised-button class="aggregate-selected-btn" [disabled]="!hasSelectedDirectories" (click)="runSelectiveAggregation()">
+              <mat-icon>assessment</mat-icon>
+              Aggregate Selected ({{ getSelectedCount() }})
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Main Content -->
-    <div *ngIf="!isLoading && !isCompleted" class="main-content">
+    <div *ngIf="currentView === 'main'" class="main-content">
       <p class="intro-text">
         Choose your data source and analysis type:
       </p>
@@ -86,10 +125,15 @@
             <mat-icon>analytics</mat-icon>
             Analysis Type
           </h5>
-          <div class="option-buttons">
+          <div class="option-buttons aggregate-buttons">
             <button mat-raised-button class="option-btn aggregate-btn" (click)="runAggregateBenchmark()" [disabled]="isLoading">
               <mat-icon>assessment</mat-icon>
-              <span>Aggregate Analysis</span>
+              <span>Aggregate All Analysis</span>
+            </button>
+
+            <button mat-raised-button class="option-btn selective-aggregate-btn" (click)="showSelectiveBenchmarkOptions()" [disabled]="isLoading">
+              <mat-icon>tune</mat-icon>
+              <span>Select & Aggregate</span>
             </button>
           </div>
         </div>
@@ -97,21 +141,22 @@
     </div>
   </div>
 
-  <div class="info-panel" *ngIf="!isLoading && !isCompleted">
+  <!-- *ngIf="!isLoading && !isCompleted" -->
+  <div class="info-panel" *ngIf="currentView === 'main'">
     <mat-icon class="info-icon">lightbulb</mat-icon>
     <div class="info-content">
-      <h5>Pro Tips</h5>
+      <h5>Analysis Options</h5>
       <ul>
-        <li>Database analysis uses your current system data</li>
-        <li>Upload analysis allows testing with custom datasets</li>
-        <li>Aggregate analysis provides comprehensive insights across all data</li>
+        <li><strong>Database/Upload:</strong> Run new benchmark with current or custom data</li>
+        <li><strong>Aggregate All:</strong> Combine all existing benchmark results into comprehensive report</li>
+        <li><strong>Select & Aggregate:</strong> Choose specific benchmarks to compare and analyze</li>
       </ul>
     </div>
   </div>
 
   <div mat-dialog-actions class="dialog-actions">
     <button mat-stroked-button (click)="close()" class="cancel-btn">
-      {{ isCompleted ? 'Close' : 'Cancel' }}
+      {{ currentView === 'completed' ? 'Close' : 'Cancel' }}
     </button>
   </div>
 

@@ -287,6 +287,12 @@
     height: 16px;
 }
 
+.aggregate-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
 .option-buttons {
     display: flex;
     gap: 8px;
@@ -352,6 +358,15 @@
     background: #f57c00;
 }
 
+.selective-aggregate-btn {
+    background: #009688;
+    color: white;
+}
+
+.selective-aggregate-btn:hover:not([disabled]) {
+    background: #00796b;
+}
+
 
 /* Info Panel */
 
@@ -393,6 +408,9 @@
     line-height: 1.2;
 }
 
+.info-content li strong {
+    color: #555;
+}
 
 /* Dialog Actions */
 
@@ -418,13 +436,16 @@
 
 /* Responsive Design */
 
-@media (max-width: 480px) {
+@media (max-width: 520px) {
     .benchmark-dialog {
         min-width: 350px;
         max-width: 90vw;
     }
     .option-buttons {
         flex-direction: column;
+    }
+    .aggregate-buttons {
+        grid-template-columns: 1fr;
     }
     .option-btn {
         min-width: auto;
@@ -437,4 +458,206 @@
         min-width: auto;
         width: 100%;
     }
+    .selection-controls {
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+    }
+    .directories-container {
+        max-height: 150px;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.selection-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.back-button {
+    color: #666;
+    width: 36px;
+    height: 36px;
+}
+
+.back-button:hover {
+    background-color: #f5f5f5;
+    color: #3f51b5;
+}
+
+.selection-title {
+    margin: 0;
+    color: #424242;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.selection-content {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.no-benchmarks {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+}
+
+.no-benchmarks-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #bbb;
+    margin-bottom: 16px;
+}
+
+.no-benchmarks p {
+    margin: 8px 0;
+}
+
+.hint {
+    font-size: 0.85rem;
+    color: #999;
+}
+
+.benchmarks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.selection-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+}
+
+.select-all-btn {
+    color: #3f51b5;
+    border-color: #3f51b5;
+    font-size: 0.8rem;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.select-all-btn:hover {
+    background-color: #f3f4ff;
+}
+
+.select-all-btn mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.selection-count {
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.directories-container {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background: white;
+}
+
+.directory-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.directory-item:last-child {
+    border-bottom: none;
+}
+
+.directory-item:hover {
+    background-color: #f8f9ff;
+}
+
+.directory-item.selected {
+    background-color: #e8f5e8;
+    border-left: 3px solid #4caf50;
+}
+
+.directory-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.directory-name {
+    font-weight: 500;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.directory-hint {
+    font-size: 0.75rem;
+    color: #999;
+}
+
+.selection-actions {
+    display: flex;
+    justify-content: center;
+    padding-top: 8px;
+}
+
+.aggregate-selected-btn {
+    background: #4caf50;
+    color: white;
+    height: 40px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 200px;
+    transition: all 0.2s ease;
+}
+
+.aggregate-selected-btn:hover:not([disabled]) {
+    background: #45a049;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.aggregate-selected-btn[disabled] {
+    background: #ccc;
+    color: #999;
+    cursor: not-allowed;
+}
+
+.aggregate-selected-btn mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
 }

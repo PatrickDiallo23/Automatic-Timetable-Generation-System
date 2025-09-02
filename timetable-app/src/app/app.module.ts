@@ -20,6 +20,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSortModule } from '@angular/material/sort';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -85,6 +86,7 @@ import { BenchmarkDialogComponent } from './dashboard/benchmark-dialog/benchmark
     MatButtonToggleModule,
     MatCardModule,
     MatChipsModule,
+    MatCheckboxModule,
     MatFormFieldModule,
     MatTableModule,
     FormsModule,

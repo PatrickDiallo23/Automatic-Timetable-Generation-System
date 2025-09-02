@@ -3,6 +3,13 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { BenchmarkService } from './benchmark.service';
 import { JsonImportService } from 'src/app/core/json-import.service';
 import { CoreService } from 'src/app/core/core.service';
+import { AggregationResponse, BenchmarkDirectory } from 'src/app/model/timetableEntities';
+
+type ViewState =
+  | 'main'
+  | 'loading'
+  | 'completed'
+  | 'selectBenchmarksForAggregation';
 
 @Component({
   selector: 'app-benchmark-dialog',
@@ -12,16 +19,21 @@ import { CoreService } from 'src/app/core/core.service';
 export class BenchmarkDialogComponent {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
+  currentView: ViewState = 'main';
   isRunningBenchmark = false;
   isAggregating = false;
   isProcessingFile = false;
+  isLoadingDirectories = false;
   currentOperation = '';
 
-  // State properties for completion
+  // Completion state variables
   isCompleted = false;
   completionMessage = '';
   reportUrl = '';
   completionType: 'success' | 'aggregate' = 'success';
+
+  availableDirectories: BenchmarkDirectory[] = [];
+  hasSelectedDirectories = false;
 
   constructor(
     private dialogRef: MatDialogRef<BenchmarkDialogComponent>,
@@ -31,6 +43,7 @@ export class BenchmarkDialogComponent {
   ) {}
 
   runBenchmark(useImported: boolean) {
+    this.currentView = 'loading';
     this.isRunningBenchmark = true;
     this.currentOperation = useImported
       ? 'Running benchmark with imported data...'
@@ -48,6 +61,7 @@ export class BenchmarkDialogComponent {
       },
       error: (err) => {
         this.isRunningBenchmark = false;
+        this.currentView = 'main';
         console.error('Benchmark failed', err);
         this.coreService.openSnackBar(
           'Benchmark execution failed. Please try again.'
@@ -56,28 +70,145 @@ export class BenchmarkDialogComponent {
     });
   }
 
+  showSelectiveBenchmarkOptions() {
+    this.currentView = 'loading';
+    this.isLoadingDirectories = true;
+    this.currentOperation = 'Loading available benchmark directories...';
+
+    this.benchmarkService.getAvailableBenchmarkDirectories().subscribe({
+      next: (directories) => {
+        this.isLoadingDirectories = false;
+        this.availableDirectories = directories;
+        this.currentView = 'selectBenchmarksForAggregation';
+        this.updateSelectedDirectoriesState();
+      },
+      error: (err) => {
+        this.isLoadingDirectories = false;
+        this.currentView = 'main';
+        console.error('Failed to load benchmark directories', err);
+        this.coreService.openSnackBar(
+          'Failed to load benchmark directories. Please try again.'
+        );
+      },
+    });
+  }
+
+  trackByDirectoryName(index: number, directory: BenchmarkDirectory): string {
+    return directory.name;
+  }
+
+  // Toggle directory selection
+  toggleDirectorySelection(directory: BenchmarkDirectory) {
+    directory.selected = !directory.selected;
+    this.updateSelectedDirectoriesState();
+  }
+
+  // Update selection state
+  private updateSelectedDirectoriesState() {
+    this.hasSelectedDirectories = this.availableDirectories.some(
+      (dir) => dir.selected
+    );
+  }
+
+  // Select all directories
+  isAllSelected(): boolean {
+    return (
+      this.availableDirectories.length > 0 &&
+      this.availableDirectories.every((dir) => dir.selected)
+    );
+  }
+
+  // Helper method to get count of selected directories
+  getSelectedCount(): number {
+    return this.availableDirectories.filter((dir) => dir.selected).length;
+  }
+
+  // Updated selectAllDirectories method
+  selectAllDirectories() {
+    const shouldSelectAll = !this.isAllSelected();
+    this.availableDirectories.forEach(
+      (dir) => (dir.selected = shouldSelectAll)
+    );
+    this.updateSelectedDirectoriesState();
+  }
+
   runAggregateBenchmark() {
+    this.currentView = 'loading';
     this.isAggregating = true;
     this.currentOperation = 'Running aggregate benchmark analysis...';
 
-    this.benchmarkService.aggregateBenchmark().subscribe({
-      next: () => {
+    this.benchmarkService.aggregateAllBenchmarks().subscribe({
+      next: (response: AggregationResponse) => {
         this.isAggregating = false;
-          this.showCompletionState(
-            'Aggregate benchmark analysis completed successfully!',
-            '',
-            'aggregate'
-          );
+        console.log('Aggregate benchmark result:', response);
 
+        // Extract report URL from response and generate accessible URL
+        let reportUrl = '';
+        if (response.reportPath) {
+          reportUrl = response.reportPath;
+        }
+
+        this.showCompletionState(
+          'Aggregate benchmark analysis completed successfully!',
+          reportUrl,
+          'aggregate'
+        );
       },
       error: (err) => {
         this.isAggregating = false;
+        this.currentView = 'main';
         console.error('Aggregate benchmark failed', err);
         this.coreService.openSnackBar(
           'Aggregate benchmark failed. Please try again.'
         );
       },
     });
+  }
+
+  runSelectiveAggregation() {
+    const selectedDirectoryNames = this.availableDirectories
+      .filter((dir) => dir.selected)
+      .map((dir) => dir.name);
+
+    if (selectedDirectoryNames.length === 0) {
+      this.coreService.openSnackBar(
+        'Please select at least one benchmark directory.'
+      );
+      return;
+    }
+
+    this.currentView = 'loading';
+    this.isAggregating = true;
+    this.currentOperation = `Aggregating ${selectedDirectoryNames.length} selected benchmark(s)...`;
+
+    this.benchmarkService
+      .aggregateSelectedBenchmarks(selectedDirectoryNames)
+      .subscribe({
+        next: (response: AggregationResponse) => {
+          this.isAggregating = false;
+          console.log('Selective aggregate benchmark result:', response);
+
+          // **MODIFICATION**: Generate report URL for selective aggregation
+          let reportUrl = '';
+          if (response.reportPath) {
+            reportUrl = response.reportPath;
+          }
+
+          this.showCompletionState(
+            `Selective aggregation completed! Processed ${selectedDirectoryNames.length} benchmark(s).`,
+            reportUrl,
+            'aggregate'
+          );
+        },
+        error: (err) => {
+          this.isAggregating = false;
+          this.currentView = 'main';
+          console.error('Selective aggregate benchmark failed', err);
+          this.coreService.openSnackBar(
+            'Selective aggregation failed. Please try again.'
+          );
+        },
+      });
   }
 
   triggerFileSelect() {
@@ -144,6 +275,7 @@ export class BenchmarkDialogComponent {
     url: string,
     type: 'success' | 'aggregate'
   ) {
+    this.currentView = 'completed';
     this.isCompleted = true;
     this.completionMessage = message;
     this.reportUrl = url;
@@ -158,15 +290,27 @@ export class BenchmarkDialogComponent {
   }
 
   // Restart the process
+  goBackToMain() {
+    this.currentView = 'main';
+    this.availableDirectories = [];
+    this.hasSelectedDirectories = false;
+  }
+
   runAnother() {
+    this.currentView = 'main';
     this.isCompleted = false;
     this.completionMessage = '';
     this.reportUrl = '';
+    this.availableDirectories = [];
+    this.hasSelectedDirectories = false;
   }
 
   get isLoading(): boolean {
     return (
-      this.isRunningBenchmark || this.isAggregating || this.isProcessingFile
+      this.isRunningBenchmark ||
+      this.isAggregating ||
+      this.isProcessingFile ||
+      this.isLoadingDirectories
     );
   }
 
