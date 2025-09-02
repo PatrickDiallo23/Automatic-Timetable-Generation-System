@@ -86,11 +86,10 @@ public class BenchmarkService {
      */
     public File aggregateAllBenchmarks() {
         PlannerBenchmarkConfig benchmarkConfig = PlannerBenchmarkConfig.createFromXmlResource("benchmarkConfig.xml");
-        String benchmarkDirectoryPath = String.valueOf(benchmarkConfig.getBenchmarkDirectory());
-        File benchmarkDirectory = new File(benchmarkDirectoryPath);
+        File benchmarkDirectory = benchmarkConfig.getBenchmarkDirectory();
 
         if (!benchmarkDirectory.exists() || !benchmarkDirectory.isDirectory()) {
-            throw new IllegalArgumentException("Benchmark directory does not exist: " + benchmarkDirectoryPath);
+            throw new IllegalArgumentException("Benchmark directory does not exist: " + benchmarkDirectory.getAbsolutePath());
         }
 
         log.info("Starting benchmark aggregation from directory: {}", benchmarkDirectory.getAbsolutePath());
@@ -99,7 +98,7 @@ public class BenchmarkService {
         List<PlannerBenchmarkResult> plannerBenchmarkResults = benchmarkResultIO.readPlannerBenchmarkResultList(benchmarkDirectory);
 
         if (plannerBenchmarkResults.isEmpty()) {
-            throw new IllegalArgumentException("No benchmark results found in directory: " + benchmarkDirectoryPath);
+            throw new IllegalArgumentException("No benchmark results found in directory: " + benchmarkDirectory.getAbsolutePath());
         }
 
         log.info("Found {} planner benchmark results", plannerBenchmarkResults.size());
@@ -142,11 +141,10 @@ public class BenchmarkService {
      */
     public File aggregateSelectedBenchmarks(List<String> benchmarkDirectoryNames) {
         PlannerBenchmarkConfig benchmarkConfig = PlannerBenchmarkConfig.createFromXmlResource("benchmarkConfig.xml");
-        String benchmarkDirectoryPath = String.valueOf(benchmarkConfig.getBenchmarkDirectory());
-        File benchmarkDirectory = new File(benchmarkDirectoryPath);
+        File benchmarkDirectory = benchmarkConfig.getBenchmarkDirectory();
 
         if (!benchmarkDirectory.exists() || !benchmarkDirectory.isDirectory()) {
-            throw new IllegalArgumentException("Benchmark directory does not exist: " + benchmarkDirectoryPath);
+            throw new IllegalArgumentException("Benchmark directory does not exist: " + benchmarkDirectory.getAbsolutePath());
         }
 
         log.info("Starting selective benchmark aggregation for directories: {}", benchmarkDirectoryNames);
@@ -196,8 +194,7 @@ public class BenchmarkService {
      */
     public List<String> getAvailableBenchmarkDirectories() {
         PlannerBenchmarkConfig benchmarkConfig = PlannerBenchmarkConfig.createFromXmlResource("benchmarkConfig.xml");
-        String benchmarkDirectoryPath = String.valueOf(benchmarkConfig.getBenchmarkDirectory());
-        File benchmarkDirectory = new File(benchmarkDirectoryPath);
+        File benchmarkDirectory = benchmarkConfig.getBenchmarkDirectory();
 
         List<String> directories = new ArrayList<>();
 
