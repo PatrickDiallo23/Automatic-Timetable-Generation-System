@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { StudentGroup } from '../model/timetableEntities';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StudentGroupService {
 
-  private apiUrl = 'http://localhost:8200/api/v1/studentGroups';
+  private apiUrl = environment.apiUrl + '/studentGroups';
 
   constructor(private http: HttpClient) {}
 

@@ -2,13 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Lesson } from '../model/timetableEntities';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LessonService {
-  
-  private apiUrl = 'http://localhost:8200/api/v1/lessons';
+
+  private apiUrl = environment.apiUrl + '/lessons';
 
   constructor(private http: HttpClient) {}
 

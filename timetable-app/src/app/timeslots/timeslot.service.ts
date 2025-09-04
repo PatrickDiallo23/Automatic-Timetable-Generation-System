@@ -2,13 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Timeslot } from '../model/timetableEntities';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TimeslotService {
 
-  private apiUrl = 'http://localhost:8200/api/v1/timeslots';
+  private apiUrl = environment.apiUrl + '/timeslots';
 
   constructor(private http: HttpClient) {}
 

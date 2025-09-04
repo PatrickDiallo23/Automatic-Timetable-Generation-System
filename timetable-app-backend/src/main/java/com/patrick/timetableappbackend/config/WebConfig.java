@@ -29,7 +29,7 @@ public class WebConfig implements WebMvcConfigurer {
         log.info("Cors Filtering");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("*");
+        config.addAllowedOriginPattern("*");
         config.setAllowedHeaders(Arrays.asList(
                 HttpHeaders.AUTHORIZATION,
                 HttpHeaders.CONTENT_TYPE,
@@ -40,6 +40,7 @@ public class WebConfig implements WebMvcConfigurer {
                 HttpMethod.PUT.name(),
                 HttpMethod.DELETE.name()));
         config.setMaxAge(MAX_AGE);
+        config.setAllowCredentials(true);
         source.registerCorsConfiguration("/**", config);
         FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<CorsFilter>(new CorsFilter(source));
 

@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { JsonImportService } from '../../core/json-import.service';
 import { map, Observable, switchMap } from 'rxjs';
 import { AggregationResponse, AvailableBenchmarksResponse, BenchmarkDirectory, BenchmarkRequest, BenchmarkResponse } from '../../model/timetableEntities';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BenchmarkService {
-  private apiUrl = 'http://localhost:8200/api/v1/benchmarks';
+  private apiUrl = environment.apiUrl + '/benchmarks';
 
   constructor(
     private http: HttpClient,

@@ -58,6 +58,79 @@ Before setting up the project locally, ensure you have the following installed:
 
 ## Installation
 
+### Prerequisite for Development: Generate SSL Certificates for frontend and backend with mkcert
+
+**Note**: This step is optional but recommended for secure local development. If you prefer not to use SSL, you can skip this section and use the **main** branch.
+
+#### Install mkcert:
+
+```bash
+# On macOS
+brew install mkcert
+
+# On Windows (with Chocolatey)
+choco install mkcert
+
+# On Linux
+# Download from: https://github.com/FiloSottile/mkcert/releases
+```
+
+
+#### Create and install local CA:
+```bash
+mkcert -install
+```
+
+#### Generate certificates for Angular:
+
+```bash
+# Navigate to your Angular project root
+cd timetable-app
+cd ssl
+mkcert localhost 127.0.0.1 ::1
+```
+This will create `localhost+2.pem` and `localhost+2-key.pem` files.
+
+#### Update angular.json:
+
+```json
+{
+"serve": {
+"builder": "@angular-devkit/build-angular:dev-server",
+"options": {
+"ssl": true,
+"sslCert": "./ssl/localhost+2.pem",
+"sslKey": "./ssl/localhost+2-key.pem",
+"host": "localhost",
+"port": 4200
+}
+}
+}
+```
+
+#### Generate Certificate for Spring Boot using mkcert
+```bash
+# In your Spring Boot project resources folder
+cd src/main/resources/keystore
+mkcert -pkcs12 localhost 127.0.0.1 ::1
+# This creates localhost+2.p12
+```
+
+#### Update Spring Boot Configuration
+```
+# application.properties:
+server.port=8200
+server.ssl.key-store-type=PKCS12
+server.ssl.key-store=classpath:keystore/localhost+2.p12
+server.ssl.key-store-password=changeit
+server.ssl.enabled=true
+server.http.port=8080
+security.require-ssl=true
+```
+
+**Note**: You can generate the certificates with openssl or keytool if you prefer.
+Also, you can use self-signed certificates. Check if it is needed to be imported in your browser or in Keychain Access app.
+
 ### 1. Clone the Repository
 
 ```bash

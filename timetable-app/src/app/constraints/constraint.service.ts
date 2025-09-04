@@ -2,13 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Constraint } from '../model/timetableEntities';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ConstraintService {
-  
-  private apiUrl = 'http://localhost:8200/api/v1/constraints';
+
+  private apiUrl = environment.apiUrl + '/constraints';
 
   constructor(private http: HttpClient) {}
 

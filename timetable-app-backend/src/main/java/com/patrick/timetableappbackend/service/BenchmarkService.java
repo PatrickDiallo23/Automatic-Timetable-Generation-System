@@ -48,7 +48,7 @@ public class BenchmarkService {
         String directoryName = actualBenchmarkDir.getName();
 
 //        return "http://localhost:8200/api/v1/benchmarks/report?path=" + URLEncoder.encode(indexPath, StandardCharsets.UTF_8);
-        return "http://localhost:8200/api/v1/benchmarks/report/" + directoryName + "/index.html";
+        return "https://localhost:8200/api/v1/benchmarks/report/" + directoryName + "/index.html";
     }
 
     /**
@@ -71,7 +71,7 @@ public class BenchmarkService {
         String directoryName = actualBenchmarkDir.getName();
 
 //        return actualBenchmarkDir.getAbsolutePath() + "/index.html";
-        return "http://localhost:8200/api/v1/benchmarks/report/" + directoryName + "/index.html";
+        return "https://localhost:8200/api/v1/benchmarks/report/" + directoryName + "/index.html";
     }
 
     public void aggregateBenchmarks() {

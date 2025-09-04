@@ -66,7 +66,13 @@
                             "browserTarget": "timetable-app:build:development"
                         }
                     },
-                    "options": {},
+                  "options": {
+                    "ssl": true,
+                    "sslCert": "./ssl/localhost+2.pem",
+                    "sslKey": "./ssl/localhost+2-key.pem",
+                    "host": "localhost",
+                    "port": 4200
+                  },
                     "defaultConfiguration": "development"
                 },
                 "extract-i18n": {

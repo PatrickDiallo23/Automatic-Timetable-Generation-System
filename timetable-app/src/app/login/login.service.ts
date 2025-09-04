@@ -2,12 +2,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from '../model/user';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LoginService {
-  private apiUrl = 'http://localhost:8200/api/v1/auth';
+  private apiUrl = environment.apiUrl + '/auth';
 
   // Todo: BehaviorSubject also for User object
   private userSubject = new BehaviorSubject<User>({});

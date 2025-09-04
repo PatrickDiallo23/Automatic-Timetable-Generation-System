@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Timetable } from '../model/timetableEntities';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TimetableService {
 
-  private apiUrl = 'http://localhost:8200/api/v1/timetables';
+  private apiUrl = environment.apiUrl + '/timetables';
   private jobId = new BehaviorSubject('');
 
   constructor(private http: HttpClient) {}

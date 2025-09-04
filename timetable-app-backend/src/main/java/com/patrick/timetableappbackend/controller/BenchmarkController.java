@@ -194,7 +194,7 @@ public class BenchmarkController {
             Map<String, Object> response = new HashMap<>();
             response.put("status", "success");
             response.put("message", "Benchmark aggregation completed successfully");
-            response.put("reportPath", "http://localhost:8200/api/v1/benchmarks/report/" + reportFile.getParentFile().getName() + "/" + reportFile.getName());
+            response.put("reportPath", "https://localhost:8200/api/v1/benchmarks/report/" + reportFile.getParentFile().getName() + "/" + reportFile.getName());
             response.put("reportFileName", reportFile.getName());
 
             log.info("Successfully aggregated all benchmarks. Report: {}", reportFile.getAbsolutePath());
@@ -264,7 +264,7 @@ public class BenchmarkController {
             Map<String, Object> response = new HashMap<>();
             response.put("status", "success");
             response.put("message", "Selected benchmark aggregation completed successfully");
-            response.put("reportPath", "http://localhost:8200/api/v1/benchmarks/report/" + reportFile.getParentFile().getName() + "/" + reportFile.getName());
+            response.put("reportPath", "https://localhost:8200/api/v1/benchmarks/report/" + reportFile.getParentFile().getName() + "/" + reportFile.getName());
             response.put("reportFileName", reportFile.getName());
             response.put("selectedDirectories", request.getDirectoryNames());
 
