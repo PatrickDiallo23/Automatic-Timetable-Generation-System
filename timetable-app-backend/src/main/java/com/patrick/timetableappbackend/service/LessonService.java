@@ -1,7 +1,9 @@
 package com.patrick.timetableappbackend.service;
 
 import com.patrick.timetableappbackend.model.Lesson;
-import com.patrick.timetableappbackend.repository.*;
+import com.patrick.timetableappbackend.repository.LessonRepo;
+import com.patrick.timetableappbackend.repository.StudentGroupRepo;
+import com.patrick.timetableappbackend.repository.TeacherRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
