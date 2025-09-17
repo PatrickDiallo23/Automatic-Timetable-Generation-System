@@ -1,8 +1,26 @@
 package com.patrick.timetableappbackend.solver;
 
-import ai.timefold.solver.core.api.score.stream.*;
-import com.patrick.timetableappbackend.model.*;
-import com.patrick.timetableappbackend.solver.justifications.*;
+import ai.timefold.solver.core.api.score.stream.Constraint;
+import ai.timefold.solver.core.api.score.stream.ConstraintFactory;
+import ai.timefold.solver.core.api.score.stream.ConstraintProvider;
+import ai.timefold.solver.core.api.score.stream.Joiners;
+import com.patrick.timetableappbackend.model.Lesson;
+import com.patrick.timetableappbackend.model.LessonType;
+import com.patrick.timetableappbackend.model.Room;
+import com.patrick.timetableappbackend.model.StudentGroup;
+import com.patrick.timetableappbackend.model.Teacher;
+import com.patrick.timetableappbackend.model.TeacherTimeslot;
+import com.patrick.timetableappbackend.model.Timeslot;
+
+import com.patrick.timetableappbackend.solver.justifications.RoomConflictJustification;
+import com.patrick.timetableappbackend.solver.justifications.StudentGroupSubjectVarietyJustification;
+import com.patrick.timetableappbackend.solver.justifications.StudentGroupConflictJustification;
+import com.patrick.timetableappbackend.solver.justifications.StudentGroupConflictJustificationWithList;
+import com.patrick.timetableappbackend.solver.justifications.TeacherConflictJustification;
+import com.patrick.timetableappbackend.solver.justifications.TeacherRoomStabilityJustification;
+import com.patrick.timetableappbackend.solver.justifications.TeacherTimeEfficiencyJustification;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -10,7 +28,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static ai.timefold.solver.core.api.score.stream.ConstraintCollectors.*;
+import static ai.timefold.solver.core.api.score.stream.ConstraintCollectors.count;
+import static ai.timefold.solver.core.api.score.stream.ConstraintCollectors.countDistinct;
+import static ai.timefold.solver.core.api.score.stream.ConstraintCollectors.sum;
+import static ai.timefold.solver.core.api.score.stream.ConstraintCollectors.toList;
+
+
 
 public class TimetableConstraintProvider implements ConstraintProvider {
 
@@ -187,7 +210,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 .groupBy(
                         lesson -> lesson.getTimeslot().getId(),
                         Lesson::getStudentGroup,
-                        ConstraintCollectors.toList()
+                        toList()
                 )
                 .filter((timeslotId, group, lessons) -> lessons.size() > 1)
                 .penalizeConfigurable(

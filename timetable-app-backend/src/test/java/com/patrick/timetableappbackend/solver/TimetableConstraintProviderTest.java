@@ -1,7 +1,15 @@
 package com.patrick.timetableappbackend.solver;
 
 import ai.timefold.solver.test.api.score.stream.ConstraintVerifier;
-import com.patrick.timetableappbackend.model.*;
+import com.patrick.timetableappbackend.model.Lesson;
+import com.patrick.timetableappbackend.model.LessonType;
+import com.patrick.timetableappbackend.model.Room;
+import com.patrick.timetableappbackend.model.StudentGroup;
+import com.patrick.timetableappbackend.model.Teacher;
+import com.patrick.timetableappbackend.model.TeacherTimeslot;
+import com.patrick.timetableappbackend.model.Timeslot;
+import com.patrick.timetableappbackend.model.Timetable;
+import com.patrick.timetableappbackend.model.Year;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
