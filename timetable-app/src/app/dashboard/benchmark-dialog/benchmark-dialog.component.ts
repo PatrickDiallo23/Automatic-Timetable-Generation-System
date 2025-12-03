@@ -226,41 +226,54 @@ export class BenchmarkDialogComponent {
       return;
     }
 
+    this.currentView = 'loading';
     this.isProcessingFile = true;
     this.currentOperation = 'Processing and validating uploaded file...';
 
     this.jsonImportService.validateJsonFile(file).subscribe({
       next: (result) => {
         if (result.isValid && result.data) {
-          this.isProcessingFile = false;
-          this.isRunningBenchmark = true;
-          this.currentOperation = 'Running benchmark with uploaded file...';
+          this.jsonImportService.storeImportedData(result.data).subscribe({
+            next: () => {
+              this.isProcessingFile = false;
+              this.isRunningBenchmark = true;
+              this.currentOperation = 'Running benchmark with uploaded file...';
 
-          this.benchmarkService.runBenchmark(true).subscribe({
-            next: (reportUrl) => {
-              this.isRunningBenchmark = false;
-              // Show completion state
-              this.showCompletionState(
-                'Benchmark completed successfully with uploaded file!',
-                reportUrl,
-                'success'
-              );
+              this.benchmarkService.runBenchmark(true).subscribe({
+                next: (reportUrl) => {
+                  this.isRunningBenchmark = false;
+                  this.showCompletionState(
+                    'Benchmark completed successfully with uploaded file!',
+                    reportUrl,
+                    'success'
+                  );
+                },
+                error: (err) => {
+                  this.isRunningBenchmark = false;
+                  this.currentView = 'main';
+                  console.error('Benchmark failed', err);
+                  this.coreService.openSnackBar(
+                    'Benchmark failed with uploaded file'
+                  );
+                },
+              });
             },
-            error: (err) => {
-              this.isRunningBenchmark = false;
-              console.error('Benchmark failed', err);
-              this.coreService.openSnackBar(
-                'Benchmark failed with uploaded file'
-              );
-            },
+            error: (storeErr) => {
+              this.isProcessingFile = false;
+              this.currentView = 'main';
+              console.error('Error storing imported data:', storeErr);
+              this.coreService.openSnackBar('Failed to store imported data');
+            }
           });
         } else {
           this.isProcessingFile = false;
+          this.currentView = 'main';
           this.coreService.openSnackBar('Invalid JSON file format');
         }
       },
       error: (err) => {
         this.isProcessingFile = false;
+        this.currentView = 'main';
         console.error('Error validating file:', err);
         this.coreService.openSnackBar('Error reading JSON file');
       },
