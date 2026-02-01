@@ -1,10 +1,12 @@
 package com.patrick.timetableappbackend.service;
 
+
 import ai.timefold.solver.core.api.score.analysis.ScoreAnalysis;
 import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 // import ai.timefold.solver.core.config.solver.termination.TerminationConfig;
 import ai.timefold.solver.core.api.solver.ScoreAnalysisFetchPolicy;
 import ai.timefold.solver.core.api.solver.SolutionManager;
+import ai.timefold.solver.core.api.solver.SolutionUpdatePolicy;
 import ai.timefold.solver.core.api.solver.SolverManager;
 import ai.timefold.solver.core.api.solver.SolverStatus;
 import com.patrick.timetableappbackend.exception.TimetableSolverException;
@@ -96,6 +98,10 @@ public class TimetableService {
 
     public ScoreAnalysis<HardMediumSoftScore> analyze(Timetable problem, ScoreAnalysisFetchPolicy fetchPolicy) {
         return fetchPolicy == null ? solutionManager.analyze(problem) : solutionManager.analyze(problem, fetchPolicy);
+    }
+
+    public HardMediumSoftScore update(Timetable problem, SolutionUpdatePolicy fetchPolicy) {
+        return fetchPolicy == null ? solutionManager.update(problem) : solutionManager.update(problem, fetchPolicy);
     }
 
     public Timetable getTimetable(String jobId) {
