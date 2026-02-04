@@ -129,11 +129,11 @@
           <div class="affected-lesson-details">
             <div class="detail-row">
               <mat-icon>person</mat-icon>
-              <span>{{ affected.teacher?.name || 'No Teacher' }}</span>
+              <span>{{ affected.teacher.name || 'No Teacher' }}</span>
             </div>
             <div class="detail-row">
               <mat-icon>groups</mat-icon>
-              <span>{{ affected.studentGroup?.studentGroup }} ({{ formatYear(affected.studentGroup?.year) }} {{ affected.studentGroup?.name }})</span>
+              <span>{{ affected.studentGroup.studentGroup }} ({{ formatYear(affected.studentGroup.year) }} {{ affected.studentGroup.name }})</span>
             </div>
             <div class="detail-row" *ngIf="affected.room && affected.room.name">
               <mat-icon>meeting_room</mat-icon>

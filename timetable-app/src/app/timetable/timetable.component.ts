@@ -191,8 +191,8 @@ export class TimetableComponent implements OnInit, OnDestroy {
 
       const filteredTimetable = this.timetableData?.lessons?.filter(
         (lesson) =>
-          lesson.studentGroup.studentGroup === selectedStudentGroup &&
-          lesson.studentGroup.semiGroup === selectedSemiGroup
+          lesson.studentGroup?.studentGroup === selectedStudentGroup &&
+          lesson.studentGroup?.semiGroup === selectedSemiGroup
       );
 
       console.log(filteredTimetable);
@@ -289,7 +289,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
         <td>
           <div style="display: flex; align-items: center;">
             <i class="material-icons" style="font-size: 18px; margin-right: 8px; color: #673ab7;">account_circle</i>
-            ${lesson.teacher.name}
+            ${lesson.teacher?.name || 'N/A'}
           </div>
         </td>
         <td>
@@ -411,7 +411,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
       const selectedTeacher = teacher;
 
       const filteredTimetable = this.timetableData?.lessons?.filter(
-        (lesson) => lesson.teacher.name === selectedTeacher
+        (lesson) => lesson.teacher?.name === selectedTeacher
       );
 
       console.log(filteredTimetable);
@@ -495,8 +495,8 @@ export class TimetableComponent implements OnInit, OnDestroy {
           <div style="display: flex; align-items: center;">
             <i class="material-icons" style="font-size: 18px; margin-right: 8px; color: #673ab7;">group</i>
             <div>
-              <div style="font-weight: 600; color: #673ab7;">${lesson.studentGroup.studentGroup}</div>
-              <div style="font-size: 0.85rem; color: #666;">Subgroup ${lesson.studentGroup.semiGroup?.replace('SEMI_GROUP', '') || 'N/A'}</div>
+              <div style="font-weight: 600; color: #673ab7;">${lesson.studentGroup?.studentGroup || 'N/A'}</div>
+              <div style="font-size: 0.85rem; color: #666;">Subgroup ${lesson.studentGroup?.semiGroup?.replace('SEMI_GROUP', '') || 'N/A'}</div>
             </div>
           </div>
         </td>

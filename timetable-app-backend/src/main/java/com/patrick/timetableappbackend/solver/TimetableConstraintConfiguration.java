@@ -16,7 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 public class TimetableConstraintConfiguration {
 
-    //todo to implement a benchmark if possible
     //hard
 //    @ConstraintWeight("roomConflict")
 //    private HardMediumSoftScore roomConflict = HardMediumSoftScore.ZERO;
