@@ -456,3 +456,149 @@
     flex: 1;
   }
 }
+
+/* ==================== Edit Functionality Styles ==================== */
+
+/* Action Buttons in Table */
+.actions-cell {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.action-btn i {
+  font-size: 18px;
+}
+
+.edit-btn {
+  background: linear-gradient(135deg, #673ab7, #9c27b0);
+  color: white;
+}
+
+.edit-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(103, 58, 183, 0.4);
+}
+
+.analyze-btn {
+  background: linear-gradient(135deg, #2196f3, #03a9f4);
+  color: white;
+}
+
+.analyze-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+}
+
+/* Edited Row Highlighting */
+.edited-row {
+  background: linear-gradient(90deg, #e3f2fd 0%, #fff 100%) !important;
+  position: relative;
+}
+
+.edited-row:hover {
+  background: linear-gradient(90deg, #bbdefb 0%, #f5f5f5 100%) !important;
+}
+
+/* Edited Cell with indicator */
+.edited-cell {
+  position: relative;
+  padding-left: 40px !important;
+}
+
+.edited-indicator {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #2196f3, #1976d2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.4);
+}
+
+.edited-indicator i {
+  color: white;
+  font-size: 16px;
+}
+
+.lesson-content {
+  display: inline-block;
+}
+
+/* Edited Badge */
+.edited-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, #4caf50, #388e3c);
+  color: white;
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border-radius: 12px;
+  margin-left: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
+}
+
+/* Edit Indicator in Admin Section */
+.edit-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: #e65100;
+  font-weight: 500;
+  margin-left: auto;
+}
+
+.edit-indicator mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+/* Responsive Styles for Actions */
+@media (max-width: 768px) {
+  .actions-cell {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .action-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .action-btn i {
+    font-size: 16px;
+  }
+
+  .edit-indicator {
+    margin-left: 0;
+    margin-top: 8px;
+  }
+}
+

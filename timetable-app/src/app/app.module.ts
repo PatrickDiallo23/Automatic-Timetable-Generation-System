@@ -50,6 +50,10 @@ import { LessonDialogComponent } from './lessons/lesson-dialog/lesson-dialog.com
 import { CountdownTimerComponent } from './helpers/countdown-timer/countdown-timer.component';
 import { ScoreAnalysisDialogComponent } from './timetable/score-analysis-dialog/score-analysis-dialog.component';
 import { BenchmarkDialogComponent } from './dashboard/benchmark-dialog/benchmark-dialog.component';
+import { EditLessonDialogComponent } from './timetable/edit-lesson-dialog/edit-lesson-dialog.component';
+import { ImpactAnalysisDialogComponent } from './timetable/impact-analysis-dialog/impact-analysis-dialog.component';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 @NgModule({
@@ -76,6 +80,8 @@ import { BenchmarkDialogComponent } from './dashboard/benchmark-dialog/benchmark
     CountdownTimerComponent,
     ScoreAnalysisDialogComponent,
     BenchmarkDialogComponent,
+    EditLessonDialogComponent,
+    ImpactAnalysisDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -105,6 +111,8 @@ import { BenchmarkDialogComponent } from './dashboard/benchmark-dialog/benchmark
     MatSnackBarModule,
     MatProgressSpinnerModule,
     HttpClientModule,
+    MatDividerModule,
+    MatTooltipModule,
   ],
   providers: [
     AuthGuard,

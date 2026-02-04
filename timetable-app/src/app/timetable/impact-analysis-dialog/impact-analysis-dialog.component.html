@@ -1,0 +1,158 @@
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon class="title-icon">analytics</mat-icon>
+  Impact Analysis
+</h2>
+
+<mat-dialog-content class="dialog-content">
+  <!-- Change Summary -->
+  <div class="change-summary">
+    <h4 class="section-title">
+      <mat-icon>swap_horiz</mat-icon>
+      Change Applied
+    </h4>
+    <div class="change-details">
+      <div class="lesson-name">
+        <mat-icon>book</mat-icon>
+        <strong>{{ data.change.lesson.subject }}</strong>
+        <span class="lesson-meta">({{ data.change.lesson.teacher.name }} • {{ data.change.lesson.studentGroup.studentGroup }})</span>
+      </div>
+      <div class="change-row">
+        <span class="change-label">Room:</span>
+        <span class="change-from">{{ data.change.originalRoom?.name || 'Unassigned' }}</span>
+        <mat-icon class="change-arrow">arrow_forward</mat-icon>
+        <span class="change-to">{{ data.change.newRoom?.name || 'Unassigned' }}</span>
+      </div>
+      <div class="change-row">
+        <span class="change-label">Time:</span>
+        <span class="change-from">{{ formatTimeslot(data.change.originalTimeslot) }}</span>
+        <mat-icon class="change-arrow">arrow_forward</mat-icon>
+        <span class="change-to">{{ formatTimeslot(data.change.newTimeslot) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <mat-divider class="section-divider"></mat-divider>
+
+  <!-- Score Comparison -->
+  <div class="score-comparison">
+    <h4 class="section-title">
+      <mat-icon>score</mat-icon>
+      Score Impact
+    </h4>
+    <div class="score-grid">
+      <div class="score-item">
+        <span class="score-type hard">Hard</span>
+        <span class="score-value">{{ data.previousScore?.hardScore || 0 }}</span>
+        <mat-icon class="score-arrow">arrow_forward</mat-icon>
+        <span class="score-value" [class]="getScoreClass(getScoreDiff().hard)">
+          {{ data.newScore?.hardScore || 0 }}
+        </span>
+        <span class="score-diff" [class]="getScoreClass(getScoreDiff().hard)">
+          ({{ getScoreDiff().hard >= 0 ? '+' : '' }}{{ getScoreDiff().hard }})
+        </span>
+      </div>
+      <div class="score-item">
+        <span class="score-type medium">Medium</span>
+        <span class="score-value">{{ data.previousScore?.mediumScore || 0 }}</span>
+        <mat-icon class="score-arrow">arrow_forward</mat-icon>
+        <span class="score-value" [class]="getScoreClass(getScoreDiff().medium)">
+          {{ data.newScore?.mediumScore || 0 }}
+        </span>
+        <span class="score-diff" [class]="getScoreClass(getScoreDiff().medium)">
+          ({{ getScoreDiff().medium >= 0 ? '+' : '' }}{{ getScoreDiff().medium }})
+        </span>
+      </div>
+      <div class="score-item">
+        <span class="score-type soft">Soft</span>
+        <span class="score-value">{{ data.previousScore?.softScore || 0 }}</span>
+        <mat-icon class="score-arrow">arrow_forward</mat-icon>
+        <span class="score-value" [class]="getScoreClass(getScoreDiff().soft)">
+          {{ data.newScore?.softScore || 0 }}
+        </span>
+        <span class="score-diff" [class]="getScoreClass(getScoreDiff().soft)">
+          ({{ getScoreDiff().soft >= 0 ? '+' : '' }}{{ getScoreDiff().soft }})
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <mat-divider class="section-divider"></mat-divider>
+
+  <!-- Violation Summary -->
+  <div class="violation-summary" *ngIf="hasViolations()">
+    <h4 class="section-title">
+      <mat-icon>warning</mat-icon>
+      Constraint Violations for This Lesson
+    </h4>
+    <div class="summary-badges">
+      <span class="badge hard" *ngIf="violationSummary.hard > 0">
+        <mat-icon>error</mat-icon>
+        {{ violationSummary.hard }} Hard
+      </span>
+      <span class="badge medium" *ngIf="violationSummary.medium > 0">
+        <mat-icon>warning</mat-icon>
+        {{ violationSummary.medium }} Medium
+      </span>
+      <span class="badge soft" *ngIf="violationSummary.soft > 0">
+        <mat-icon>info</mat-icon>
+        {{ violationSummary.soft }} Soft
+      </span>
+    </div>
+  </div>
+
+  <!-- No Violations Message -->
+  <div class="no-violations" *ngIf="!hasViolations()">
+    <mat-icon class="success-icon">check_circle</mat-icon>
+    <h4>No Constraint Violations</h4>
+    <p>This change does not introduce any new constraint violations for this lesson.</p>
+  </div>
+
+  <!-- Violation Details -->
+  <div class="violations-list" *ngIf="hasViolations()">
+    <div class="violation-card" *ngFor="let violation of displayedViolations" [class]="violation.constraintType">
+      <div class="violation-header">
+        <mat-icon class="violation-icon">
+          {{ violation.constraintType === 'hard' ? 'error' : violation.constraintType === 'medium' ? 'warning' : 'info' }}
+        </mat-icon>
+        <span class="constraint-name">{{ violation.constraintName }}</span>
+        <span class="constraint-type-badge">{{ violation.constraintType | uppercase }}</span>
+      </div>
+      <p class="violation-description">{{ violation.description }}</p>
+      <div class="affected-lessons" *ngIf="violation.affectedLessons.length > 0">
+        <span class="affected-label">Conflicts with:</span>
+        <div class="affected-lesson-card" *ngFor="let affected of violation.affectedLessons">
+          <div class="affected-lesson-header">
+            <mat-icon>class</mat-icon>
+            <span class="affected-subject">{{ affected.subject }}</span>
+            <span class="lesson-type-badge">{{ affected.lessonType }}</span>
+          </div>
+          <div class="affected-lesson-details">
+            <div class="detail-row">
+              <mat-icon>person</mat-icon>
+              <span>{{ affected.teacher?.name || 'No Teacher' }}</span>
+            </div>
+            <div class="detail-row">
+              <mat-icon>groups</mat-icon>
+              <span>{{ affected.studentGroup?.studentGroup }} ({{ formatYear(affected.studentGroup?.year) }} {{ affected.studentGroup?.name }})</span>
+            </div>
+            <div class="detail-row" *ngIf="affected.room && affected.room.name">
+              <mat-icon>meeting_room</mat-icon>
+              <span>{{ affected.room.name }}{{ affected.room.building ? ' - ' + affected.room.building : '' }}</span>
+            </div>
+            <div class="detail-row" *ngIf="affected.timeslot && affected.timeslot.dayOfWeek">
+              <mat-icon>schedule</mat-icon>
+              <span>{{ formatAffectedTimeslot(affected.timeslot) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-raised-button color="primary" (click)="onClose()">
+    <mat-icon>close</mat-icon>
+    Close
+  </button>
+</mat-dialog-actions>

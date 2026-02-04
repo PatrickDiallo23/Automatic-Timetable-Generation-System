@@ -186,6 +186,10 @@
         <mat-icon>admin_panel_settings</mat-icon>
         Administrative Actions
       </mat-card-title>
+      <div class="edit-indicator" *ngIf="hasEditHistory()">
+        <mat-icon>history</mat-icon>
+        <span>{{ getEditCount() }} unsaved edit{{ getEditCount() > 1 ? 's' : '' }}</span>
+      </div>
     </mat-card-header>
 
     <mat-card-content>
@@ -195,9 +199,11 @@
           Export Timetable
         </button>
 
-        <button mat-raised-button color="accent" class="action-button">
-          <mat-icon>edit</mat-icon>
-          Edit Timetable
+        <button mat-raised-button color="accent" class="action-button" 
+                [disabled]="!hasEditHistory()" 
+                (click)="undoLastEdit()">
+          <mat-icon>undo</mat-icon>
+          Undo Edit
         </button>
 
         <button mat-raised-button color="warn" class="action-button" (click)="openAnalysisDialog()">
@@ -205,9 +211,11 @@
           Analyze Solution
         </button>
 
-        <button mat-stroked-button class="action-button">
-          <mat-icon>history</mat-icon>
-          View History
+        <button mat-stroked-button class="action-button" 
+                [disabled]="!hasEditHistory()"
+                (click)="clearSessionStorage()">
+          <mat-icon>clear_all</mat-icon>
+          Clear Session
         </button>
       </div>
     </mat-card-content>

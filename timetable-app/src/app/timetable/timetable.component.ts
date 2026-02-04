@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { User } from '../model/user';
 import { LoginService } from '../login/login.service';
 import { CoreService } from '../core/core.service';
@@ -8,6 +8,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable, map, startWith } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ScoreAnalysisDialogComponent } from './score-analysis-dialog/score-analysis-dialog.component';
+import { EditLessonDialogComponent, EditLessonDialogData, EditLessonDialogResult } from './edit-lesson-dialog/edit-lesson-dialog.component';
+import { ImpactAnalysisDialogComponent, ImpactAnalysisDialogData, LessonChangeInfo } from './impact-analysis-dialog/impact-analysis-dialog.component';
 import * as XLSX from 'xlsx';
 
 
@@ -16,7 +18,7 @@ import * as XLSX from 'xlsx';
   templateUrl: './timetable.component.html',
   styleUrls: ['./timetable.component.css'],
 })
-export class TimetableComponent implements OnInit {
+export class TimetableComponent implements OnInit, OnDestroy {
 
   user: User = {};
   connectedUser: User = {};
@@ -54,6 +56,13 @@ export class TimetableComponent implements OnInit {
 
   isLoading: boolean = false;
 
+  // Edit functionality properties
+  editHistory: EditLessonDialogResult[] = [];
+  isEditMode: boolean = false;
+  recentlyEditedLessonIds: Set<number> = new Set();
+  private readonly TIMETABLE_STORAGE_KEY = 'timetable_session_data';
+  private readonly EDIT_HISTORY_STORAGE_KEY = 'timetable_edit_history';
+
   // todo: filter timetable on day and student series
   // persist timetable result so that it can be used by admin and USER (student or teacher) - did this with cookies
 
@@ -79,7 +88,29 @@ export class TimetableComponent implements OnInit {
     this.user.role = this.loginService.userConnected.role;
     // this.timetableService.getJobId().subscribe((msg) => this.jobId = msg)
     this.jobId = localStorage.getItem('jobId');
-    if (this.jobId != null && this.jobId != '') {
+    
+    // Try to load from session storage first
+    const sessionData = this.loadFromSessionStorage();
+    if (sessionData) {
+      this.timetableData = sessionData.timetable;
+      this.editHistory = sessionData.editHistory || [];
+      this.recentlyEditedLessonIds = new Set(sessionData.editedLessonIds || []);
+      if (typeof this.timetableData.score === 'string') {
+        this.score = this.parseScore(this.timetableData.score);
+      } else if (this.timetableData.score && typeof this.timetableData.score === 'object') {
+        this.score = {
+          initScore: this.timetableData.score.initScore ?? 0,
+          hardScore: this.timetableData.score.hardScore ?? 0,
+          mediumScore: this.timetableData.score.mediumScore ?? 0,
+          softScore: this.timetableData.score.softScore ?? 0,
+        };
+      }
+      this.populateStudentGroups();
+      this.populateTeachers();
+      this.filterTimetable('', '');
+      this.isLoading = false;
+      console.log('Loaded timetable from session storage');
+    } else if (this.jobId != null && this.jobId != '') {
       console.log(this.jobId);
       this.timetableService.getTimetable(this.jobId).subscribe((timetable) => {
         this.timetableData = timetable;
@@ -107,6 +138,8 @@ export class TimetableComponent implements OnInit {
 
         // Filter timetable initially
         this.filterTimetable('', '');
+        // Save to session storage
+        this.saveToSessionStorage();
         this.isLoading = false;
       });
     } else {
@@ -199,11 +232,13 @@ export class TimetableComponent implements OnInit {
 
     // Create timetable header
     const headerRow = table.insertRow(0);
+    const isAdmin = this.isAdmin(this.user);
     headerRow.innerHTML = `
       <th><i class="material-icons" style="vertical-align: middle; margin-right: 8px;">book</i>Subject & Type</th>
       <th><i class="material-icons" style="vertical-align: middle; margin-right: 8px;">person</i>Teacher</th>
       <th><i class="material-icons" style="vertical-align: middle; margin-right: 8px;">schedule</i>Day & Time</th>
       <th><i class="material-icons" style="vertical-align: middle; margin-right: 8px;">room</i>Room & Building</th>
+      ${isAdmin ? '<th><i class="material-icons" style="vertical-align: middle; margin-right: 8px;">settings</i>Actions</th>' : ''}
     `;
 
     const sortedTimetable = lessons?.sort((a, b) => {
@@ -233,12 +268,23 @@ export class TimetableComponent implements OnInit {
         (slot) => slot.id === lesson.timeslot
       );
       const room = this.timetableData?.rooms?.find((r) => r.id === lesson.room);
+      const isEdited = this.isLessonEdited(lesson.id);
 
       const row = table.insertRow();
+      if (isEdited) {
+        row.classList.add('edited-row');
+      }
+      
       row.innerHTML = `
-        <td>
-          <div style="font-weight: 600; color: #673ab7; margin-bottom: 4px;">${lesson.subject}</div>
-          <div style="font-size: 0.85rem; color: #666; font-style: italic;">${lesson.lessonType}</div>
+        <td class="${isEdited ? 'edited-cell' : ''}">
+          ${isEdited ? '<div class="edited-indicator"><i class="material-icons">edit_note</i></div>' : ''}
+          <div class="lesson-content">
+            <div style="font-weight: 600; color: #673ab7; margin-bottom: 4px;">
+              ${lesson.subject}
+            </div>
+            <div style="font-size: 0.85rem; color: #666; font-style: italic;">${lesson.lessonType}</div>
+          </div>
+          ${isEdited ? '<span class="edited-badge"><i class="material-icons" style="font-size: 12px; vertical-align: middle;">check_circle</i> Modified</span>' : ''}
         </td>
         <td>
           <div style="display: flex; align-items: center;">
@@ -254,12 +300,53 @@ export class TimetableComponent implements OnInit {
           <div style="font-weight: 500; margin-bottom: 2px;">${room?.name}</div>
           <div style="font-size: 0.85rem; color: #666;">${room?.building}</div>
         </td>
+        ${isAdmin ? `
+        <td class="actions-cell">
+          <button class="action-btn edit-btn" data-lesson-id="${lesson.id}" title="Edit Lesson">
+            <i class="material-icons">edit</i>
+          </button>
+          <button class="action-btn analyze-btn" data-lesson-id="${lesson.id}" title="Analyze Impact">
+            <i class="material-icons">analytics</i>
+          </button>
+        </td>
+        ` : ''}
       `;
 
       row.style.animation = `fadeIn 0.3s ease-in-out ${index * 0.05}s both`;
     });
 
     timetableContainer?.appendChild(table);
+
+    // Attach event listeners if admin
+    if (isAdmin) {
+      this.attachActionButtonListeners(sortedTimetable || []);
+    }
+  }
+
+  private attachActionButtonListeners(lessons: Lesson[]): void {
+    // Edit buttons
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', (event) => {
+        const target = event.currentTarget as HTMLElement;
+        const lessonId = parseInt(target.getAttribute('data-lesson-id') || '0', 10);
+        const lesson = lessons.find(l => l.id === lessonId);
+        if (lesson) {
+          this.openEditLessonDialog(lesson);
+        }
+      });
+    });
+
+    // Analyze buttons
+    document.querySelectorAll('.analyze-btn').forEach(btn => {
+      btn.addEventListener('click', (event) => {
+        const target = event.currentTarget as HTMLElement;
+        const lessonId = parseInt(target.getAttribute('data-lesson-id') || '0', 10);
+        const lesson = lessons.find(l => l.id === lessonId);
+        if (lesson) {
+          this.openImpactAnalysisDialog(lesson);
+        }
+      });
+    });
   }
 
   formatDay(day: string | undefined): string {
@@ -711,5 +798,325 @@ export class TimetableComponent implements OnInit {
       printWindow.document.close();
       printWindow.print();
     }
+  }
+
+  // ==================== Edit Functionality Methods ====================
+
+  ngOnDestroy(): void {
+    // Save current state when component is destroyed (e.g., navigation)
+    this.saveToSessionStorage();
+  }
+
+  // Session Storage Methods
+  private saveToSessionStorage(): void {
+    try {
+      const sessionData = {
+        timetable: this.timetableData,
+        editHistory: this.editHistory,
+        editedLessonIds: Array.from(this.recentlyEditedLessonIds),
+        timestamp: Date.now(),
+      };
+      sessionStorage.setItem(this.TIMETABLE_STORAGE_KEY, JSON.stringify(sessionData));
+    } catch (error) {
+      console.error('Error saving to session storage:', error);
+    }
+  }
+
+  private loadFromSessionStorage(): { timetable: Timetable; editHistory: EditLessonDialogResult[]; editedLessonIds: number[] } | null {
+    try {
+      const data = sessionStorage.getItem(this.TIMETABLE_STORAGE_KEY);
+      if (data) {
+        const parsed = JSON.parse(data);
+        // Check if data is not too old (e.g., 24 hours)
+        const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+        if (Date.now() - parsed.timestamp < maxAge) {
+          return parsed;
+        }
+        // Clear stale data
+        sessionStorage.removeItem(this.TIMETABLE_STORAGE_KEY);
+      }
+    } catch (error) {
+      console.error('Error loading from session storage:', error);
+    }
+    return null;
+  }
+
+  clearSessionStorage(): void {
+    sessionStorage.removeItem(this.TIMETABLE_STORAGE_KEY);
+    this.editHistory = [];
+    this.recentlyEditedLessonIds.clear();
+    
+    // Reload timetable from API to restore original state
+    if (this.jobId) {
+      this.isLoading = true;
+      this.timetableService.getTimetable(this.jobId).subscribe({
+        next: (timetable) => {
+          this.timetableData = timetable;
+          if (typeof this.timetableData.score === 'string') {
+            this.score = this.parseScore(this.timetableData.score);
+          } else if (this.timetableData.score && typeof this.timetableData.score === 'object') {
+            this.score = {
+              initScore: this.timetableData.score.initScore ?? 0,
+              hardScore: this.timetableData.score.hardScore ?? 0,
+              mediumScore: this.timetableData.score.mediumScore ?? 0,
+              softScore: this.timetableData.score.softScore ?? 0,
+            };
+          }
+          this.populateStudentGroups();
+          this.populateTeachers();
+          this.refreshCurrentView();
+          this.isLoading = false;
+          this.coreService.openSnackBar('Timetable restored to original state');
+        },
+        error: (error) => {
+          console.error('Error reloading timetable:', error);
+          this.isLoading = false;
+          this.coreService.openSnackBar('Failed to restore timetable');
+        }
+      });
+    } else {
+      this.coreService.openSnackBar('Session data cleared');
+    }
+  }
+
+  // Edit Lesson Dialog
+  openEditLessonDialog(lesson: Lesson): void {
+    const currentRoom = this.timetableData?.rooms?.find(r => r.id === lesson.room);
+    const currentTimeslot = this.timetableData?.timeslots?.find(ts => ts.id === lesson.timeslot);
+
+    const dialogData: EditLessonDialogData = {
+      lesson: lesson,
+      rooms: this.timetableData?.rooms || [],
+      timeslots: this.timetableData?.timeslots || [],
+      currentRoom: currentRoom,
+      currentTimeslot: currentTimeslot,
+    };
+
+    const dialogRef = this.dialog.open(EditLessonDialogComponent, {
+      width: '550px',
+      data: dialogData,
+      disableClose: false,
+    });
+
+    dialogRef.afterClosed().subscribe((result: EditLessonDialogResult | null) => {
+      if (result) {
+        this.applyLessonEdit(result);
+      }
+    });
+  }
+
+  private applyLessonEdit(editResult: EditLessonDialogResult): void {
+    this.isLoading = true;
+
+    // Find and update the lesson in timetableData
+    const lessonIndex = this.timetableData?.lessons?.findIndex(l => l.id === editResult.lesson.id);
+    if (lessonIndex !== undefined && lessonIndex >= 0 && this.timetableData?.lessons) {
+      // Store previous score for comparison
+      const previousScore = this.score ? { ...this.score } : null;
+
+      // Update the lesson
+      this.timetableData.lessons[lessonIndex].room = editResult.newRoom;
+      this.timetableData.lessons[lessonIndex].timeslot = editResult.newTimeslot;
+
+      // Add to edit history for undo
+      this.editHistory.push(editResult);
+      this.recentlyEditedLessonIds.add(editResult.lesson.id!);
+
+      // Update timetable via API to recalculate score
+      this.timetableService.updateTimetable(this.timetableData).subscribe({
+        next: (updatedTimetable) => {
+          this.timetableData = updatedTimetable;
+          
+          // Update score display
+          if (typeof this.timetableData.score === 'string') {
+            this.score = this.parseScore(this.timetableData.score);
+          } else if (this.timetableData.score && typeof this.timetableData.score === 'object') {
+            this.score = {
+              initScore: this.timetableData.score.initScore ?? 0,
+              hardScore: this.timetableData.score.hardScore ?? 0,
+              mediumScore: this.timetableData.score.mediumScore ?? 0,
+              softScore: this.timetableData.score.softScore ?? 0,
+            };
+          }
+
+          // Save to session storage
+          this.saveToSessionStorage();
+
+          // Refresh the displayed timetable
+          this.refreshCurrentView();
+          this.isLoading = false;
+
+          this.coreService.openSnackBar('Lesson updated successfully');
+        },
+        error: (error) => {
+          console.error('Error updating timetable:', error);
+          this.isLoading = false;
+          this.coreService.openSnackBar('Failed to update lesson. Please try again.');
+          
+          // Revert the change
+          if (this.timetableData?.lessons && lessonIndex >= 0) {
+            this.timetableData.lessons[lessonIndex].room = editResult.originalRoom;
+            this.timetableData.lessons[lessonIndex].timeslot = editResult.originalTimeslot;
+            this.editHistory.pop();
+            this.recentlyEditedLessonIds.delete(editResult.lesson.id!);
+          }
+        }
+      });
+    }
+  }
+
+  // Impact Analysis Dialog
+  openImpactAnalysisDialog(lesson: Lesson): void {
+    this.isLoading = true;
+
+    // Get analysis for current timetable focusing on this lesson
+    this.timetableService.analyzeTimetableSolution(this.timetableData).subscribe({
+      next: (analysis: any) => {
+        // Find the edit result for this lesson if it exists
+        const editResult = this.editHistory.find(h => h.lesson.id === lesson.id);
+        
+        const currentRoom = this.timetableData?.rooms?.find(r => r.id === lesson.room);
+        const currentTimeslot = this.timetableData?.timeslots?.find(ts => ts.id === lesson.timeslot);
+        
+        let originalRoom: Room | undefined;
+        let originalTimeslot: Timeslot | undefined;
+        
+        if (editResult) {
+          originalRoom = this.timetableData?.rooms?.find(r => r.id === editResult.originalRoom);
+          originalTimeslot = this.timetableData?.timeslots?.find(ts => ts.id === editResult.originalTimeslot);
+        }
+
+        const changeInfo: LessonChangeInfo = {
+          lesson: lesson,
+          originalRoom: originalRoom || currentRoom,
+          originalTimeslot: originalTimeslot || currentTimeslot,
+          newRoom: currentRoom,
+          newTimeslot: currentTimeslot,
+        };
+
+        const dialogData: ImpactAnalysisDialogData = {
+          change: changeInfo,
+          previousScore: null, // We don't have the previous score stored
+          newScore: this.score || null,
+          violations: [],
+          analysisData: analysis,
+          rooms: this.timetableData?.rooms || [],
+          timeslots: this.timetableData?.timeslots || [],
+        };
+
+        this.dialog.open(ImpactAnalysisDialogComponent, {
+          width: '700px',
+          maxHeight: '80vh',
+          data: dialogData,
+        });
+
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error analyzing timetable:', error);
+        this.isLoading = false;
+        this.coreService.openSnackBar('Failed to analyze. Please try again.');
+      }
+    });
+  }
+
+  // Undo Functionality
+  undoLastEdit(): void {
+    if (this.editHistory.length === 0) {
+      this.coreService.openSnackBar('No edits to undo');
+      return;
+    }
+
+    this.isLoading = true;
+    const lastEdit = this.editHistory.pop()!;
+
+    // Find and revert the lesson
+    const lessonIndex = this.timetableData?.lessons?.findIndex(l => l.id === lastEdit.lesson.id);
+    if (lessonIndex !== undefined && lessonIndex >= 0 && this.timetableData?.lessons) {
+      this.timetableData.lessons[lessonIndex].room = lastEdit.originalRoom;
+      this.timetableData.lessons[lessonIndex].timeslot = lastEdit.originalTimeslot;
+
+      // Remove from recently edited if no more edits for this lesson
+      const stillEdited = this.editHistory.some(h => h.lesson.id === lastEdit.lesson.id);
+      if (!stillEdited) {
+        this.recentlyEditedLessonIds.delete(lastEdit.lesson.id!);
+      }
+
+      // Update via API
+      this.timetableService.updateTimetable(this.timetableData).subscribe({
+        next: (updatedTimetable) => {
+          this.timetableData = updatedTimetable;
+          
+          if (typeof this.timetableData.score === 'string') {
+            this.score = this.parseScore(this.timetableData.score);
+          } else if (this.timetableData.score && typeof this.timetableData.score === 'object') {
+            this.score = {
+              initScore: this.timetableData.score.initScore ?? 0,
+              hardScore: this.timetableData.score.hardScore ?? 0,
+              mediumScore: this.timetableData.score.mediumScore ?? 0,
+              softScore: this.timetableData.score.softScore ?? 0,
+            };
+          }
+
+          this.saveToSessionStorage();
+          this.refreshCurrentView();
+          this.isLoading = false;
+
+          this.coreService.openSnackBar('Edit undone successfully');
+        },
+        error: (error) => {
+          console.error('Error undoing edit:', error);
+          this.isLoading = false;
+          this.coreService.openSnackBar('Failed to undo. Please try again.');
+          
+          // Re-add to history if failed
+          this.editHistory.push(lastEdit);
+          this.recentlyEditedLessonIds.add(lastEdit.lesson.id!);
+        }
+      });
+    }
+  }
+
+  hasEditHistory(): boolean {
+    return this.editHistory.length > 0;
+  }
+
+  getEditCount(): number {
+    return this.editHistory.length;
+  }
+
+  private refreshCurrentView(): void {
+    // Get current filter values and re-apply
+    if (this.toggle === 'student') {
+      const studentGroup = this.studentGroupFormGroup.get('studentGroupControl')?.value;
+      if (studentGroup) {
+        // Re-filter with current selection
+        const timetableContainer = document.getElementById('timetable');
+        if (timetableContainer) timetableContainer.innerHTML = '';
+        
+        const filteredTimetable = this.timetableData?.lessons?.filter(
+          (lesson) => lesson.studentGroup.studentGroup === studentGroup
+        );
+        this.displayedTimetable = filteredTimetable || [];
+        this.displayTimetable(filteredTimetable);
+      }
+    } else {
+      const teacher = this.teacherFormGroup.get('teacherControl')?.value;
+      if (teacher) {
+        const timetableContainer = document.getElementById('timetable');
+        if (timetableContainer) timetableContainer.innerHTML = '';
+        
+        const filteredTimetable = this.timetableData?.lessons?.filter(
+          (lesson) => lesson.teacher.name === teacher
+        );
+        this.displayedTimetable = filteredTimetable || [];
+        this.displayTeacherTimetable(filteredTimetable);
+      }
+    }
+  }
+
+  // Check if lesson was recently edited
+  isLessonEdited(lessonId: number | undefined): boolean {
+    return lessonId !== undefined && this.recentlyEditedLessonIds.has(lessonId);
   }
 }

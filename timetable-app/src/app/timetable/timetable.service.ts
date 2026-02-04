@@ -36,4 +36,8 @@ export class TimetableService {
   analyzeTimetableSolution(timetable: Timetable): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/analyze`, timetable);
   }
+
+  updateTimetable(timetable: Timetable): Observable<Timetable> {
+    return this.http.put<Timetable>(`${this.apiUrl}/update`, timetable);
+  }
 }
