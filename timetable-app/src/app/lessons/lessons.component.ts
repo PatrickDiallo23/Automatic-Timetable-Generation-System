@@ -23,6 +23,7 @@ export class LessonsComponent implements OnInit {
     'lessonType',
     'year',
     'duration',
+    'pinned',
     'action',
   ];
 

@@ -89,9 +89,9 @@ export class TimetableComponent implements OnInit, OnDestroy {
     // this.timetableService.getJobId().subscribe((msg) => this.jobId = msg)
     this.jobId = localStorage.getItem('jobId');
     
-    // Try to load from session storage first
+    // Try to load from session storage first - but only if jobId matches
     const sessionData = this.loadFromSessionStorage();
-    if (sessionData) {
+    if (sessionData && sessionData.jobId === this.jobId) {
       this.timetableData = sessionData.timetable;
       this.editHistory = sessionData.editHistory || [];
       this.recentlyEditedLessonIds = new Set(sessionData.editedLessonIds || []);
@@ -109,7 +109,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
       this.populateTeachers();
       this.filterTimetable('', '');
       this.isLoading = false;
-      console.log('Loaded timetable from session storage');
+      console.log('Loaded timetable from session storage (jobId matches)');
     } else if (this.jobId != null && this.jobId != '') {
       console.log(this.jobId);
       this.timetableService.getTimetable(this.jobId).subscribe((timetable) => {
@@ -274,9 +274,13 @@ export class TimetableComponent implements OnInit, OnDestroy {
       if (isEdited) {
         row.classList.add('edited-row');
       }
+      if (lesson.pinned) {
+        row.classList.add('pinned-row');
+      }
       
       row.innerHTML = `
-        <td class="${isEdited ? 'edited-cell' : ''}">
+        <td class="${isEdited ? 'edited-cell' : ''} ${lesson.pinned ? 'pinned-cell' : ''}">
+          ${lesson.pinned ? '<div class="pinned-indicator"><i class="material-icons" title="Pinned - This lesson is locked">push_pin</i></div>' : ''}
           ${isEdited ? '<div class="edited-indicator"><i class="material-icons">edit_note</i></div>' : ''}
           <div class="lesson-content">
             <div style="font-weight: 600; color: #673ab7; margin-bottom: 4px;">
@@ -284,6 +288,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
             </div>
             <div style="font-size: 0.85rem; color: #666; font-style: italic;">${lesson.lessonType}</div>
           </div>
+          ${lesson.pinned && !isEdited ? '<span class="pinned-badge"><i class="material-icons" style="font-size: 12px; vertical-align: middle;">lock</i> Pinned</span>' : ''}
           ${isEdited ? '<span class="edited-badge"><i class="material-icons" style="font-size: 12px; vertical-align: middle;">check_circle</i> Modified</span>' : ''}
         </td>
         <td>
@@ -490,8 +495,13 @@ export class TimetableComponent implements OnInit, OnDestroy {
       const room = this.timetableData?.rooms?.find((r) => r.id === lesson.room);
 
       const row = table.insertRow();
+      if (lesson.pinned) {
+        row.classList.add('pinned-row');
+      }
+      
       row.innerHTML = `
-        <td>
+        <td class="${lesson.pinned ? 'pinned-cell' : ''}">
+          ${lesson.pinned ? '<div class="pinned-indicator"><i class="material-icons" title="Pinned - This lesson is locked">push_pin</i></div>' : ''}
           <div style="display: flex; align-items: center;">
             <i class="material-icons" style="font-size: 18px; margin-right: 8px; color: #673ab7;">group</i>
             <div>
@@ -499,6 +509,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
               <div style="font-size: 0.85rem; color: #666;">Subgroup ${lesson.studentGroup?.semiGroup?.replace('SEMI_GROUP', '') || 'N/A'}</div>
             </div>
           </div>
+          ${lesson.pinned ? '<span class="pinned-badge"><i class="material-icons" style="font-size: 12px; vertical-align: middle;">lock</i> Pinned</span>' : ''}
         </td>
         <td>
           <div style="font-weight: 600; color: #673ab7; margin-bottom: 4px;">${lesson.subject}</div>
@@ -811,6 +822,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
   private saveToSessionStorage(): void {
     try {
       const sessionData = {
+        jobId: this.jobId, // Store the jobId to validate cache
         timetable: this.timetableData,
         editHistory: this.editHistory,
         editedLessonIds: Array.from(this.recentlyEditedLessonIds),
@@ -822,7 +834,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
     }
   }
 
-  private loadFromSessionStorage(): { timetable: Timetable; editHistory: EditLessonDialogResult[]; editedLessonIds: number[] } | null {
+  private loadFromSessionStorage(): { jobId: string; timetable: Timetable; editHistory: EditLessonDialogResult[]; editedLessonIds: number[] } | null {
     try {
       const data = sessionStorage.getItem(this.TIMETABLE_STORAGE_KEY);
       if (data) {
@@ -834,6 +846,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
         }
         // Clear stale data
         sessionStorage.removeItem(this.TIMETABLE_STORAGE_KEY);
+        console.log('Cleared stale session storage data');
       }
     } catch (error) {
       console.error('Error loading from session storage:', error);

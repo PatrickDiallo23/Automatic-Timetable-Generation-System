@@ -231,6 +231,9 @@ export class JsonImportService {
   }
 
   private isValidLesson(lesson: any): boolean {
+    // Required fields validation
+    // Note: 'pinned' is optional and defaults to false if not provided
+    //       'timeslot' and 'room' are optional (set by solver or manually)
     return (
       typeof lesson === 'object' &&
       typeof lesson.subject === 'string' &&
@@ -239,7 +242,9 @@ export class JsonImportService {
       Object.values(LessonType).includes(lesson.lessonType) &&
       Object.values(Year).includes(lesson.year) &&
       typeof lesson.duration === 'number' &&
-      lesson.duration > 0
+      lesson.duration > 0 &&
+      // Validate optional pinned field if present
+      (lesson.pinned === undefined || typeof lesson.pinned === 'boolean')
     );
   }
 

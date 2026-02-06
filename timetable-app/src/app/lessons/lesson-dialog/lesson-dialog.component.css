@@ -1,5 +1,7 @@
 .content {
     padding-top: 10px;
+    max-height: 70vh;
+    overflow-y: auto;
 }
 
 .mat-form-field {
@@ -10,5 +12,84 @@
     padding: 0px 25px 20px;
     button {
         flex: 1;
+    }
+}
+
+/* Pinning Section Styles */
+.pinning-divider {
+    margin: 24px 0 16px 0;
+}
+
+.pinning-section {
+    background: linear-gradient(135deg, rgba(103, 58, 183, 0.05) 0%, rgba(156, 39, 176, 0.05) 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 16px;
+    border: 1px solid rgba(103, 58, 183, 0.15);
+}
+
+.pinning-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 8px 0;
+    color: #673ab7;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.pinning-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #673ab7;
+}
+
+.pinning-description {
+    margin: 0 0 16px 0;
+    color: #666;
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.pinning-toggle {
+    margin-bottom: 16px;
+}
+
+.pinning-options {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed rgba(103, 58, 183, 0.25);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.pinning-field {
+    width: 100%;
+}
+
+.pinning-field mat-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pinning-field mat-label mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #673ab7;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

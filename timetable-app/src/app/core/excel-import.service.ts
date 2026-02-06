@@ -158,8 +158,11 @@ export class ExcelImportService {
       const lessons = this.extractLessons(
         workbook,
         errors,
+        warnings,
         teachers,
-        studentGroups
+        studentGroups,
+        timeslots,
+        rooms
       );
       const config = this.extractConfiguration(workbook, warnings);
 
@@ -420,8 +423,11 @@ export class ExcelImportService {
   private extractLessons(
     workbook: XLSX.WorkBook,
     errors: string[],
+    warnings: string[],
     teachers: Teacher[],
-    studentGroups: StudentGroup[]
+    studentGroups: StudentGroup[],
+    timeslots: Timeslot[],
+    rooms: Room[]
   ): Lesson[] {
     const sheetName = 'Lessons';
     if (!workbook.Sheets[sheetName]) {
@@ -502,6 +508,39 @@ export class ExcelImportService {
           return;
         }
 
+        // Parse pinned field
+        const isPinned = this.hasValue(row.pinned) 
+          ? (String(row.pinned).toLowerCase() === 'true' || row.pinned === true) 
+          : false;
+
+        // Look up timeslot by ID if provided
+        let timeslotRef: number | null = null;
+        if (this.hasValue(row.timeslotId)) {
+          const timeslotId = Number(row.timeslotId);
+          const foundTimeslot = timeslots.find(ts => ts.id === timeslotId);
+          if (foundTimeslot) {
+            timeslotRef = foundTimeslot.id ?? null;
+          } else {
+            warnings.push(
+              `Lessons sheet row ${index + 2}: Timeslot with ID ${timeslotId} not found. Lesson will be unpinned from timeslot.`
+            );
+          }
+        }
+
+        // Look up room by ID if provided
+        let roomRef: number | null = null;
+        if (this.hasValue(row.roomId)) {
+          const roomId = Number(row.roomId);
+          const foundRoom = rooms.find(r => r.id === roomId);
+          if (foundRoom) {
+            roomRef = foundRoom.id ?? null;
+          } else {
+            warnings.push(
+              `Lessons sheet row ${index + 2}: Room with ID ${roomId} not found. Lesson will be unpinned from room.`
+            );
+          }
+        }
+
         lessons.push({
           id: Number(row.id),
           subject: String(row.subject),
@@ -510,8 +549,9 @@ export class ExcelImportService {
           lessonType,
           year,
           duration: Number(row.duration),
-          timeslot: null,
-          room: null,
+          timeslot: timeslotRef,
+          room: roomRef,
+          pinned: isPinned,
         });
       } catch (error) {
         errors.push(

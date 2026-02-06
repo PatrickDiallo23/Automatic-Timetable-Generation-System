@@ -225,8 +225,9 @@
             "lessonType": "COURSE",
             "year": "FIRST",
             "duration": 1,
-            "timeslot": null,
-            "room": null,
+            "timeslot": 4,
+            "room": 2,
+            "pinned": true,
             "possibleTimeslots": []
         },
         {
@@ -2521,7 +2522,7 @@
     "timetableConstraintConfiguration": {
         "roomConflict": "1hard/0medium/0soft",
         "teacherConflict": "1hard/0medium/0soft",
-        "studentGroupConflict": "1hard/0medium/0soft",
+        "studentGroupConflictWithGroupBy": "1hard/0medium/0soft",
         "capacityRoomConflict": "0hard/0medium/0soft",
         "courseStudentsGroupedInTheSameRoom": "0hard/0medium/0soft",
         "seminarStudentsGroupedInTheSameRoom": "0hard/0medium/0soft",

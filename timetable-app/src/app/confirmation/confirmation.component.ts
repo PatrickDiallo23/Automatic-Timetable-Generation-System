@@ -365,5 +365,58 @@ export class ConfirmationComponent implements OnInit, OnDestroy {
       .replace(/([A-Z])/g, ' $1')
       .replace(/^./, (str) => str.toUpperCase());
   }
+
+  // Helper method to display timeslot info for pinned lessons
+  getTimeslotDisplay(timeslotRef: any): string {
+    if (!timeslotRef || !this.data?.timeslots) {
+      return 'Unknown';
+    }
+    
+    // If timeslotRef is an object (full timeslot), use it directly
+    if (typeof timeslotRef === 'object') {
+      return `${this.formatDay(timeslotRef.dayOfWeek)} ${timeslotRef.startTime?.substring(0, 5)} - ${timeslotRef.endTime?.substring(0, 5)}`;
+    }
+    
+    // If timeslotRef is an ID, look it up
+    const timeslot = this.data.timeslots.find(ts => ts.id === timeslotRef);
+    if (timeslot) {
+      return `${this.formatDay(timeslot.dayOfWeek)} ${timeslot.startTime?.substring(0, 5)} - ${timeslot.endTime?.substring(0, 5)}`;
+    }
+    return `Timeslot ID: ${timeslotRef}`;
+  }
+
+  // Helper method to display room info for pinned lessons
+  getRoomDisplay(roomRef: any): string {
+    if (!roomRef || !this.data?.rooms) {
+      return 'Unknown';
+    }
+    
+    // If roomRef is an object (full room), use it directly
+    if (typeof roomRef === 'object') {
+      return `${roomRef.name}${roomRef.building ? ` (${roomRef.building})` : ''}`;
+    }
+    
+    // If roomRef is an ID, look it up
+    const room = this.data.rooms.find(r => r.id === roomRef);
+    if (room) {
+      return `${room.name}${room.building ? ` (${room.building})` : ''}`;
+    }
+    return `Room ID: ${roomRef}`;
+  }
+
+  // Format day of week for display
+  private formatDay(day: string | undefined): string {
+    if (!day) return '';
+    const dayMap: { [key: string]: string } = {
+      'MONDAY': 'Mon',
+      'TUESDAY': 'Tue',
+      'WEDNESDAY': 'Wed',
+      'THURSDAY': 'Thu',
+      'FRIDAY': 'Fri',
+      'SATURDAY': 'Sat',
+      'SUNDAY': 'Sun'
+    };
+    return dayMap[day.toUpperCase()] || day;
+  }
 }
 

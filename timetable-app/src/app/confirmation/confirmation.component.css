@@ -588,3 +588,93 @@
         font-size: 0.8rem;
     }
 }
+
+/* Pinned Lesson Styles */
+.pinned-lesson {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%) !important;
+    border: 2px solid #4caf50 !important;
+    position: relative;
+}
+
+.pinned-lesson:hover {
+    background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%) !important;
+    border-color: #388e3c !important;
+}
+
+.pinned-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: auto;
+    box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
+}
+
+.pinned-icon {
+    font-size: 14px !important;
+    height: 14px !important;
+    width: 14px !important;
+}
+
+.pinned-details {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed #81c784;
+    margin-left: 32px;
+}
+
+.pinned-assignment {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    border-left: 3px solid #4caf50;
+}
+
+.pinned-assignment:last-child {
+    margin-bottom: 0;
+}
+
+.pinned-assignment.solver-decides {
+    background: rgba(255, 193, 7, 0.2);
+    border-left-color: #ffc107;
+}
+
+.pinned-detail-icon {
+    color: #4caf50;
+    font-size: 18px !important;
+    height: 18px !important;
+    width: 18px !important;
+}
+
+.solver-decides .pinned-detail-icon {
+    color: #f57c00;
+}
+
+.pinned-detail-label {
+    color: #2e7d32;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.pinned-detail-value {
+    color: #1b5e20;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.solver-decides .pinned-detail-value {
+    color: #e65100;
+    font-style: italic;
+}
+

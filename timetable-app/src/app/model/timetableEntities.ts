@@ -37,6 +37,7 @@ export interface Lesson {
   duration: number;
   timeslot?: any // Timeslot or number
   room?: any; //Room or number
+  pinned?: boolean;
 }
 
 export enum LessonType {

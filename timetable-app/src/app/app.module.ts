@@ -54,6 +54,7 @@ import { EditLessonDialogComponent } from './timetable/edit-lesson-dialog/edit-l
 import { ImpactAnalysisDialogComponent } from './timetable/impact-analysis-dialog/impact-analysis-dialog.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 
 @NgModule({
@@ -113,6 +114,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     HttpClientModule,
     MatDividerModule,
     MatTooltipModule,
+    MatSlideToggleModule,
   ],
   providers: [
     AuthGuard,

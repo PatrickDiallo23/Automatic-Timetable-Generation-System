@@ -48,8 +48,8 @@ public class TimetableConstraintProvider implements ConstraintProvider {
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[]{
                 // Hard constraints
-//                roomConflict(constraintFactory),
-//                teacherConflict(constraintFactory),
+                roomConflict(constraintFactory),
+                teacherConflict(constraintFactory),
                 studentGroupConflictWithGroupBy(constraintFactory),
                 capacityRoomConflict(constraintFactory),
                 courseStudentsGroupedInTheSameRoom(constraintFactory),
@@ -72,7 +72,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 // Soft constraints
                 teacherRoomStability(constraintFactory),
                 teacherTimeEfficiency(constraintFactory),
-//                studentGroupSubjectVariety(constraintFactory),
+                studentGroupSubjectVariety(constraintFactory),
                 coursesInTheSameBuilding(constraintFactory),
                 gapsLongerThan4Hours(constraintFactory),
                 labsGroupedInTheSameTimeslot(constraintFactory),

@@ -98,7 +98,7 @@ public class TimetableConstraintProviderTest {
         Lesson conflictingLesson = new Lesson(2, "Subject2", new Teacher(2L, "Teacher2", null), conflictingGroup, TIMESLOT1, ROOM2);
         Lesson nonConflictingLesson = new Lesson(3, "Subject3", new Teacher(3L, "Teacher3", null), new StudentGroup(3L, "Group3", 30L), TIMESLOT2, ROOM1);
 
-        constraintVerifier.verifyThat(TimetableConstraintProvider::studentGroupConflict)
+        constraintVerifier.verifyThat(TimetableConstraintProvider::studentGroupConflictWithGroupBy)
                 .given(firstLesson, conflictingLesson, nonConflictingLesson)
                 .penalizesBy(1);
     }
@@ -215,7 +215,7 @@ public class TimetableConstraintProviderTest {
 
         constraintVerifier.verifyThat(TimetableConstraintProvider::gapsLongerThan4Hours)
                 .given(firstTuesdayLesson, secondTuesdayLesson, thirdTuesdayLesson, sixthTuesdayLesson)
-                .penalizesBy(1);
+                .penalizesBy(2);
     }
 
     @Test

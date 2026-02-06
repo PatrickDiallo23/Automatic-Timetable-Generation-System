@@ -31,4 +31,15 @@ export class LessonService {
   deleteLesson(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  updatePinning(id: number, pinned: boolean, timeslotId?: number, roomId?: number): Observable<Lesson> {
+    let params = `?pinned=${pinned}`;
+    if (timeslotId !== undefined && timeslotId !== null) {
+      params += `&timeslotId=${timeslotId}`;
+    }
+    if (roomId !== undefined && roomId !== null) {
+      params += `&roomId=${roomId}`;
+    }
+    return this.http.patch<Lesson>(`${this.apiUrl}/${id}/pin${params}`, {});
+  }
 }

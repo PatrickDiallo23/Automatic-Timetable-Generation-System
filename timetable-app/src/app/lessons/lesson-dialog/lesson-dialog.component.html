@@ -61,6 +61,56 @@
             <input matInput type="number" placeholder="2" formControlName="duration">
         </mat-form-field>
 
+        <!-- Pinning Section -->
+        <mat-divider class="pinning-divider"></mat-divider>
+        
+        <div class="pinning-section">
+            <h3 class="pinning-title">
+                <mat-icon class="pinning-icon">push_pin</mat-icon>
+                Pinning Options
+            </h3>
+            <p class="pinning-description">Pin this lesson to lock its timeslot and/or room during scheduling optimization.</p>
+            
+            <mat-slide-toggle formControlName="pinned" color="primary" class="pinning-toggle">
+                Pin this lesson
+            </mat-slide-toggle>
+
+            <div *ngIf="lessonForm.get('pinned')?.value" class="pinning-options">
+                <mat-form-field appearance="outline" class="pinning-field">
+                    <mat-label>
+                        <mat-icon>schedule</mat-icon>
+                        Pin to Timeslot
+                    </mat-label>
+                    <mat-select formControlName="timeslot">
+                        <mat-option [value]="null">
+                            <em>Let solver decide</em>
+                        </mat-option>
+                        <mat-optgroup *ngFor="let day of dayOrder" [label]="formatDay(day)">
+                            <mat-option *ngFor="let ts of getTimeslotsByDay(day)" [value]="ts.id">
+                                {{ formatDay(ts.dayOfWeek) }} | {{ ts.startTime?.substring(0, 5) }} - {{ ts.endTime?.substring(0, 5) }}
+                            </mat-option>
+                        </mat-optgroup>
+                    </mat-select>
+                    <mat-hint>Optional - Select a specific time when this lesson should occur</mat-hint>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="pinning-field">
+                    <mat-label>
+                        <mat-icon>room</mat-icon>
+                        Pin to Room
+                    </mat-label>
+                    <mat-select formControlName="room">
+                        <mat-option [value]="null">
+                            <em>Let solver decide</em>
+                        </mat-option>
+                        <mat-option *ngFor="let room of rooms" [value]="room.id">
+                            {{ room.name }} | {{ room.building }} | Cap: {{ room.capacity }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-hint>Optional - Select a specific room for this lesson</mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
 
     </div>
     <div mat-dialog-actions class="action">

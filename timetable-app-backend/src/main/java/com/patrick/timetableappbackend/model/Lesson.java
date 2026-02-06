@@ -1,6 +1,7 @@
 package com.patrick.timetableappbackend.model;
 
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
+import ai.timefold.solver.core.api.domain.entity.PlanningPin;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
@@ -66,6 +67,10 @@ public class Lesson {
     private Year year;
 
     private int duration;
+
+    @PlanningPin
+    @Builder.Default
+    private boolean pinned = false;
 
     @JsonIdentityReference
     @ManyToOne() // cascade = CascadeType.MERGE

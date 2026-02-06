@@ -602,3 +602,73 @@
   }
 }
 
+/* ==================== Pinned Lesson Styles ==================== */
+
+/* Pinned Row Highlighting */
+.pinned-row {
+  background: linear-gradient(90deg, rgba(255, 152, 0, 0.1) 0%, rgba(255, 193, 7, 0.05) 100%) !important;
+  position: relative;
+  border-left: 3px solid #ff9800;
+}
+
+.pinned-row:hover {
+  background: linear-gradient(90deg, rgba(255, 152, 0, 0.15) 0%, rgba(255, 193, 7, 0.08) 100%) !important;
+}
+
+/* Pinned Cell with indicator */
+.pinned-cell {
+  position: relative;
+  padding-left: 40px !important;
+}
+
+.pinned-indicator {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.4);
+}
+
+.pinned-indicator i {
+  color: white;
+  font-size: 16px;
+}
+
+/* Pinned Badge */
+.pinned-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+  color: white;
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border-radius: 12px;
+  margin-left: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(255, 152, 0, 0.3);
+}
+
+/* Both edited and pinned */
+.pinned-cell.edited-cell {
+  padding-left: 70px !important;
+}
+
+.pinned-cell.edited-cell .pinned-indicator {
+  left: 8px;
+}
+
+.pinned-cell.edited-cell .edited-indicator {
+  left: 40px;
+}
+
+
