@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { User } from '../model/user';
 import { LoginService } from '../login/login.service';
 import { CoreService } from '../core/core.service';
@@ -602,6 +602,89 @@ export class TimetableComponent implements OnInit, OnDestroy {
           console.error('Analyze failed', err);
           alert('Analyze failed. See console for details.');
         },
+      });
+  }
+
+
+
+  @ViewChild('fileInput') fileInput!: ElementRef;
+
+  triggerImport(): void {
+    this.fileInput.nativeElement.click();
+  }
+
+  onFileSelected(event: any): void {
+    const file: File = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        try {
+          const jsonContent = JSON.parse(e.target.result);
+          // Handle both structure types: direct Timetable or { exportInfo, timetableData }
+          const timetableData = jsonContent.timetableData || jsonContent;
+          
+          if (!timetableData.lessons || !Array.isArray(timetableData.lessons)) {
+            throw new Error('Invalid timetable format: missing lessons array');
+          }
+
+          this.processImportedData(timetableData);
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
+          alert('Error parsing JSON file. Please ensure it is a valid timetable export.');
+        }
+      };
+      reader.readAsText(file);
+    }
+    // Reset input so same file can be selected again if needed
+    event.target.value = ''; 
+  }
+
+  processImportedData(data: Timetable): void {
+      this.isLoading = true;
+      
+      // Update the solution logic to ensure score is calculated
+      this.timetableService.updateTimetable(data).subscribe({
+        next: (updatedTimetable) => {
+          this.timetableData = updatedTimetable;
+          this.jobId = 'imported-session'; // dummy ID to indicate valid session
+          
+          // Parse score if exists
+          if (typeof this.timetableData.score === 'string') {
+            this.score = this.parseScore(this.timetableData.score);
+          } else if (this.timetableData.score && typeof this.timetableData.score === 'object') {
+            this.score = {
+                initScore: this.timetableData.score.initScore ?? 0,
+                hardScore: this.timetableData.score.hardScore ?? 0,
+                mediumScore: this.timetableData.score.mediumScore ?? 0,
+                softScore: this.timetableData.score.softScore ?? 0,
+            };
+          } else {
+            this.score = null;
+          }
+
+          // Populate dropdowns
+          this.populateStudentGroups();
+          this.populateTeachers();
+
+          // Reset filters to show full view or clear view
+          this.studentGroupFormGroup.reset();
+          this.teacherFormGroup.reset();
+          this.filterTimetable('', '');
+          this.filterTeachers('');
+          
+          // Clear current display
+          this.displayedTimetable = [];
+          const timetableContainer = document.getElementById('timetable');
+          if (timetableContainer) timetableContainer.innerHTML = '';
+
+          this.isLoading = false;
+          this.coreService.openSnackBar('Timetable imported and updated successfully!', 'done');
+        },
+        error: (err) => {
+          console.error('Error updating imported timetable:', err);
+          this.isLoading = false;
+          this.coreService.openSnackBar('Error processing imported timetable.', 'error');
+        }
       });
   }
 

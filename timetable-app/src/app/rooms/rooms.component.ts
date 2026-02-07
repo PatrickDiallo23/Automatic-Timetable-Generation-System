@@ -21,6 +21,13 @@ export class RoomsComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   // @ViewChild(MatTable) table!: MatTable<Room>;
 
+  // Filter values
+  filterValues: any = {
+    name: '',
+    building: '',
+    capacity: null
+  };
+
   constructor(
     private roomService: RoomService,
     private dialog: MatDialog,
@@ -79,9 +86,44 @@ export class RoomsComponent implements OnInit {
   loadRooms() {
     this.roomService.getAllRooms().subscribe((rooms) => {
       this.dataSource.data = rooms;
-      console.log(rooms);
       this.dataSource.paginator = this.paginator;
+
+      this.dataSource.filterPredicate = (data: Room, filter: string) => {
+        const searchTerms = JSON.parse(filter);
+        
+        const nameMatch = !searchTerms.name || (data.name?.toLowerCase().includes(searchTerms.name.toLowerCase()));
+        const buildingMatch = !searchTerms.building || (data.building?.toLowerCase().includes(searchTerms.building.toLowerCase()));
+        const capacityMatch = !searchTerms.capacity || (data.capacity ? data.capacity >= searchTerms.capacity : false);
+
+        return Boolean(nameMatch && buildingMatch && capacityMatch);
+      };
     });
+  }
+
+  applyFilter(field: string, value: any) {
+    if (field === 'capacity') {
+        this.filterValues[field] = value ? Number(value) : null;
+    } else {
+        this.filterValues[field] = value;
+    }
+    this.dataSource.filter = JSON.stringify(this.filterValues);
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  resetFilters() {
+    this.filterValues = {
+      name: '',
+      building: '',
+      capacity: null
+    };
+    this.dataSource.filter = JSON.stringify(this.filterValues);
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 
 }

@@ -2,6 +2,51 @@
 
 <button mat-raised-button color="primary" class="StudentGroupForm" (click)="openAddEditStudentGroupForm()">Add Student Group</button>
 
+<div class="filter-container">
+    <mat-form-field class="filter-field">
+        <mat-label>Year</mat-label>
+        <mat-select [(ngModel)]="filterValues.year" (selectionChange)="applyFilter('year', $event.value)">
+            <mat-option value="">All</mat-option>
+            <mat-option value="FIRST">1st Year</mat-option>
+            <mat-option value="SECOND">2nd Year</mat-option>
+            <mat-option value="THIRD">3rd Year</mat-option>
+            <mat-option value="FOURTH">4th Year</mat-option>
+            <mat-option value="FIFTH">5th Year</mat-option>
+            <mat-option value="SIXTH">6th Year</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="filter-field">
+        <mat-label>Name</mat-label>
+        <input matInput [(ngModel)]="filterValues.name" (keyup)="applyFilter('name', filterValues.name)" placeholder="Ex. 311">
+    </mat-form-field>
+
+    <mat-form-field class="filter-field">
+        <mat-label>Group</mat-label>
+        <input matInput [(ngModel)]="filterValues.studentGroup" (keyup)="applyFilter('studentGroup', filterValues.studentGroup)" placeholder="Ex. A/B">
+    </mat-form-field>
+
+    <mat-form-field class="filter-field">
+        <mat-label>Semi-Group</mat-label>
+        <mat-select [(ngModel)]="filterValues.semiGroup" (selectionChange)="applyFilter('semiGroup', $event.value)">
+            <mat-option value="">All</mat-option>
+            <mat-option value="SEMI_GROUP1">Semi-Group 1</mat-option>
+            <mat-option value="SEMI_GROUP2">Semi-Group 2</mat-option>
+            <mat-option value="SEMI_GROUP0">Master/Other</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="filter-field">
+        <mat-label>Min. Students</mat-label>
+        <input matInput type="number" [(ngModel)]="filterValues.numberOfStudents" (keyup)="applyFilter('numberOfStudents', filterValues.numberOfStudents)" placeholder="Ex. 20">
+    </mat-form-field>
+
+    <button mat-flat-button class="reset-button" (click)="resetFilters()">
+        <mat-icon>refresh</mat-icon>
+        Reset Filters
+    </button>
+</div>
+
 <mat-table [dataSource]="dataSource" class="table">
 
     <ng-container matColumnDef="year">

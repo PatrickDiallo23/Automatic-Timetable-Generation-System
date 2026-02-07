@@ -199,6 +199,12 @@
           Export Timetable
         </button>
 
+        <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)" accept=".json">
+        <button mat-raised-button color="primary" class="action-button" (click)="triggerImport()">
+            <mat-icon>upload</mat-icon>
+            Import Custom Solution JSON
+        </button>
+
         <button mat-raised-button color="accent" class="action-button" 
                 [disabled]="!hasEditHistory()" 
                 (click)="undoLastEdit()">

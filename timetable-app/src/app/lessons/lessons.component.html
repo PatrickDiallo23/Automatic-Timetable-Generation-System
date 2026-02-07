@@ -2,6 +2,54 @@
 
 <button mat-raised-button color="primary" class="lessonForm" (click)="openAddEditLessonForm()">Add Lesson</button>
 
+<div class="filter-container">
+    <mat-form-field class="filter-field">
+        <mat-label>Subject</mat-label>
+        <input matInput [(ngModel)]="filterValues.subject" (keyup)="applyFilter('subject', filterValues.subject)" placeholder="Search Subject">
+    </mat-form-field>
+
+    <mat-form-field class="filter-field">
+        <mat-label>Teacher</mat-label>
+        <input matInput [(ngModel)]="filterValues.teacher" (keyup)="applyFilter('teacher', filterValues.teacher)" placeholder="Search Teacher">
+    </mat-form-field>
+
+    <mat-form-field class="filter-field">
+        <mat-label>Student Group</mat-label>
+        <input matInput [(ngModel)]="filterValues.studentGroup" (keyup)="applyFilter('studentGroup', filterValues.studentGroup)" placeholder="Search Group">
+    </mat-form-field>
+
+    <mat-form-field class="filter-field">
+        <mat-label>Type</mat-label>
+        <mat-select [(ngModel)]="filterValues.lessonType" (selectionChange)="applyFilter('lessonType', $event.value)">
+            <mat-option value="">All</mat-option>
+            <mat-option value="COURSE">Course</mat-option>
+            <mat-option value="LABORATORY">Laboratory</mat-option>
+            <mat-option value="SEMINAR">Seminar</mat-option>
+            <mat-option value="PROJECT">Project</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="filter-field">
+        <mat-label>Year</mat-label>
+        <mat-select [(ngModel)]="filterValues.year" (selectionChange)="applyFilter('year', $event.value)">
+            <mat-option value="">All</mat-option>
+            <mat-option value="FIRST">1st Year</mat-option>
+            <mat-option value="SECOND">2nd Year</mat-option>
+            <mat-option value="THIRD">3rd Year</mat-option>
+            <mat-option value="FOURTH">4th Year</mat-option>
+            <mat-option value="FIFTH">5th Year</mat-option>
+            <mat-option value="SIXTH">6th Year</mat-option>
+        </mat-select>
+    </mat-form-field>
+    
+    <mat-checkbox [(ngModel)]="filterValues.pinned" (change)="applyFilter('pinned', $event.checked ? true : null)">Pinned Only</mat-checkbox>
+
+    <button mat-flat-button class="reset-button" (click)="resetFilters()">
+        <mat-icon>refresh</mat-icon>
+        Reset Filters
+    </button>
+</div>
+
 <mat-table [dataSource]="dataSource" class="table">
     <ng-container matColumnDef="subject">
         <mat-header-cell *matHeaderCellDef>Subject</mat-header-cell>

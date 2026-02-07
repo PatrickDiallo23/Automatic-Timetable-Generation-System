@@ -2,6 +2,28 @@
 
 <button mat-raised-button color="primary" class="constraintForm" (click)="openAddEditConstraintForm()">Add Constraint</button>
 
+<div class="filter-container">
+    <mat-form-field class="filter-field">
+        <mat-label>Description</mat-label>
+        <input matInput [(ngModel)]="filterValues.description" (keyup)="applyFilter('description', filterValues.description)" placeholder="Search Description">
+    </mat-form-field>
+
+    <mat-form-field class="filter-field">
+        <mat-label>Weight</mat-label>
+        <mat-select [(ngModel)]="filterValues.weight" (selectionChange)="applyFilter('weight', $event.value)">
+            <mat-option value="">All</mat-option>
+            <mat-option value="HARD">Hard</mat-option>
+            <mat-option value="MEDIUM">Medium</mat-option>
+            <mat-option value="SOFT">Soft</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <button mat-flat-button class="reset-button" (click)="resetFilters()">
+        <mat-icon>refresh</mat-icon>
+        Reset Filters
+    </button>
+</div>
+
 <mat-table [dataSource]="dataSource" class="table">
     <ng-container matColumnDef="description">
         <mat-header-cell *matHeaderCellDef>Constraint Description</mat-header-cell>

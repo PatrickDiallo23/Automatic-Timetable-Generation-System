@@ -15,6 +15,15 @@ import { StudentGroup } from '../model/timetableEntities';
 export class StudentGroupComponent implements OnInit {
 
   newStudentGroup: StudentGroup = {};
+  // Filter values
+  filterValues: any = {
+    name: '',
+    year: '',
+    studentGroup: '',
+    semiGroup: '',
+    numberOfStudents: null
+  };
+
   dataSource = new MatTableDataSource<StudentGroup>([]);
   displayedColumns: string[] = [
     'year',
@@ -87,7 +96,48 @@ export class StudentGroupComponent implements OnInit {
         this.dataSource.data = studentGroups;
         console.log(studentGroups);
         this.dataSource.paginator = this.paginator;
+
+        // Custom filter predicate
+        this.dataSource.filterPredicate = (data: StudentGroup, filter: string) => {
+          const searchTerms = JSON.parse(filter);
+          
+          const nameMatch = !searchTerms.name || (data.name?.toLowerCase().includes(searchTerms.name.toLowerCase()));
+          const yearMatch = !searchTerms.year || (data.year === searchTerms.year);
+          const groupMatch = !searchTerms.studentGroup || (data.studentGroup?.toLowerCase().includes(searchTerms.studentGroup.toLowerCase()));
+          const semiGroupMatch = !searchTerms.semiGroup || (data.semiGroup === searchTerms.semiGroup);
+          const studentsMatch = !searchTerms.numberOfStudents || (data.numberOfStudents ? data.numberOfStudents >= searchTerms.numberOfStudents : false);
+
+          return Boolean(nameMatch && yearMatch && groupMatch && semiGroupMatch && studentsMatch);
+        };
       });
+  }
+
+  applyFilter(field: string, value: any) {
+    if (field === 'numberOfStudents') {
+        this.filterValues[field] = value ? Number(value) : null;
+    } else {
+        this.filterValues[field] = value;
+    }
+    this.dataSource.filter = JSON.stringify(this.filterValues);
+    
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  resetFilters() {
+    this.filterValues = {
+      name: '',
+      year: '',
+      studentGroup: '',
+      semiGroup: '',
+      numberOfStudents: null
+    };
+    this.dataSource.filter = JSON.stringify(this.filterValues);
+    
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 
   addStudent() {
