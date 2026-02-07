@@ -1,0 +1,73 @@
+name: Backend CI
+
+# Trigger only on pull requests for efficiency (Free Tier optimization)
+on:
+  pull_request:
+    branches:
+      - '**'  # Triggers on PRs to any branch
+    paths:
+      - 'timetable-app-backend/**'
+      - '.github/workflows/backend-ci.yml'
+
+# Optimize for Free Tier: limit concurrent runs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build & Test Backend
+    runs-on: ubuntu-latest
+    
+    # PostgreSQL service for integration tests
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: timetable_test
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'  # Cache Maven dependencies
+      
+      - name: Build and Test
+        working-directory: ./timetable-app-backend
+        env:
+          # Override database settings for tests
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/timetable_test
+          SPRING_DATASOURCE_USERNAME: test_user
+          SPRING_DATASOURCE_PASSWORD: test_password
+        run: |
+          chmod +x mvnw
+          ./mvnw clean install -B
+      
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-results
+          path: timetable-app-backend/target/surefire-reports/
+          retention-days: 7  # Free Tier: limit retention
+
+# Extension points:
+# - Add code coverage reporting (e.g., JaCoCo)
+# - Add static analysis (e.g., SonarCloud, SpotBugs)
+# - Add security scanning (e.g., OWASP Dependency Check)
+# - Add Docker build step
+# - Add deployment step for staging environment

@@ -1,0 +1,78 @@
+name: PR Checks
+
+# Main orchestrator workflow for pull request validation
+on:
+  pull_request:
+    branches:
+      - '**'
+
+# Optimize for Free Tier: limit concurrent runs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Check which parts of the codebase changed
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Check for changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'timetable-app-backend/**'
+            frontend:
+              - 'timetable-app/**'
+  
+  # Run backend CI only if backend files changed
+  backend-ci:
+    name: Backend CI
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true'
+    uses: ./.github/workflows/backend-ci.yml
+  
+  # Run frontend CI only if frontend files changed
+  frontend-ci:
+    name: Frontend CI
+    needs: detect-changes
+    if: needs.detect-changes.outputs.frontend == 'true'
+    uses: ./.github/workflows/frontend-ci.yml
+  
+  # Summary job - required status check
+  pr-validation:
+    name: PR Validation
+    runs-on: ubuntu-latest
+    needs: [detect-changes, backend-ci, frontend-ci]
+    if: always()
+    steps:
+      - name: Check results
+        run: |
+          echo "Backend changed: ${{ needs.detect-changes.outputs.backend }}"
+          echo "Frontend changed: ${{ needs.detect-changes.outputs.frontend }}"
+          echo "Backend CI: ${{ needs.backend-ci.result }}"
+          echo "Frontend CI: ${{ needs.frontend-ci.result }}"
+          
+          # Fail if any required job failed
+          if [[ "${{ needs.backend-ci.result }}" == "failure" ]] || [[ "${{ needs.frontend-ci.result }}" == "failure" ]]; then
+            echo "❌ One or more CI checks failed"
+            exit 1
+          fi
+          
+          echo "✅ All CI checks passed"
+
+# Extension points:
+# - Add security scanning job (e.g., Snyk, Dependabot)
+# - Add code quality gates (e.g., SonarCloud)
+# - Add performance benchmarks
+# - Add visual regression testing
+# - Add automated changelog generation
+# - Add PR labeling based on changed files

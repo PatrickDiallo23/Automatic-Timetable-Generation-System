@@ -1,0 +1,59 @@
+name: Frontend CI
+
+# Trigger only on pull requests for efficiency (Free Tier optimization)
+on:
+  pull_request:
+    branches:
+      - '**'  # Triggers on PRs to any branch
+    paths:
+      - 'timetable-app/**'
+      - '.github/workflows/frontend-ci.yml'
+
+# Optimize for Free Tier: limit concurrent runs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build & Test Frontend
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'  # Cache npm dependencies
+          cache-dependency-path: timetable-app/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: ./timetable-app
+        run: npm ci  # Clean install for reproducible builds
+      
+      - name: Run tests
+        working-directory: ./timetable-app
+        run: npm test -- --browsers=ChromeHeadless --watch=false --code-coverage
+      
+      - name: Build production
+        working-directory: ./timetable-app
+        run: npm run build -- --configuration production
+      
+      - name: Upload Coverage Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: timetable-app/coverage/
+          retention-days: 7  # Free Tier: limit retention
+
+# Extension points:
+# - Add linting step (ng lint)
+# - Add E2E tests (ng e2e)
+# - Add bundle size analysis
+# - Add accessibility testing
+# - Add Lighthouse CI for performance metrics
+# - Add deployment to preview environment (e.g., Vercel, Netlify)
