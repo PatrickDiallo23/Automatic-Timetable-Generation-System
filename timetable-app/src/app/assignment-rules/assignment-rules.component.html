@@ -1,0 +1,73 @@
+<h2>Assignment Rules</h2>
+
+<p class="page-description">
+    Create reusable rules to constrain which rooms or timeslots the solver can assign to lessons.
+    Rules can filter by criteria (e.g., building = "A") or by selecting specific items.
+</p>
+
+<button mat-raised-button color="primary" class="ruleForm" (click)="openAddForm()">Add Rule</button>
+
+<div class="filter-container">
+    <mat-form-field class="filter-field">
+        <mat-label>Name</mat-label>
+        <input matInput [(ngModel)]="filterValues.name" (keyup)="applyFilter('name', filterValues.name)" placeholder="Search Name">
+    </mat-form-field>
+
+    <mat-form-field class="filter-field">
+        <mat-label>Target</mat-label>
+        <mat-select [(ngModel)]="filterValues.targetType" (selectionChange)="applyFilter('targetType', $event.value)">
+            <mat-option value="">All</mat-option>
+            <mat-option value="ROOM">Room</mat-option>
+            <mat-option value="TIMESLOT">Timeslot</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <button mat-flat-button class="reset-button" (click)="resetFilters()">
+        <mat-icon>refresh</mat-icon>
+        Reset Filters
+    </button>
+</div>
+
+<mat-table [dataSource]="dataSource" class="table">
+    <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+        <mat-cell *matCellDef="let rule">
+            <mat-icon class="rule-type-icon" [class.room-icon]="rule.targetType === 'ROOM'" [class.timeslot-icon]="rule.targetType === 'TIMESLOT'">
+                {{ rule.targetType === 'ROOM' ? 'meeting_room' : 'schedule' }}
+            </mat-icon>
+            {{ rule.name }}
+        </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="targetType">
+        <mat-header-cell *matHeaderCellDef>Target</mat-header-cell>
+        <mat-cell *matCellDef="let rule">{{ rule.targetType }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="mode">
+        <mat-header-cell *matHeaderCellDef>Mode</mat-header-cell>
+        <mat-cell *matCellDef="let rule">{{ getRuleMode(rule) }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="details">
+        <mat-header-cell *matHeaderCellDef>Details</mat-header-cell>
+        <mat-cell *matCellDef="let rule">{{ getRuleDetails(rule) }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let rule">
+            <button mat-icon-button color="primary" (click)="openEditForm(rule)">
+                <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteRule(rule.id)">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of rules"></mat-paginator>

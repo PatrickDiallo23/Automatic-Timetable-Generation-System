@@ -1,0 +1,34 @@
+.ruleForm {
+    width: 150px!important;
+    min-width: unset!important;
+    margin-bottom: 20px;
+    margin-left: 20px;
+}
+
+h2 {
+    margin-left: 20px;
+}
+
+.page-description {
+    margin-left: 20px;
+    color: #5f6368;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+.rule-type-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.room-icon {
+    color: #1976d2;
+}
+
+.timeslot-icon {
+    color: #e65100;
+}

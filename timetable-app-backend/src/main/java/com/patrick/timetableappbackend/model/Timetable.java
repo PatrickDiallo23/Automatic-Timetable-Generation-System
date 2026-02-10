@@ -5,7 +5,6 @@ import ai.timefold.solver.core.api.domain.solution.PlanningEntityCollectionPrope
 import ai.timefold.solver.core.api.domain.solution.PlanningScore;
 import ai.timefold.solver.core.api.domain.solution.PlanningSolution;
 import ai.timefold.solver.core.api.domain.solution.ProblemFactCollectionProperty;
-import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import ai.timefold.solver.core.api.solver.SolverStatus;
 import com.patrick.timetableappbackend.solver.TimetableConstraintConfiguration;
@@ -27,7 +26,7 @@ public class Timetable {
     // @ValueRangeProvider
     private List<Timeslot> timeslots;
     @ProblemFactCollectionProperty
-    @ValueRangeProvider
+    // @ValueRangeProvider - Moved to Lesson.getPossibleRooms() for entity-specific filtering
     private List<Room> rooms;
     @PlanningEntityCollectionProperty
     private List<Lesson> lessons;

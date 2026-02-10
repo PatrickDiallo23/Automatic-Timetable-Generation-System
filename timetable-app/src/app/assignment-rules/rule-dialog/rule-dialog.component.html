@@ -1,0 +1,149 @@
+<div mat-dialog-title>
+    <h1>{{ data ? 'Edit' : 'Create' }} Assignment Rule</h1>
+</div>
+
+<form [formGroup]="ruleForm" (ngSubmit)="onSubmit()">
+    <div mat-dialog-content class="content">
+
+        <!-- Rule Name -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Rule Name</mat-label>
+            <input matInput formControlName="name" placeholder="e.g., Lab Rooms Only, Morning Slots">
+            <mat-hint>A descriptive name to identify this rule</mat-hint>
+        </mat-form-field>
+
+        <br>
+
+        <!-- Target Type -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Target Type</mat-label>
+            <mat-select formControlName="targetType" (selectionChange)="onTargetTypeChange()">
+                <mat-option value="ROOM">
+                    <mat-icon>meeting_room</mat-icon>
+                    Room
+                </mat-option>
+                <mat-option value="TIMESLOT">
+                    <mat-icon>schedule</mat-icon>
+                    Timeslot
+                </mat-option>
+            </mat-select>
+            <mat-hint>What entity this rule filters</mat-hint>
+        </mat-form-field>
+
+        <br>
+
+        <!-- Rule Mode Toggle -->
+        <div class="mode-toggle">
+            <mat-button-toggle-group [(ngModel)]="mode" [ngModelOptions]="{standalone: true}" (change)="onModeChange()">
+                <mat-button-toggle value="criteria">
+                    <mat-icon>filter_list</mat-icon>
+                    Criteria
+                </mat-button-toggle>
+                <mat-button-toggle value="specific">
+                    <mat-icon>checklist</mat-icon>
+                    Specific Items
+                </mat-button-toggle>
+            </mat-button-toggle-group>
+            <span class="mode-hint">
+                {{ mode === 'criteria' ? 'Filter by field condition (e.g., building = "A")' : 'Select specific rooms or timeslots' }}
+            </span>
+        </div>
+
+        <!-- Criteria Mode -->
+        <div *ngIf="mode === 'criteria'" class="criteria-section">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Field</mat-label>
+                <mat-select formControlName="criteriaField">
+                    <mat-option *ngFor="let field of availableFields" [value]="field">
+                        {{ field }}
+                    </mat-option>
+                </mat-select>
+                <mat-hint>Which property to compare</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Operator</mat-label>
+                <mat-select formControlName="operator">
+                    <mat-option value="EQUALS">= (equals)</mat-option>
+                    <mat-option value="NOT_EQUALS">≠ (not equals)</mat-option>
+                    <mat-option value="IN">IN (matches any in list)</mat-option>
+                    <mat-option value="NOT_IN">NOT IN (excludes list)</mat-option>
+                    <mat-option value="GREATER_THAN_OR_EQUAL">≥ (greater or equal)</mat-option>
+                    <mat-option value="LESS_THAN">< (less than)</mat-option>
+                    <mat-option value="CONTAINS">CONTAINS (substring)</mat-option>
+                </mat-select>
+                <mat-hint>How to compare the field value</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Value</mat-label>
+                <input matInput formControlName="criteriaValue" 
+                    placeholder="e.g., A, 80, MONDAY,WEDNESDAY">
+                <mat-hint>For IN/NOT_IN, separate multiple values with commas</mat-hint>
+            </mat-form-field>
+        </div>
+
+        <!-- Specific Items Mode -->
+        <div *ngIf="mode === 'specific'" class="specific-section">
+            
+            <!-- Room Selection -->
+            <div *ngIf="currentTargetType === 'ROOM'">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Select Rooms</mat-label>
+                    <mat-select formControlName="specificRoomIds" multiple>
+                        <mat-select-trigger>
+                            <span *ngIf="ruleForm.get('specificRoomIds')?.value?.length; else noRooms">
+                                {{ ruleForm.get('specificRoomIds')?.value?.length }} room(s) selected
+                            </span>
+                            <ng-template #noRooms>
+                                <span class="placeholder">Select one or more rooms</span>
+                            </ng-template>
+                        </mat-select-trigger>
+                        <mat-option *ngFor="let room of rooms" [value]="room.id">
+                            <div class="item-option">
+                                <mat-icon>meeting_room</mat-icon>
+                                {{ room.name }}
+                                <span class="item-details">| {{ room.building }} | Cap: {{ room.capacity }}</span>
+                            </div>
+                        </mat-option>
+                    </mat-select>
+                    <mat-hint>Select the specific rooms this rule allows</mat-hint>
+                </mat-form-field>
+            </div>
+
+            <!-- Timeslot Selection -->
+            <div *ngIf="currentTargetType === 'TIMESLOT'">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Select Timeslots</mat-label>
+                    <mat-select formControlName="specificTimeslotIds" multiple>
+                        <mat-select-trigger>
+                            <span *ngIf="ruleForm.get('specificTimeslotIds')?.value?.length; else noTimeslots">
+                                {{ ruleForm.get('specificTimeslotIds')?.value?.length }} timeslot(s) selected
+                            </span>
+                            <ng-template #noTimeslots>
+                                <span class="placeholder">Select one or more timeslots</span>
+                            </ng-template>
+                        </mat-select-trigger>
+                        <mat-optgroup *ngFor="let day of dayOrder" [label]="formatDay(day)">
+                            <mat-option *ngFor="let ts of getTimeslotsByDay(day)" [value]="ts.id">
+                                <div class="item-option">
+                                    <mat-icon>access_time</mat-icon>
+                                    {{ ts.startTime?.substring(0, 5) }} - {{ ts.endTime?.substring(0, 5) }}
+                                </div>
+                            </mat-option>
+                        </mat-optgroup>
+                    </mat-select>
+                    <mat-hint>Select the specific timeslots this rule allows</mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+
+    </div>
+
+    <div mat-dialog-actions class="actions">
+        <button mat-raised-button type="button" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="!ruleForm.valid">
+            {{ data ? 'Update' : 'Create' }}
+        </button>
+    </div>
+</form>

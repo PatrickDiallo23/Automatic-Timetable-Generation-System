@@ -52,6 +52,8 @@ import { ScoreAnalysisDialogComponent } from './timetable/score-analysis-dialog/
 import { BenchmarkDialogComponent } from './dashboard/benchmark-dialog/benchmark-dialog.component';
 import { EditLessonDialogComponent } from './timetable/edit-lesson-dialog/edit-lesson-dialog.component';
 import { ImpactAnalysisDialogComponent } from './timetable/impact-analysis-dialog/impact-analysis-dialog.component';
+import { AssignmentRulesComponent } from './assignment-rules/assignment-rules.component';
+import { RuleDialogComponent } from './assignment-rules/rule-dialog/rule-dialog.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -83,6 +85,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     BenchmarkDialogComponent,
     EditLessonDialogComponent,
     ImpactAnalysisDialogComponent,
+    AssignmentRulesComponent,
+    RuleDialogComponent,
   ],
   imports: [
     BrowserModule,

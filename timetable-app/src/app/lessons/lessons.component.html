@@ -81,6 +81,21 @@
         <mat-cell *matCellDef="let lesson">{{ lesson.duration }}</mat-cell>
     </ng-container>
 
+    <ng-container matColumnDef="constraints">
+        <mat-header-cell *matHeaderCellDef>Constraints</mat-header-cell>
+        <mat-cell *matCellDef="let lesson">
+            <div class="constraints-indicator" *ngIf="lesson.hasRestrictions">
+                <mat-icon class="constraints-icon" 
+                          matTooltip="This lesson has assignment constraints configured"
+                          [matTooltipPosition]="'above'">
+                    tune
+                </mat-icon>
+                <span class="constraints-badge">Active</span>
+            </div>
+            <span *ngIf="!lesson.hasRestrictions" class="no-constraints">-</span>
+        </mat-cell>
+    </ng-container>
+
     <ng-container matColumnDef="pinned">
         <mat-header-cell *matHeaderCellDef>Pinned</mat-header-cell>
         <mat-cell *matCellDef="let lesson">

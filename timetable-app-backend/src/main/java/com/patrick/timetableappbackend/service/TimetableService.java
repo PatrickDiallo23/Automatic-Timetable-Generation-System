@@ -31,9 +31,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -66,7 +68,8 @@ public class TimetableService {
         final List<Room> rooms = roomRepo.findAll();
         final List<ConstraintModel> constraintModels = constraintRepo.findAll();
         final TimetableConstraintConfiguration timetableConstraintConfiguration = new TimetableConstraintConfiguration(constraintModels);
-        final List<Lesson> lessons = lessonRepo.findAll();
+        // Use custom query that includes LEFT JOIN FETCH for restrictions
+        final List<Lesson> lessons = lessonRepo.findAllLessonsOrderedById();
 
         return new Timetable(timeslots, rooms, lessons, timetableConstraintConfiguration, problemDuration);
 
@@ -74,7 +77,12 @@ public class TimetableService {
 
     // How to integrate with Spring JPA to persist the Timetable solution
     // How to get the best solution
+    @Transactional(readOnly = true)
     public String solve(Timetable problem) {
+        // Re-hydrate lesson restrictions from database since they're @JsonIgnore
+        // and lost during deserialization from frontend
+        enrichLessonsWithRestrictions(problem.getLessons());
+        
         problem.getLessons().forEach(lesson -> lesson.setTimetable(problem));
         final ConcurrentMap<String, Timetable> timetableSolution = new ConcurrentHashMap<>();
         String jobId = UUID.randomUUID().toString();
@@ -94,6 +102,31 @@ public class TimetableService {
                 })
                 .run();
         return jobId;
+    }
+
+    /**
+     * Re-hydrates lesson restriction rules from database.
+     * Since restrictionRules are @JsonIgnore, they're lost during
+     * deserialization when the frontend submits the timetable problem.
+     * This method fetches the actual rule associations from the DB.
+     */
+    private void enrichLessonsWithRestrictions(List<Lesson> lessons) {
+        if (lessons == null || lessons.isEmpty()) {
+            return;
+        }
+        Map<Long, Lesson> lessonMap = lessonRepo.findAllLessonsOrderedById().stream()
+                .collect(Collectors.toMap(Lesson::getId, l -> l));
+        
+        for (Lesson lesson : lessons) {
+            if (lesson.getId() != null) {
+                Lesson dbLesson = lessonMap.get(lesson.getId());
+                if (dbLesson != null) {
+                    lesson.setRestrictionRules(dbLesson.getRestrictionRules());
+                    lesson.setRoomRuleCombination(dbLesson.getRoomRuleCombination());
+                    lesson.setTimeslotRuleCombination(dbLesson.getTimeslotRuleCombination());
+                }
+            }
+        }
     }
 
     public ScoreAnalysis<HardMediumSoftScore> analyze(Timetable problem, ScoreAnalysisFetchPolicy fetchPolicy) {

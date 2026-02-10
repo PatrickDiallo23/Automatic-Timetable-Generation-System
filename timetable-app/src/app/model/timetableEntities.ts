@@ -38,6 +38,54 @@ export interface Lesson {
   timeslot?: any // Timeslot or number
   room?: any; //Room or number
   pinned?: boolean;
+  /** Indicates if this lesson has any assignment restrictions */
+  hasRestrictions?: boolean;
+  /** Applied restriction rule IDs (empty = no restrictions) */
+  appliedRuleIds?: number[];
+  /** How to combine room rules: AND or OR */
+  roomRuleCombination?: RuleCombination;
+  /** How to combine timeslot rules: AND or OR */
+  timeslotRuleCombination?: RuleCombination;
+}
+
+/** How multiple rules of the same target type combine */
+export enum RuleCombination {
+  AND = 'AND',
+  OR = 'OR'
+}
+
+/** What entity type a restriction rule filters */
+export enum RuleTargetType {
+  ROOM = 'ROOM',
+  TIMESLOT = 'TIMESLOT'
+}
+
+/** Comparison operators for criteria-based rules */
+export enum RuleOperator {
+  EQUALS = 'EQUALS',
+  NOT_EQUALS = 'NOT_EQUALS',
+  IN = 'IN',
+  NOT_IN = 'NOT_IN',
+  GREATER_THAN_OR_EQUAL = 'GREATER_THAN_OR_EQUAL',
+  LESS_THAN = 'LESS_THAN',
+  CONTAINS = 'CONTAINS'
+}
+
+/**
+ * A reusable restriction rule that filters rooms or timeslots.
+ * Supports criteria-based mode (field/operator/value) and specific-items mode (IDs).
+ */
+export interface RestrictionRule {
+  id?: number;
+  name: string;
+  targetType: RuleTargetType;
+  /** Criteria mode fields (null/empty when using specific items) */
+  criteriaField?: string;
+  operator?: RuleOperator;
+  criteriaValue?: string;
+  /** Specific items mode (empty when using criteria) */
+  specificRoomIds?: number[];
+  specificTimeslotIds?: number[];
 }
 
 export enum LessonType {

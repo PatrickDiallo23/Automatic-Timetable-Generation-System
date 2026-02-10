@@ -15,6 +15,8 @@ public interface LessonRepo extends JpaRepository<Lesson,Long> {
             "LEFT JOIN FETCH l.studentGroup " +
             "LEFT JOIN FETCH l.timeslot " +
             "LEFT JOIN FETCH l.room " +
+            "LEFT JOIN FETCH l.restrictionRules lr " +
+            "LEFT JOIN FETCH lr.rule r " +
             "ORDER BY l.id")
     List<Lesson> findAllLessonsOrderedById();
 
@@ -24,6 +26,8 @@ public interface LessonRepo extends JpaRepository<Lesson,Long> {
             "LEFT JOIN FETCH l.studentGroup " +
             "LEFT JOIN FETCH l.timeslot " +
             "LEFT JOIN FETCH l.room " +
+            "LEFT JOIN FETCH l.restrictionRules lr " +
+            "LEFT JOIN FETCH lr.rule r " +
             "WHERE l.id = :id")
     Optional<Lesson> findLessonsById(Long id);
 }

@@ -112,6 +112,132 @@
             </div>
         </div>
 
+        <!-- Assignment Rules Section -->
+        <mat-divider class="pinning-divider"></mat-divider>
+        
+        <div class="restrictions-section">
+            <div class="restrictions-header">
+                <h3 class="restrictions-title">
+                    <mat-icon class="restrictions-icon">tune</mat-icon>
+                    Assignment Rules
+                </h3>
+                <span *ngIf="hasActiveRestrictions()" class="restrictions-badge">
+                    {{ (lessonForm.get('appliedRuleIds')?.value || []).length }} rule(s)
+                </span>
+            </div>
+            <p class="restrictions-description">
+                Apply reusable rules to constrain which rooms and/or timeslots the solver can assign. 
+                Rules are managed in the Assignment Rules page.
+            </p>
+
+            <div class="restrictions-options">
+                <!-- Room Rules -->
+                <div *ngIf="roomRules.length > 0" class="rule-group">
+                    <div class="rule-group-header">
+                        <mat-icon>meeting_room</mat-icon>
+                        <span>Room Rules</span>
+                        <mat-button-toggle-group 
+                            *ngIf="appliedRoomRuleCount > 1"
+                            formControlName="roomRuleCombination"
+                            class="combination-toggle">
+                            <mat-button-toggle value="AND">
+                                <mat-icon>join_inner</mat-icon> AND
+                            </mat-button-toggle>
+                            <mat-button-toggle value="OR">
+                                <mat-icon>join_full</mat-icon> OR
+                            </mat-button-toggle>
+                        </mat-button-toggle-group>
+                    </div>
+                    <mat-form-field appearance="outline" class="restriction-field">
+                        <mat-label>Select Room Rules</mat-label>
+                        <mat-select formControlName="appliedRoomRuleIds" multiple>
+                            <mat-select-trigger>
+                                <span *ngIf="appliedRoomRuleCount > 0; else noRoomRules">
+                                    {{ appliedRoomRuleCount }} room rule(s) applied
+                                </span>
+                                <ng-template #noRoomRules>
+                                    <span class="no-restrictions-hint">No room rules</span>
+                                </ng-template>
+                            </mat-select-trigger>
+                            <mat-option *ngFor="let rule of roomRules" [value]="rule.id">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <mat-icon style="font-size: 16px; width: 16px; height: 16px;">meeting_room</mat-icon>
+                                    {{ rule.name }}
+                                    <span *ngIf="rule.criteriaField" style="color: #888; font-size: 0.85em;">
+                                        ({{ rule.criteriaField }} {{ rule.operator }} {{ rule.criteriaValue }})
+                                    </span>
+                                    <span *ngIf="rule.specificRoomIds?.length" style="color: #888; font-size: 0.85em;">
+                                        ({{ rule.specificRoomIds!.length }} specific room(s))
+                                    </span>
+                                </div>
+                            </mat-option>
+                        </mat-select>
+                        <mat-hint>Filter which rooms the solver can assign to this lesson</mat-hint>
+                    </mat-form-field>
+                </div>
+
+                <!-- Timeslot Rules -->
+                <div *ngIf="timeslotRules.length > 0" class="rule-group">
+                    <div class="rule-group-header">
+                        <mat-icon>schedule</mat-icon>
+                        <span>Timeslot Rules</span>
+                        <mat-button-toggle-group 
+                            *ngIf="appliedTimeslotRuleCount > 1"
+                            formControlName="timeslotRuleCombination"
+                            class="combination-toggle">
+                            <mat-button-toggle value="AND">
+                                <mat-icon>join_inner</mat-icon> AND
+                            </mat-button-toggle>
+                            <mat-button-toggle value="OR">
+                                <mat-icon>join_full</mat-icon> OR
+                            </mat-button-toggle>
+                        </mat-button-toggle-group>
+                    </div>
+                    <mat-form-field appearance="outline" class="restriction-field">
+                        <mat-label>Select Timeslot Rules</mat-label>
+                        <mat-select formControlName="appliedTimeslotRuleIds" multiple>
+                            <mat-select-trigger>
+                                <span *ngIf="appliedTimeslotRuleCount > 0; else noTimeslotRules">
+                                    {{ appliedTimeslotRuleCount }} timeslot rule(s) applied
+                                </span>
+                                <ng-template #noTimeslotRules>
+                                    <span class="no-restrictions-hint">No timeslot rules</span>
+                                </ng-template>
+                            </mat-select-trigger>
+                            <mat-option *ngFor="let rule of timeslotRules" [value]="rule.id">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <mat-icon style="font-size: 16px; width: 16px; height: 16px;">access_time</mat-icon>
+                                    {{ rule.name }}
+                                    <span *ngIf="rule.criteriaField" style="color: #888; font-size: 0.85em;">
+                                        ({{ rule.criteriaField }} {{ rule.operator }} {{ rule.criteriaValue }})
+                                    </span>
+                                    <span *ngIf="rule.specificTimeslotIds?.length" style="color: #888; font-size: 0.85em;">
+                                        ({{ rule.specificTimeslotIds!.length }} specific timeslot(s))
+                                    </span>
+                                </div>
+                            </mat-option>
+                        </mat-select>
+                        <mat-hint>Filter when this lesson can be scheduled (duration match still enforced)</mat-hint>
+                    </mat-form-field>
+                </div>
+
+                <div *ngIf="roomRules.length === 0 && timeslotRules.length === 0" class="no-rules-message">
+                    <mat-icon>info_outline</mat-icon>
+                    <span>No assignment rules exist yet. Create rules in the <strong>Assignment Rules</strong> page first.</span>
+                </div>
+            </div>
+
+            <button 
+                *ngIf="hasActiveRestrictions()" 
+                mat-button 
+                type="button"
+                class="clear-button"
+                (click)="clearRestrictions()">
+                <mat-icon>clear_all</mat-icon>
+                Clear All Rules
+            </button>
+        </div>
+
     </div>
     <div mat-dialog-actions class="action">
         <button mat-raised-button type="button" [mat-dialog-close]="false">Cancel</button>

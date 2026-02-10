@@ -11,6 +11,7 @@ import { ConstraintsComponent } from './constraints/constraints.component';
 import { TimeslotsComponent } from './timeslots/timeslots.component';
 import { TeachersComponent } from './teachers/teachers.component';
 import { LessonsComponent } from './lessons/lessons.component';
+import { AssignmentRulesComponent } from './assignment-rules/assignment-rules.component';
 
 
 const routes: Routes = [
@@ -37,6 +38,11 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   { path: 'lessons', component: LessonsComponent, canActivate: [AuthGuard] },
+  {
+    path: 'assignment-rules',
+    component: AssignmentRulesComponent,
+    canActivate: [AuthGuard],
+  },
   {
     path: 'constraints',
     component: ConstraintsComponent,

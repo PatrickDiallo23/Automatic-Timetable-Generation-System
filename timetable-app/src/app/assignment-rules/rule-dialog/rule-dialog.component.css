@@ -1,0 +1,82 @@
+.content {
+    padding-top: 10px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.actions {
+    padding: 0px 25px 20px;
+}
+
+.actions button {
+    flex: 1;
+}
+
+/* Mode Toggle */
+.mode-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: rgba(0, 150, 136, 0.04);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 150, 136, 0.12);
+}
+
+.mode-hint {
+    color: #666;
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+/* Criteria Section */
+.criteria-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Specific Items Section */
+.specific-section {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.item-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.item-option mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: #666;
+}
+
+.item-details {
+    color: #888;
+    font-size: 0.85em;
+}
+
+.placeholder {
+    color: #9e9e9e;
+    font-style: italic;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

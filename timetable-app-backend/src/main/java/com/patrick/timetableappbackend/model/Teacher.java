@@ -36,7 +36,7 @@ public class Teacher {
     private Long id;
     private String name;
     // Preferred timeslots that belong only to this teacher
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(
             name = "teacher_preferred_timeslots",
             joinColumns = @JoinColumn(name = "teacher_id")
