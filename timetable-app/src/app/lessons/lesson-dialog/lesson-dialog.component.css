@@ -83,6 +83,50 @@
     color: #673ab7;
 }
 
+/* Improved Rules Section */
+.rules-section-container {
+    background-color: #ede7f6; /* Deep Purple 50 */
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 16px;
+    border: 1px solid rgba(103, 58, 183, 0.15);
+}
+
+.title-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rules-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 600px) {
+    .rules-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.rule-option {
+    display: flex;
+    flex-direction: column;
+    padding: 4px 0;
+    line-height: 1.3;
+}
+
+.rule-name {
+    font-weight: 500;
+    color: #333;
+}
+
+.rule-desc {
+    font-size: 0.75rem;
+    color: #666;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;

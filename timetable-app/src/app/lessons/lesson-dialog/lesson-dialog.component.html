@@ -112,6 +112,74 @@
             </div>
         </div>
 
+        <!-- Assignment Rules Section -->
+        <mat-divider class="section-divider"></mat-divider>
+
+        <div class="rules-section-container">
+            <h3 class="section-title">
+                <div class="title-content">
+                    <mat-icon class="section-icon">rule</mat-icon>
+                    Assignment Rules
+                </div>
+                <button mat-button type="button" color="primary" class="manage-rules-link" (click)="saveAndNavigateToRules()">
+                    Manage Rules <mat-icon>settings</mat-icon>
+                </button>
+            </h3>
+            <p class="section-description">Restrictions for rooms and timeslots.</p>
+
+            <div class="rules-grid">
+                <!-- Room Rules -->
+                <div class="rule-group">
+                    <div class="rule-header">
+                        <h4>Room Rules</h4>
+                        <mat-button-toggle-group formControlName="roomRuleCombination" class="combination-toggle">
+                            <mat-button-toggle value="AND">AND</mat-button-toggle>
+                            <mat-button-toggle value="OR">OR</mat-button-toggle>
+                        </mat-button-toggle-group>
+                    </div>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Select Room Rules</mat-label>
+                        <mat-select formControlName="selectedRoomRuleIds" multiple>
+                            <mat-select-trigger>
+                                {{ (lessonForm.get('selectedRoomRuleIds')?.value || []).length }} Rules Selected
+                            </mat-select-trigger>
+                            <mat-option *ngFor="let rule of roomRules" [value]="rule.id">
+                                <div class="rule-option">
+                                    <span class="rule-name">{{ rule.name }}</span>
+                                    <span class="rule-desc">{{ getRuleDescription(rule) }}</span>
+                                </div>
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <!-- Timeslot Rules -->
+                <div class="rule-group">
+                    <div class="rule-header">
+                        <h4>Timeslot Rules</h4>
+                        <mat-button-toggle-group formControlName="timeslotRuleCombination" class="combination-toggle">
+                            <mat-button-toggle value="AND">AND</mat-button-toggle>
+                            <mat-button-toggle value="OR">OR</mat-button-toggle>
+                        </mat-button-toggle-group>
+                    </div>
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Select Timeslot Rules</mat-label>
+                        <mat-select formControlName="selectedTimeslotRuleIds" multiple>
+                            <mat-select-trigger>
+                                {{ (lessonForm.get('selectedTimeslotRuleIds')?.value || []).length }} Rules Selected
+                            </mat-select-trigger>
+                            <mat-option *ngFor="let rule of timeslotRules" [value]="rule.id">
+                                <div class="rule-option">
+                                    <span class="rule-name">{{ rule.name }}</span>
+                                    <span class="rule-desc">{{ getRuleDescription(rule) }}</span>
+                                </div>
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+
     </div>
     <div mat-dialog-actions class="action">
         <button mat-raised-button type="button" [mat-dialog-close]="false">Cancel</button>

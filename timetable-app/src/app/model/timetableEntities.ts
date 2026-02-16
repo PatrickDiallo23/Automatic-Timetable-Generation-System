@@ -6,6 +6,7 @@ export interface Timetable {
   score?: HardMediumSoftScore | null;
   solverStatus?: SolverStatus | null;
   duration?: number;
+  restrictionRules?: RestrictionRule[];
 }
 
 export interface Data {
@@ -38,6 +39,54 @@ export interface Lesson {
   timeslot?: any // Timeslot or number
   room?: any; //Room or number
   pinned?: boolean;
+  restrictionRules?: RestrictionRule[];
+  roomRuleCombination?: RuleCombination;
+  timeslotRuleCombination?: RuleCombination;
+  hasRestrictions?: boolean;
+  appliedRuleIds?: number[];
+}
+
+export enum RuleTargetType {
+  ROOM = 'ROOM',
+  TIMESLOT = 'TIMESLOT',
+}
+
+export enum RuleOperator {
+  EQUALS = 'EQUALS',
+  NOT_EQUALS = 'NOT_EQUALS',
+  IN = 'IN',
+  NOT_IN = 'NOT_IN',
+  GREATER_THAN_OR_EQUAL = 'GREATER_THAN_OR_EQUAL',
+  LESS_THAN = 'LESS_THAN',
+  CONTAINS = 'CONTAINS',
+}
+
+export enum RuleCombination {
+  AND = 'AND',
+  OR = 'OR',
+}
+
+export interface RestrictionRule {
+  id?: number;
+  name: string;
+  targetType: RuleTargetType;
+  criteriaField?: string;
+  operator?: RuleOperator;
+  criteriaValue?: string;
+  specificRooms?: Room[];
+  specificTimeslots?: Timeslot[];
+}
+
+export interface ApplyRulesRequest {
+  ruleIds: number[];
+  roomRuleCombination: RuleCombination;
+  timeslotRuleCombination: RuleCombination;
+}
+
+export interface RulePreview {
+  matchedCount: number;
+  totalCount: number;
+  matchedItems: Room[] | Timeslot[];
 }
 
 export enum LessonType {

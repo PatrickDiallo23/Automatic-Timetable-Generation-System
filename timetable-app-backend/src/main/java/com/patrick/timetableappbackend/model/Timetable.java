@@ -5,7 +5,6 @@ import ai.timefold.solver.core.api.domain.solution.PlanningEntityCollectionPrope
 import ai.timefold.solver.core.api.domain.solution.PlanningScore;
 import ai.timefold.solver.core.api.domain.solution.PlanningSolution;
 import ai.timefold.solver.core.api.domain.solution.ProblemFactCollectionProperty;
-import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import ai.timefold.solver.core.api.solver.SolverStatus;
 import com.patrick.timetableappbackend.solver.TimetableConstraintConfiguration;
@@ -27,10 +26,11 @@ public class Timetable {
     // @ValueRangeProvider
     private List<Timeslot> timeslots;
     @ProblemFactCollectionProperty
-    @ValueRangeProvider
     private List<Room> rooms;
     @PlanningEntityCollectionProperty
     private List<Lesson> lessons;
+
+    private List<RestrictionRule> restrictionRules;
 
     @ConstraintConfigurationProvider
     private TimetableConstraintConfiguration timetableConstraintConfiguration;
@@ -70,6 +70,15 @@ public class Timetable {
         this.timeslots = timeslots;
         this.rooms = rooms;
         this.lessons = lessons;
+        this.timetableConstraintConfiguration = timetableConstraintConfiguration;
+        this.duration = duration;
+    }
+
+    public Timetable(List<Timeslot> timeslots, List<Room> rooms, List<Lesson> lessons, List<RestrictionRule> restrictionRules, TimetableConstraintConfiguration timetableConstraintConfiguration, Long duration) {
+        this.timeslots = timeslots;
+        this.rooms = rooms;
+        this.lessons = lessons;
+        this.restrictionRules = restrictionRules;
         this.timetableConstraintConfiguration = timetableConstraintConfiguration;
         this.duration = duration;
     }

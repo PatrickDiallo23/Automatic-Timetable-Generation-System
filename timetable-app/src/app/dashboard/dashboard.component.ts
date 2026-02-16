@@ -8,6 +8,10 @@ import { CoreService } from '../core/core.service';
 import { ExcelImportService, ExcelValidationResult } from '../core/excel-import.service';
 import { MatDialog } from '@angular/material/dialog';
 import { BenchmarkDialogComponent } from './benchmark-dialog/benchmark-dialog.component';
+import { JsonExportService } from '../core/json-export.service';
+import { ExcelExportService } from '../core/excel-export.service';
+import { Timetable } from '../model/timetableEntities';
+import { TimetableService } from '../timetable/timetable.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -27,6 +31,9 @@ export class DashboardComponent implements OnInit {
     private loginService: LoginService,
     private jsonImportService: JsonImportService,
     private excelImportService: ExcelImportService,
+    private jsonExportService: JsonExportService,
+    private excelExportService: ExcelExportService,
+    private timetableService: TimetableService,
     private coreService: CoreService,
     private dialog: MatDialog
   ) {}
@@ -209,6 +216,34 @@ export class DashboardComponent implements OnInit {
     this.isImporting = false;
     console.error(`Error processing ${fileType} file:`, error);
     this.coreService.openSnackBar(`Error reading ${fileType} file`);
+  }
+
+  exportData(format: 'json' | 'excel') {
+    if (!this.user || this.user.role !== 'ADMIN') {
+        this.coreService.openSnackBar('Export is only available for Administrators');
+        return;
+    }
+
+    this.coreService.openSnackBar(`preparing ${format.toUpperCase()} export...`);
+
+    // Fetch fresh data to ensure we have the latest state including rules
+    this.timetableService.getTimetableData().subscribe({
+        next: (data: Timetable) => {
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+            const fileName = `timetable_export_${timestamp}`;
+
+            if (format === 'json') {
+                this.jsonExportService.exportTimetable(data, fileName);
+            } else {
+                this.excelExportService.exportTimetable(data, fileName);
+            }
+            this.coreService.openSnackBar(`${format.toUpperCase()} export completed successfully`);
+        },
+        error: (err: any) => {
+            console.error('Export failed', err);
+            this.coreService.openSnackBar('Failed to fetch data for export');
+        }
+    });
   }
 
   openBenchmarkDialog() {

@@ -12,6 +12,7 @@ import ai.timefold.solver.core.api.solver.SolverStatus;
 import com.patrick.timetableappbackend.exception.TimetableSolverException;
 import com.patrick.timetableappbackend.model.ConstraintModel;
 import com.patrick.timetableappbackend.model.Lesson;
+import com.patrick.timetableappbackend.model.RestrictionRule;
 import com.patrick.timetableappbackend.model.Room;
 import com.patrick.timetableappbackend.model.Timeslot;
 import com.patrick.timetableappbackend.model.Timetable;
@@ -19,6 +20,7 @@ import com.patrick.timetableappbackend.repository.ConstraintRepo;
 import com.patrick.timetableappbackend.repository.LessonRepo;
 import com.patrick.timetableappbackend.repository.RoomRepo;
 import com.patrick.timetableappbackend.repository.TimeslotRepo;
+import com.patrick.timetableappbackend.repository.RestrictionRuleRepository;
 import com.patrick.timetableappbackend.solver.TimetableConstraintConfiguration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +47,7 @@ public class TimetableService {
     private final TimeslotRepo timeslotRepo;
     private final LessonRepo lessonRepo;
     private final ConstraintRepo constraintRepo;
+    private final RestrictionRuleRepository restrictionRuleRepository;
     private final SolverManager<Timetable, String> solverManager;
     private final SolutionManager<Timetable, HardMediumSoftScore> solutionManager;
     @Value("${timefold.solver.termination.spent-limit}")
@@ -66,9 +69,10 @@ public class TimetableService {
         final List<Room> rooms = roomRepo.findAll();
         final List<ConstraintModel> constraintModels = constraintRepo.findAll();
         final TimetableConstraintConfiguration timetableConstraintConfiguration = new TimetableConstraintConfiguration(constraintModels);
-        final List<Lesson> lessons = lessonRepo.findAll();
+        final List<Lesson> lessons = lessonRepo.findAllWithRestrictionRules();
+        final List<RestrictionRule> restrictionRules = restrictionRuleRepository.findAll();
 
-        return new Timetable(timeslots, rooms, lessons, timetableConstraintConfiguration, problemDuration);
+        return new Timetable(timeslots, rooms, lessons, restrictionRules, timetableConstraintConfiguration, problemDuration);
 
     }
 
@@ -76,7 +80,6 @@ public class TimetableService {
     // How to get the best solution
     public String solve(Timetable problem) {
         problem.getLessons().forEach(lesson -> lesson.setTimetable(problem));
-        final ConcurrentMap<String, Timetable> timetableSolution = new ConcurrentHashMap<>();
         String jobId = UUID.randomUUID().toString();
         jobIdToJob.put(jobId, Job.ofTimetable(problem));
         solverManager.solveBuilder()

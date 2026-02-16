@@ -7,18 +7,24 @@ import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.patrick.timetableappbackend.utils.LessonStrengthComparator;
 import com.patrick.timetableappbackend.utils.RoomStrengthComparator;
+import com.patrick.timetableappbackend.utils.RuleEvaluator;
 import com.patrick.timetableappbackend.utils.TimeslotStrengthComparator;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
@@ -31,8 +37,10 @@ import org.hibernate.Hibernate;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @PlanningEntity(difficultyComparatorClass = LessonStrengthComparator.class)
 @Getter
@@ -71,6 +79,24 @@ public class Lesson {
     @PlanningPin
     @Builder.Default
     private boolean pinned = false;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "lesson_restriction_rules",
+            joinColumns = @JoinColumn(name = "lesson_id"),
+            inverseJoinColumns = @JoinColumn(name = "rule_id")
+    )
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @Builder.Default
+    private Set<RestrictionRule> restrictionRules = new HashSet<>();
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private RuleCombination roomRuleCombination = RuleCombination.AND;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private RuleCombination timeslotRuleCombination = RuleCombination.AND;
 
     @JsonIdentityReference
     @ManyToOne() // cascade = CascadeType.MERGE
@@ -183,15 +209,53 @@ public class Lesson {
     }
 
     @ValueRangeProvider
+    @JsonIgnore
+    public List<Room> getPossibleRooms() {
+        if (this.timetable == null || this.timetable.getRooms() == null) {
+            return new ArrayList<>(List.of());
+        }
+        List<Room> allRooms = this.timetable.getRooms();
+        if (restrictionRules == null || restrictionRules.isEmpty()) {
+            return allRooms;
+        }
+        return RuleEvaluator.filterRooms(allRooms, restrictionRules, roomRuleCombination);
+    }
+
+    @ValueRangeProvider
+    @JsonIgnore
     public List<Timeslot> getPossibleTimeslots() {
         if (this.timetable == null || this.timetable.getTimeslots() == null) {
             return new ArrayList<>(List.of());
         }
-        return this.timetable.getTimeslots().stream().filter(this::matchesTimeslot).toList();
+        // Always apply mandatory duration matching first
+        List<Timeslot> durationMatched = this.timetable.getTimeslots().stream()
+                .filter(this::matchesTimeslot)
+                .toList();
+
+        // Then apply timeslot restriction rules if any
+        if (restrictionRules == null || restrictionRules.isEmpty()) {
+            return durationMatched;
+        }
+        return RuleEvaluator.filterTimeslots(durationMatched, restrictionRules, timeslotRuleCombination);
     }
 
     private boolean matchesTimeslot(Timeslot timeslot) {
         var timeslotDuration = Duration.between(timeslot.getStartTime(), timeslot.getEndTime());
         return (timeslotDuration.abs().toHours() == duration);
+    }
+
+    @JsonProperty("hasRestrictions")
+    public boolean hasRestrictions() {
+        return restrictionRules != null && !restrictionRules.isEmpty();
+    }
+
+    @JsonProperty("appliedRuleIds")
+    public Set<Long> getAppliedRuleIds() {
+        if (restrictionRules == null) {
+            return Set.of();
+        }
+        return restrictionRules.stream()
+                .map(RestrictionRule::getId)
+                .collect(java.util.stream.Collectors.toSet());
     }
 }

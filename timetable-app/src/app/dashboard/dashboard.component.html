@@ -39,6 +39,22 @@
                     Importing...
                 </span>
       </button>
+
+      <button mat-raised-button color="primary" class="export-action" [matMenuTriggerFor]="exportMenu" aria-label="Export Timetable Data">
+        <mat-icon>download</mat-icon>
+        <span>Export Data</span>
+      </button>
+      <mat-menu #exportMenu="matMenu">
+        <button mat-menu-item (click)="exportData('excel')">
+          <mat-icon>description</mat-icon>
+          <span>Export as Excel</span>
+        </button>
+        <button mat-menu-item (click)="exportData('json')">
+          <mat-icon>code</mat-icon>
+          <span>Export as JSON</span>
+        </button>
+      </mat-menu>
+
       <input #fileInput type="file" accept=".json,.xlsx,.xls" style="display: none;" (change)="onFileSelected($event)">
       <button mat-raised-button color="warn" class="benchmark-action" (click)="openBenchmarkDialog()">
         <mat-icon>analytics</mat-icon>

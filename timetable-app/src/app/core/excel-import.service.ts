@@ -13,6 +13,9 @@ import {
   Timeslot,
   Timetable,
   Year,
+  RestrictionRule,
+  RuleTargetType,
+  RuleOperator,
 } from '../model/timetableEntities';
 
 export interface ExcelValidationResult {
@@ -164,6 +167,7 @@ export class ExcelImportService {
         timeslots,
         rooms
       );
+      const restrictionRules = this.extractRestrictionRules(workbook, errors, rooms, timeslots);
       const config = this.extractConfiguration(workbook, warnings);
 
       if (errors.length > 0) {
@@ -175,6 +179,7 @@ export class ExcelImportService {
         timeslots,
         rooms,
         lessons,
+        restrictionRules,
         duration: config.duration || 60, // Default duration
         timetableConstraintConfiguration: config.constraints || {},
         score: null,
@@ -561,6 +566,95 @@ export class ExcelImportService {
     });
 
     return lessons;
+  }
+
+  private extractRestrictionRules(
+    workbook: XLSX.WorkBook,
+    errors: string[],
+    rooms: Room[],
+    timeslots: Timeslot[]
+  ): RestrictionRule[] {
+    const sheetName = 'RestrictionRules';
+    if (!workbook.Sheets[sheetName]) {
+      // Optional sheet for now
+      return [];
+    }
+
+    const worksheet = workbook.Sheets[sheetName];
+    const data = XLSX.utils.sheet_to_json(worksheet);
+    const rules: RestrictionRule[] = [];
+
+    data.forEach((row: any, index: number) => {
+      try {
+        if (!this.hasValue(row.Name) || !this.hasValue(row.TargetType) || !this.hasValue(row.Mode)) {
+          errors.push(
+            `RestrictionRules sheet row ${index + 2}: Missing required fields (Name, TargetType, Mode)`
+          );
+          return;
+        }
+
+        const targetType = String(row.TargetType).toUpperCase() as RuleTargetType;
+        if (!Object.values(RuleTargetType).includes(targetType)) {
+          errors.push(`RestrictionRules sheet row ${index + 2}: Invalid TargetType '${row.TargetType}'`);
+          return;
+        }
+
+        const rule: RestrictionRule = {
+          name: row.Name,
+          targetType: targetType
+        };
+
+        const mode = String(row.Mode).toUpperCase();
+        if (mode === 'CRITERIA') {
+           if (!this.hasValue(row.Field) || !this.hasValue(row.Operator)) {
+             errors.push(`RestrictionRules sheet row ${index + 2}: Mode CRITERIA requires Field and Operator`);
+             return;
+           }
+           rule.criteriaField = row.Field;
+           rule.operator = String(row.Operator).toUpperCase() as RuleOperator;
+           if (this.hasValue(row.Value)) {
+             rule.criteriaValue = String(row.Value);
+           }
+        } else if (mode === 'SPECIFIC') {
+           if (!this.hasValue(row.SpecificItems)) {
+             errors.push(`RestrictionRules sheet row ${index + 2}: Mode SPECIFIC requires SpecificItems`);
+             return;
+           }
+           const items = String(row.SpecificItems).split(',').map(s => s.trim());
+           if (targetType === RuleTargetType.ROOM) {
+             rule.specificRooms = items.map(itemName => {
+               const room = rooms.find(r => r.name === itemName);
+               if (!room) {
+                  errors.push(`RestrictionRules sheet row ${index + 2}: Room '${itemName}' not found`);
+               }
+               return room!;
+             }).filter(r => !!r);
+           } else if (targetType === RuleTargetType.TIMESLOT) {
+             // Timeslot format example: "MONDAY 08:00-10:00"
+             rule.specificTimeslots = items.map(itemStr => {
+               // Try to match by parsing
+               // Or if exact match with export format
+               // Export format: `${ts.dayOfWeek} ${ts.startTime}-${ts.endTime}`
+               const ts = timeslots.find(t => `${t.dayOfWeek} ${t.startTime}-${t.endTime}` === itemStr);
+               if (!ts) {
+                  errors.push(`RestrictionRules sheet row ${index + 2}: Timeslot '${itemStr}' not found`);
+               }
+               return ts!;
+             }).filter(t => !!t);
+           }
+        } else {
+           errors.push(`RestrictionRules sheet row ${index + 2}: Invalid Mode '${row.Mode}'`);
+           return;
+        }
+
+        rules.push(rule);
+
+      } catch (error) {
+        errors.push(`RestrictionRules sheet row ${index + 2}: ${(error as Error).message}`);
+      }
+    });
+
+    return rules;
   }
 
   private extractConfiguration(

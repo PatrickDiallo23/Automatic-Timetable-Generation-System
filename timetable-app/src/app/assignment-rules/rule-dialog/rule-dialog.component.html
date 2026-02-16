@@ -1,0 +1,126 @@
+<div mat-dialog-title>
+    <h1>{{ data ? 'Edit' : 'Create' }} Assignment Rule</h1>
+</div>
+
+<form [formGroup]="ruleForm" (ngSubmit)="onSubmit()">
+    <div mat-dialog-content class="content">
+
+        <mat-form-field appearance="outline">
+            <mat-label>Descriptive Rule Name</mat-label>
+            <input matInput type="text" placeholder="e.g. Building A Only, Morning Slots" formControlName="name">
+        </mat-form-field>
+
+        <br>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Applies to</mat-label>
+            <mat-select formControlName="targetType">
+                <mat-option [value]="'ROOM'">
+                    <mat-icon>meeting_room</mat-icon> Rooms
+                </mat-option>
+                <mat-option [value]="'TIMESLOT'">
+                    <mat-icon>schedule</mat-icon> Timeslots
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <br>
+
+        <!-- Mode Selection -->
+        <mat-divider class="section-divider"></mat-divider>
+
+        <div class="mode-section">
+            <h3 class="section-title">
+                <mat-icon class="section-icon">filter_list</mat-icon>
+                Rule Definition
+            </h3>
+            <p class="section-description">Choose how to define which {{ isRoomTarget ? 'rooms' : 'timeslots' }} are allowed.</p>
+
+            <mat-button-toggle-group formControlName="mode" class="mode-toggle">
+                <mat-button-toggle value="criteria">
+                    <mat-icon>tune</mat-icon>
+                    Filter by criteria
+                </mat-button-toggle>
+                <mat-button-toggle value="specific">
+                    <mat-icon>checklist</mat-icon>
+                    Pick specific {{ isRoomTarget ? 'rooms' : 'timeslots' }}
+                </mat-button-toggle>
+            </mat-button-toggle-group>
+        </div>
+
+        <!-- Criteria Mode -->
+        <div *ngIf="isCriteriaMode" class="criteria-section">
+            <div class="criteria-row">
+                <mat-form-field appearance="outline" class="criteria-field">
+                    <mat-label>Field</mat-label>
+                    <mat-select formControlName="criteriaField">
+                        <mat-option *ngFor="let field of currentCriteriaFields" [value]="field.value">
+                            {{ field.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="criteria-operator">
+                    <mat-label>Condition</mat-label>
+                    <mat-select formControlName="operator">
+                        <mat-option *ngFor="let op of operators" [value]="op">
+                            {{ operatorLabels[op] }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="criteria-value">
+                    <mat-label>Value</mat-label>
+                    <input matInput type="text" formControlName="criteriaValue" placeholder="Enter value">
+                    <mat-hint *ngIf="getCriteriaHint()">{{ getCriteriaHint() }}</mat-hint>
+                </mat-form-field>
+            </div>
+
+            <div class="criteria-preview" *ngIf="ruleForm.get('criteriaField')?.value && ruleForm.get('operator')?.value">
+                <mat-icon class="preview-icon">info</mat-icon>
+                <span>
+                    This rule will match {{ isRoomTarget ? 'rooms' : 'timeslots' }} where
+                    <strong>{{ ruleForm.get('criteriaField')?.value }}</strong>
+                    {{ operatorLabels[ruleForm.get('operator')?.value] }}
+                    <strong>"{{ ruleForm.get('criteriaValue')?.value }}"</strong>
+                </span>
+            </div>
+        </div>
+
+        <!-- Specific Items Mode -->
+        <div *ngIf="!isCriteriaMode" class="specific-section">
+            <!-- Room Selection -->
+            <div *ngIf="isRoomTarget">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Select Rooms</mat-label>
+                    <mat-select formControlName="specificRoomIds" multiple>
+                        <mat-option *ngFor="let room of rooms" [value]="room.id">
+                            {{ room.name }} | {{ room.building }} | Cap: {{ room.capacity }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-hint>Select one or more rooms that lessons can be assigned to</mat-hint>
+                </mat-form-field>
+            </div>
+
+            <!-- Timeslot Selection -->
+            <div *ngIf="isTimeslotTarget">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Select Timeslots</mat-label>
+                    <mat-select formControlName="specificTimeslotIds" multiple>
+                        <mat-option *ngFor="let ts of timeslots" [value]="ts.id">
+                            {{ formatTimeslot(ts) }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-hint>Select one or more timeslots that lessons can be assigned to</mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+
+    </div>
+    <div mat-dialog-actions class="action">
+        <button mat-raised-button type="button" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="ruleForm.invalid">
+            {{ data ? 'Update' : 'Create' }}
+        </button>
+    </div>
+</form>

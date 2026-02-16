@@ -1,0 +1,70 @@
+<h2>Assignment Rules</h2>
+
+<button mat-raised-button color="primary" class="add-button" (click)="openAddRuleForm()">Add Rule</button>
+
+<div class="filter-container">
+    <mat-form-field class="filter-field">
+        <mat-label>Name</mat-label>
+        <input matInput [(ngModel)]="filterValues.name" (keyup)="applyFilter('name', filterValues.name)" placeholder="Search Name">
+    </mat-form-field>
+
+    <mat-form-field class="filter-field">
+        <mat-label>Target Type</mat-label>
+        <mat-select [(ngModel)]="filterValues.targetType" (selectionChange)="applyFilter('targetType', filterValues.targetType)">
+            <mat-option value="">All</mat-option>
+            <mat-option value="ROOM">Room</mat-option>
+            <mat-option value="TIMESLOT">Timeslot</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <button mat-flat-button class="reset-button" (click)="resetFilters()">
+        <mat-icon>refresh</mat-icon>
+        Reset Filters
+    </button>
+</div>
+
+<mat-table [dataSource]="dataSource" class="table">
+    <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef>Rule Name</mat-header-cell>
+        <mat-cell *matCellDef="let rule">{{ rule.name }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="targetType">
+        <mat-header-cell *matHeaderCellDef class="centered-column">Applies To</mat-header-cell>
+        <mat-cell *matCellDef="let rule" class="centered-column">
+            <mat-chip-listbox>
+                <mat-chip [color]="rule.targetType === 'ROOM' ? 'primary' : 'accent'" selected>
+                    <mat-icon>{{ rule.targetType === 'ROOM' ? 'meeting_room' : 'schedule' }}</mat-icon>
+                    {{ rule.targetType === 'ROOM' ? 'Room' : 'Timeslot' }}
+                </mat-chip>
+            </mat-chip-listbox>
+        </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="definition">
+        <mat-header-cell *matHeaderCellDef>Definition</mat-header-cell>
+        <mat-cell *matCellDef="let rule" class="definition-cell">
+            <div class="definition-content">
+                <mat-icon class="def-icon">{{ getIcon(rule) }}</mat-icon>
+                <span>{{ getRuleDefinition(rule) }}</span>
+            </div>
+        </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let row">
+            <button mat-icon-button color="primary" (click)="openEditForm(row)">
+                <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteRule(row.id)">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of rules"></mat-paginator>

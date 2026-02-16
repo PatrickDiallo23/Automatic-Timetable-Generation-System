@@ -5,6 +5,9 @@ import {
   Timetable,
   LessonType,
   Year,
+  RestrictionRule,
+  RuleTargetType,
+  RuleOperator,
 } from '../model/timetableEntities';
 
 export interface ValidationResult {
@@ -197,6 +200,19 @@ export class JsonImportService {
       }
     }
 
+    // Validate restriction rules
+    if (data.restrictionRules) {
+      if (!Array.isArray(data.restrictionRules)) {
+        errors.push('restrictionRules must be an array');
+      } else {
+        data.restrictionRules.forEach((rule: any, index: number) => {
+          if (!this.isValidRestrictionRule(rule)) {
+            errors.push(`Invalid restriction rule at index ${index}`);
+          }
+        });
+      }
+    }
+
     // Validate duration
     if (
       data.duration !== undefined &&
@@ -260,5 +276,30 @@ export class JsonImportService {
       typeof studentGroup.numberOfStudents === 'number' &&
       studentGroup.numberOfStudents > 0
     );
+  }
+
+  private isValidRestrictionRule(rule: any): boolean {
+    if (
+      typeof rule !== 'object' ||
+      typeof rule.name !== 'string' ||
+      !Object.values(RuleTargetType).includes(rule.targetType)
+    ) {
+      return false;
+    }
+
+    // Validate based on mode (though mode isn't explicitly in the interface, we check fields)
+    if (rule.specificRooms !== undefined && !Array.isArray(rule.specificRooms)) {
+      return false;
+    }
+    if (rule.specificTimeslots !== undefined && !Array.isArray(rule.specificTimeslots)) {
+      return false;
+    }
+    
+    // Check operator if it exists
+    if (rule.operator !== undefined && !Object.values(RuleOperator).includes(rule.operator)) {
+      return false;
+    }
+
+    return true;
   }
 }

@@ -14,6 +14,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTableModule } from '@angular/material/table';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatMenuModule } from '@angular/material/menu';
 import { FormsModule } from '@angular/forms';
 import { TimetableComponent } from './timetable/timetable.component';
 import { MatInputModule } from '@angular/material/input';
@@ -57,6 +58,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 
+import { RestrictionRuleService } from './assignment-rules/restriction-rule.service';
+import { AssignmentRulesComponent } from './assignment-rules/assignment-rules.component';
+import { RuleDialogComponent } from './assignment-rules/rule-dialog/rule-dialog.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -83,6 +88,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     BenchmarkDialogComponent,
     EditLessonDialogComponent,
     ImpactAnalysisDialogComponent,
+    AssignmentRulesComponent,
+    RuleDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -102,6 +109,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     ReactiveFormsModule,
     MatToolbarModule,
     MatIconModule,
+    MatMenuModule,
     MatDialogModule,
     MatSortModule,
     MatSelectModule,

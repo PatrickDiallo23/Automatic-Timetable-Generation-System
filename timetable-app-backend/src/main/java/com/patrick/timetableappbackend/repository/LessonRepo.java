@@ -26,4 +26,19 @@ public interface LessonRepo extends JpaRepository<Lesson,Long> {
             "LEFT JOIN FETCH l.room " +
             "WHERE l.id = :id")
     Optional<Lesson> findLessonsById(Long id);
+
+    @Query("SELECT DISTINCT l FROM Lesson l " +
+            "LEFT JOIN FETCH l.teacher t " +
+            "LEFT JOIN FETCH t.preferredTimeslots " +
+            "LEFT JOIN FETCH l.studentGroup " +
+            "LEFT JOIN FETCH l.timeslot " +
+            "LEFT JOIN FETCH l.room " +
+            "LEFT JOIN FETCH l.restrictionRules " +
+            "ORDER BY l.id")
+    List<Lesson> findAllWithRestrictionRules();
+
+    @Query("SELECT l FROM Lesson l " +
+            "LEFT JOIN FETCH l.restrictionRules " +
+            "WHERE l.id = :id")
+    Lesson findWithRestrictionRulesById(Long id);
 }

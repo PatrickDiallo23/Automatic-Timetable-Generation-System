@@ -85,9 +85,22 @@
         <mat-header-cell *matHeaderCellDef>Pinned</mat-header-cell>
         <mat-cell *matCellDef="let lesson">
             <div class="pinned-indicator" *ngIf="lesson.pinned">
-                <mat-icon class="pinned-icon" matTooltip="This lesson is pinned to a specific timeslot/room">push_pin</mat-icon>
+                <mat-icon class="pinned-icon" matTooltip="Pinned to Timeslot/Room">push_pin</mat-icon>
             </div>
             <span *ngIf="!lesson.pinned" class="not-pinned">-</span>
+        </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="restrictions">
+        <mat-header-cell *matHeaderCellDef>Rules</mat-header-cell>
+        <mat-cell *matCellDef="let lesson">
+            <div class="restriction-indicator" *ngIf="lesson.restrictionRules && lesson.restrictionRules.length > 0">
+                <mat-icon class="restriction-icon" 
+                    [matTooltip]="lesson.restrictionRules.length + ' rules assigned'">
+                    gavel
+                </mat-icon>
+            </div>
+            <span *ngIf="!lesson.restrictionRules || lesson.restrictionRules.length === 0" class="not-pinned">-</span>
         </mat-cell>
     </ng-container>
 
