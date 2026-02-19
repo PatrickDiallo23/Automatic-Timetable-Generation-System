@@ -1,0 +1,256 @@
+.dialog-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: #3949ab;
+  margin: 0;
+  padding: 20px 24px 8px;
+}
+
+.title-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  color: #5c6bc0;
+}
+
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 480px;
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 8px 0 0;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.field-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: #7986cb;
+  margin-right: 4px;
+}
+
+.option-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  margin-right: 8px;
+  color: #5c6bc0;
+}
+
+/* ── Example Callout ─────────────────────────────────── */
+
+.example-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%);
+  border: 1px solid #ffe0b2;
+  border-left: 4px solid #ffb74d;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #e65100;
+  margin: 4px 0 8px;
+  animation: fadeSlide 0.25s ease-out;
+}
+
+.example-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: #f57c00;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ── Help Text ───────────────────────────────────────── */
+
+.help-text {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #3949ab;
+  background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin: 4px 0 8px;
+  border-left: 4px solid #5c6bc0;
+  animation: fadeSlide 0.25s ease-out;
+}
+
+.help-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: #3949ab;
+  flex-shrink: 0;
+}
+
+/* ── Preview Section ─────────────────────────────────── */
+
+.preview-section {
+  background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%);
+  border: 1px solid #ce93d8;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 8px 0;
+  animation: fadeSlide 0.3s ease-out;
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.preview-header-icon {
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+  color: #7b1fa2;
+}
+
+.preview-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: #4a148c;
+}
+
+.preview-empty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #9e9e9e;
+  font-size: 13px;
+  font-style: italic;
+  padding: 8px 0;
+}
+
+.preview-empty-icon {
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+  color: #bdbdbd;
+}
+
+.preview-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.preview-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 1px solid #e1bee7;
+  border-radius: 20px;
+  padding: 6px 14px 6px 10px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 4px rgba(123, 31, 162, 0.1);
+}
+
+.preview-chip:hover {
+  border-color: #ab47bc;
+  box-shadow: 0 2px 8px rgba(123, 31, 162, 0.2);
+  transform: translateY(-1px);
+}
+
+.preview-chip.hidden-chip {
+  display: none;
+}
+
+.chip-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #7b1fa2;
+}
+
+.chip-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.chip-label {
+  font-weight: 600;
+  font-size: 13px;
+  color: #4a148c;
+  line-height: 1.2;
+}
+
+.chip-detail {
+  font-size: 11px;
+  color: #7e57c2;
+  line-height: 1.2;
+}
+
+.preview-overflow {
+  display: flex;
+  align-items: center;
+  color: #7b1fa2;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 6px 12px;
+  background: rgba(123, 31, 162, 0.08);
+  border-radius: 20px;
+}
+
+/* ── Active Toggle ───────────────────────────────────── */
+
+.active-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 8px 0;
+  padding: 12px 16px;
+  background: #fafafa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.active-hint {
+  font-size: 12px;
+  color: #9e9e9e;
+  margin-left: 48px;
+}
+
+/* ── Dialog Actions ──────────────────────────────────── */
+
+.dialog-actions {
+  padding: 12px 24px 16px;
+  gap: 8px;
+}
+
+.dialog-actions button mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  margin-right: 4px;
+}
+
+/* ── Animation ───────────────────────────────────────── */
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

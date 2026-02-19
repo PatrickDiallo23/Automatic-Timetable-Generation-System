@@ -112,6 +112,36 @@
             </div>
         </div>
 
+        <!-- Restriction Rules Section -->
+        <mat-divider class="pinning-divider"></mat-divider>
+
+        <div class="pinning-section">
+            <h3 class="pinning-title">
+                <mat-icon class="pinning-icon">gavel</mat-icon>
+                Restriction Rules
+            </h3>
+            <p class="pinning-description">Apply rules to restrict which rooms or timeslots the solver can assign to this lesson.</p>
+
+            <mat-form-field appearance="outline" class="pinning-field">
+                <mat-label>Applied Rules</mat-label>
+                <mat-select formControlName="appliedRuleIds" multiple>
+                    <mat-option *ngFor="let rule of rules" [value]="rule.id" [disabled]="!rule.active">
+                        <mat-icon style="font-size: 16px; margin-right: 4px;">
+                            {{ rule.targetType === 'ROOM' ? 'meeting_room' : 'access_time' }}
+                        </mat-icon>
+                        {{ rule.name }}
+                        <span *ngIf="!rule.active" style="color: #999; font-style: italic;"> (inactive)</span>
+                    </mat-option>
+                </mat-select>
+                <mat-hint>Select restriction rules to apply during solving</mat-hint>
+            </mat-form-field>
+
+            <a mat-button type="button" routerLink="/rules" [mat-dialog-close]="false" class="manage-rules-link">
+                <mat-icon>settings</mat-icon>
+                Manage Rules
+            </a>
+        </div>
+
     </div>
     <div mat-dialog-actions class="action">
         <button mat-raised-button type="button" [mat-dialog-close]="false">Cancel</button>

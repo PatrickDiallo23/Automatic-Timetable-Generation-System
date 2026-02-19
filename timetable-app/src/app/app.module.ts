@@ -55,6 +55,8 @@ import { ImpactAnalysisDialogComponent } from './timetable/impact-analysis-dialo
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { RestrictionRulesComponent } from './restriction-rules/restriction-rules.component';
+import { RestrictionRuleDialogComponent } from './restriction-rules/restriction-rule-dialog/restriction-rule-dialog.component';
 
 
 @NgModule({
@@ -83,6 +85,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     BenchmarkDialogComponent,
     EditLessonDialogComponent,
     ImpactAnalysisDialogComponent,
+    RestrictionRulesComponent,
+    RestrictionRuleDialogComponent,
   ],
   imports: [
     BrowserModule,

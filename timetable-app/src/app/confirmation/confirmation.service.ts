@@ -34,5 +34,9 @@ export class ConfirmationService {
   getStudentGroupCount(): Observable<number> {
     return this.http.get<number>(`${this.apiUrl}/studentGroups/count`);
   }
+
+  getRestrictionRuleCount(): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/restriction-rules/count`);
+  }
   
 }

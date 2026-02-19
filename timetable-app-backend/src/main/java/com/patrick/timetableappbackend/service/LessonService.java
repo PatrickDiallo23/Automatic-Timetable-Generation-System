@@ -62,6 +62,10 @@ public class LessonService {
                     existingLesson.setDuration(updatedLesson.getDuration());
                     existingLesson.setPinned(updatedLesson.isPinned());
                     
+                    if (updatedLesson.getAppliedRuleIds() != null) {
+                        existingLesson.setAppliedRuleIds(updatedLesson.getAppliedRuleIds());
+                    }
+                    
                     // Update timeslot and room if provided (for pinning)
                     if (updatedLesson.getTimeslot() != null) {
                         existingLesson.setTimeslot(timeslotRepo.findById(updatedLesson.getTimeslot().getId())

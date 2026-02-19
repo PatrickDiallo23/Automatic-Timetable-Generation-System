@@ -91,6 +91,17 @@
         </mat-cell>
     </ng-container>
 
+    <ng-container matColumnDef="rules">
+        <mat-header-cell *matHeaderCellDef>Rules</mat-header-cell>
+        <mat-cell *matCellDef="let lesson">
+            <div class="rules-indicator" *ngIf="lesson.appliedRuleIds?.length > 0">
+                <mat-icon class="rules-icon" matTooltip="Has restriction rules applied">gavel</mat-icon>
+                <span class="rules-count">{{ lesson.appliedRuleIds.length }}</span>
+            </div>
+            <span *ngIf="!lesson.appliedRuleIds?.length" class="not-pinned">-</span>
+        </mat-cell>
+    </ng-container>
+
     <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef></mat-header-cell>
         <mat-cell *matCellDef="let row">
@@ -105,7 +116,9 @@
 
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" [class.pinned-row]="row.pinned"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"
+        [class.pinned-row]="row.pinned"
+        [class.has-rules-row]="row.appliedRuleIds?.length > 0"></mat-row>
 </mat-table>
 
 <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of lessons"></mat-paginator>

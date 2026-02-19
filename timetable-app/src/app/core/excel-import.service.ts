@@ -13,6 +13,10 @@ import {
   Timeslot,
   Timetable,
   Year,
+  RestrictionRule,
+  RuleTargetType,
+  RuleCriteriaField,
+  RuleOperator,
 } from '../model/timetableEntities';
 
 export interface ExcelValidationResult {
@@ -165,6 +169,7 @@ export class ExcelImportService {
         rooms
       );
       const config = this.extractConfiguration(workbook, warnings);
+      const restrictionRules = this.extractRestrictionRules(workbook, errors);
 
       if (errors.length > 0) {
         return { isValid: false, errors, warnings };
@@ -177,6 +182,7 @@ export class ExcelImportService {
         lessons,
         duration: config.duration || 60, // Default duration
         timetableConstraintConfiguration: config.constraints || {},
+        restrictionRules,
         score: null,
         solverStatus: null
       };
@@ -191,6 +197,82 @@ export class ExcelImportService {
       errors.push('Error processing Excel data: ' + (error as Error).message);
       return { isValid: false, errors, warnings };
     }
+  }
+
+  private extractRestrictionRules(
+    workbook: XLSX.WorkBook,
+    errors: string[]
+  ): RestrictionRule[] {
+    const sheetName = 'RestrictionRules';
+    // Optional sheet, return empty array if missing
+    if (!workbook.Sheets[sheetName]) {
+      return [];
+    }
+
+    const worksheet = workbook.Sheets[sheetName];
+    const data = XLSX.utils.sheet_to_json(worksheet);
+    const rules: RestrictionRule[] = [];
+
+    data.forEach((row: any, index: number) => {
+      try {
+        console.log(`RestrictionRules row ${index + 2}:`, row);
+
+        if (
+          !this.hasValue(row.id) ||
+          !this.hasValue(row.name) ||
+          !this.hasValue(row.targetType) ||
+          !this.hasValue(row.criteriaField) ||
+          !this.hasValue(row.operator) ||
+          !this.hasValue(row.criteriaValue)
+        ) {
+          errors.push(
+            `RestrictionRules sheet row ${index + 2}: Missing required fields`
+          );
+          return;
+        }
+
+        // Validate enums
+        const targetType = String(row.targetType).toUpperCase() as RuleTargetType;
+        if (!Object.values(RuleTargetType).includes(targetType)) {
+          errors.push(
+            `RestrictionRules sheet row ${index + 2}: Invalid targetType '${row.targetType}'`
+          );
+          return;
+        }
+
+        const criteriaField = String(row.criteriaField).toUpperCase() as RuleCriteriaField;
+        if (!Object.values(RuleCriteriaField).includes(criteriaField)) {
+          errors.push(
+            `RestrictionRules sheet row ${index + 2}: Invalid criteriaField '${row.criteriaField}'`
+          );
+          return;
+        }
+
+        const operator = String(row.operator).toUpperCase() as RuleOperator;
+        if (!Object.values(RuleOperator).includes(operator)) {
+          errors.push(
+            `RestrictionRules sheet row ${index + 2}: Invalid operator '${row.operator}'`
+          );
+          return;
+        }
+
+        rules.push({
+          id: Number(row.id),
+          name: String(row.name),
+          targetType,
+          criteriaField,
+          operator,
+          criteriaValue: String(row.criteriaValue),
+          active: this.hasValue(row.active) ? (String(row.active).toLowerCase() === 'true' || row.active === true) : true
+        });
+      } catch (error) {
+        errors.push(
+          `RestrictionRules sheet row ${index + 2}: ${(error as Error).message}`
+        );
+      }
+    });
+
+    return rules;
   }
 
   private extractTimeslots(
@@ -541,6 +623,18 @@ export class ExcelImportService {
           }
         }
 
+        // Parse applied rule IDs if provided (pipe-delimited, e.g. "1|3|5")
+        let appliedRuleIds: number[] = [];
+        if (this.hasValue(row.appliedRuleIds)) {
+          const ruleIdStr = String(row.appliedRuleIds);
+          appliedRuleIds = ruleIdStr
+            .split('|')
+            .map((id: string) => id.trim())
+            .filter((id: string) => id.length > 0)
+            .map((id: string) => Number(id))
+            .filter((id: number) => !isNaN(id));
+        }
+
         lessons.push({
           id: Number(row.id),
           subject: String(row.subject),
@@ -552,6 +646,7 @@ export class ExcelImportService {
           timeslot: timeslotRef,
           room: roomRef,
           pinned: isPinned,
+          appliedRuleIds: appliedRuleIds.length > 0 ? appliedRuleIds : [],
         });
       } catch (error) {
         errors.push(

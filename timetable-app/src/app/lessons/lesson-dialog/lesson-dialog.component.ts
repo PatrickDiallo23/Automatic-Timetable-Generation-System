@@ -8,7 +8,8 @@ import { StudentGroupService } from 'src/app/student-group/student-group.service
 import { TimeslotService } from 'src/app/timeslots/timeslot.service';
 import { RoomService } from 'src/app/rooms/room.service';
 import { Observable, map, startWith } from 'rxjs';
-import { LessonType, Room, StudentGroup, Teacher, Timeslot, Year } from 'src/app/model/timetableEntities';
+import { LessonType, RestrictionRule, Room, StudentGroup, Teacher, Timeslot, Year } from 'src/app/model/timetableEntities';
+import { RestrictionRuleService } from 'src/app/restriction-rules/restriction-rule.service';
 
 @Component({
   selector: 'app-lesson-dialog',
@@ -25,6 +26,7 @@ export class LessonDialogComponent implements OnInit {
   studentGroups: StudentGroup[] = [];
   timeslots: Timeslot[] = [];
   rooms: Room[] = [];
+  rules: RestrictionRule[] = [];
   groupedTimeslots: Map<string, Timeslot[]> = new Map();
   dayOrder = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
   
@@ -50,6 +52,7 @@ export class LessonDialogComponent implements OnInit {
     private studentGroupService: StudentGroupService,
     private timeslotService: TimeslotService,
     private roomService: RoomService,
+    private ruleService: RestrictionRuleService,
     private coreService: CoreService,
     private dialogRef: MatDialogRef<LessonDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
@@ -64,6 +67,7 @@ export class LessonDialogComponent implements OnInit {
       pinned: false,
       timeslot: null,
       room: null,
+      appliedRuleIds: [[]],
     });
   }
 
@@ -81,6 +85,7 @@ export class LessonDialogComponent implements OnInit {
         // Extract IDs for timeslot and room - they may come as objects or IDs
         timeslot: this.data.timeslot?.id ?? this.data.timeslot ?? null,
         room: this.data.room?.id ?? this.data.room ?? null,
+        appliedRuleIds: this.data.appliedRuleIds || [],
       });
     }
     
@@ -121,6 +126,11 @@ export class LessonDialogComponent implements OnInit {
     // Load rooms for pinning
     this.roomService.getAllRooms().subscribe((retrievedRooms) => {
       this.rooms = retrievedRooms;
+    });
+
+    // Load restriction rules
+    this.ruleService.getAllRules().subscribe((retrievedRules) => {
+      this.rules = retrievedRules;
     });
   }
 
@@ -193,6 +203,7 @@ export class LessonDialogComponent implements OnInit {
         year: formValue.year,
         duration: formValue.duration,
         pinned: formValue.pinned || false,
+        appliedRuleIds: formValue.appliedRuleIds || [],
       };
       
       // Include timeslot and room if pinned

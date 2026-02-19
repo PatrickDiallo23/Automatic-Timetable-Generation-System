@@ -12,11 +12,13 @@ import ai.timefold.solver.core.api.solver.SolverStatus;
 import com.patrick.timetableappbackend.exception.TimetableSolverException;
 import com.patrick.timetableappbackend.model.ConstraintModel;
 import com.patrick.timetableappbackend.model.Lesson;
+import com.patrick.timetableappbackend.model.RestrictionRule;
 import com.patrick.timetableappbackend.model.Room;
 import com.patrick.timetableappbackend.model.Timeslot;
 import com.patrick.timetableappbackend.model.Timetable;
 import com.patrick.timetableappbackend.repository.ConstraintRepo;
 import com.patrick.timetableappbackend.repository.LessonRepo;
+import com.patrick.timetableappbackend.repository.RestrictionRuleRepo;
 import com.patrick.timetableappbackend.repository.RoomRepo;
 import com.patrick.timetableappbackend.repository.TimeslotRepo;
 import com.patrick.timetableappbackend.solver.TimetableConstraintConfiguration;
@@ -31,9 +33,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +50,7 @@ public class TimetableService {
     private final TimeslotRepo timeslotRepo;
     private final LessonRepo lessonRepo;
     private final ConstraintRepo constraintRepo;
+    private final RestrictionRuleRepo restrictionRuleRepo;
     private final SolverManager<Timetable, String> solverManager;
     private final SolutionManager<Timetable, HardMediumSoftScore> solutionManager;
     @Value("${timefold.solver.termination.spent-limit}")
@@ -67,8 +73,12 @@ public class TimetableService {
         final List<ConstraintModel> constraintModels = constraintRepo.findAll();
         final TimetableConstraintConfiguration timetableConstraintConfiguration = new TimetableConstraintConfiguration(constraintModels);
         final List<Lesson> lessons = lessonRepo.findAll();
+        final List<RestrictionRule> activeRules = restrictionRuleRepo.findByActiveTrue();
 
-        return new Timetable(timeslots, rooms, lessons, timetableConstraintConfiguration, problemDuration);
+        Timetable timetable = new Timetable(timeslots, rooms, lessons, timetableConstraintConfiguration, problemDuration);
+        timetable.setRestrictionRules(activeRules);
+        wireRulesToLessons(timetable);
+        return timetable;
 
     }
 
@@ -76,7 +86,8 @@ public class TimetableService {
     // How to get the best solution
     public String solve(Timetable problem) {
         problem.getLessons().forEach(lesson -> lesson.setTimetable(problem));
-        final ConcurrentMap<String, Timetable> timetableSolution = new ConcurrentHashMap<>();
+        wireRulesToLessons(problem);
+
         String jobId = UUID.randomUUID().toString();
         jobIdToJob.put(jobId, Job.ofTimetable(problem));
         solverManager.solveBuilder()
@@ -142,6 +153,24 @@ public class TimetableService {
 
         static Job ofException(Throwable error) {
             return new Job(null, error);
+        }
+    }
+
+    private void wireRulesToLessons(Timetable timetable) {
+        List<RestrictionRule> allRules = timetable.getRestrictionRules();
+        if (allRules == null || allRules.isEmpty()) {
+            return;
+        }
+        Map<Long, RestrictionRule> ruleMap = allRules.stream()
+                .collect(Collectors.toMap(RestrictionRule::getId, Function.identity()));
+        for (Lesson lesson : timetable.getLessons()) {
+            if (lesson.getAppliedRuleIds() != null && !lesson.getAppliedRuleIds().isEmpty()) {
+                List<RestrictionRule> resolved = lesson.getAppliedRuleIds().stream()
+                        .map(ruleMap::get)
+                        .filter(java.util.Objects::nonNull)
+                        .toList();
+                lesson.setAppliedRules(resolved);
+            }
         }
     }
 }

@@ -277,9 +277,13 @@ export class TimetableComponent implements OnInit, OnDestroy {
       if (lesson.pinned) {
         row.classList.add('pinned-row');
       }
+      const hasRules = lesson.appliedRuleIds && lesson.appliedRuleIds.length > 0;
+      if (hasRules) {
+        row.classList.add('has-rules-row');
+      }
       
       row.innerHTML = `
-        <td class="${isEdited ? 'edited-cell' : ''} ${lesson.pinned ? 'pinned-cell' : ''}">
+        <td class="${isEdited ? 'edited-cell' : ''} ${lesson.pinned ? 'pinned-cell' : ''} ${hasRules ? 'has-rules-cell' : ''}">
           ${lesson.pinned ? '<div class="pinned-indicator"><i class="material-icons" title="Pinned - This lesson is locked">push_pin</i></div>' : ''}
           ${isEdited ? '<div class="edited-indicator"><i class="material-icons">edit_note</i></div>' : ''}
           <div class="lesson-content">
@@ -290,6 +294,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
           </div>
           ${lesson.pinned && !isEdited ? '<span class="pinned-badge"><i class="material-icons" style="font-size: 12px; vertical-align: middle;">lock</i> Pinned</span>' : ''}
           ${isEdited ? '<span class="edited-badge"><i class="material-icons" style="font-size: 12px; vertical-align: middle;">check_circle</i> Modified</span>' : ''}
+          ${hasRules ? '<span class="rules-badge"><i class="material-icons" style="font-size: 12px; vertical-align: middle;">gavel</i> ' + lesson.appliedRuleIds!.length + ' Rule' + (lesson.appliedRuleIds!.length > 1 ? 's' : '') + '</span>' : ''}
         </td>
         <td>
           <div style="display: flex; align-items: center;">
@@ -498,9 +503,13 @@ export class TimetableComponent implements OnInit, OnDestroy {
       if (lesson.pinned) {
         row.classList.add('pinned-row');
       }
+      const hasRules = lesson.appliedRuleIds && lesson.appliedRuleIds.length > 0;
+      if (hasRules) {
+        row.classList.add('has-rules-row');
+      }
       
       row.innerHTML = `
-        <td class="${lesson.pinned ? 'pinned-cell' : ''}">
+        <td class="${lesson.pinned ? 'pinned-cell' : ''} ${hasRules ? 'has-rules-cell' : ''}">
           ${lesson.pinned ? '<div class="pinned-indicator"><i class="material-icons" title="Pinned - This lesson is locked">push_pin</i></div>' : ''}
           <div style="display: flex; align-items: center;">
             <i class="material-icons" style="font-size: 18px; margin-right: 8px; color: #673ab7;">group</i>
@@ -510,6 +519,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
             </div>
           </div>
           ${lesson.pinned ? '<span class="pinned-badge"><i class="material-icons" style="font-size: 12px; vertical-align: middle;">lock</i> Pinned</span>' : ''}
+          ${hasRules ? '<span class="rules-badge"><i class="material-icons" style="font-size: 12px; vertical-align: middle;">gavel</i> ' + lesson.appliedRuleIds!.length + ' Rule' + (lesson.appliedRuleIds!.length > 1 ? 's' : '') + '</span>' : ''}
         </td>
         <td>
           <div style="font-weight: 600; color: #673ab7; margin-bottom: 4px;">${lesson.subject}</div>
@@ -738,7 +748,9 @@ export class TimetableComponent implements OnInit, OnDestroy {
             'Start Time': timeslot?.startTime || 'N/A',
             'End Time': timeslot?.endTime || 'N/A',
             'Room': room?.name || 'N/A',
-            'Building': room?.building || 'N/A'
+            'Building': room?.building || 'N/A',
+            'Pinned': lesson.pinned ? 'Yes' : 'No',
+            'Rules': lesson.appliedRuleIds?.length ? lesson.appliedRuleIds.length + ' rule(s)' : '-',
           };
         });
 
@@ -755,7 +767,9 @@ export class TimetableComponent implements OnInit, OnDestroy {
           { wch: 12 }, // Start Time
           { wch: 12 }, // End Time
           { wch: 15 }, // Room
-          { wch: 15 }  // Building
+          { wch: 15 }, // Building
+          { wch: 8 },  // Pinned
+          { wch: 10 }, // Rules
         ];
         worksheet['!cols'] = columnWidths;
 
