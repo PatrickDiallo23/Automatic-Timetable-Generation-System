@@ -63,6 +63,10 @@
             <mat-icon>person</mat-icon>
             Teacher View
           </mat-button-toggle>
+          <mat-button-toggle value="advanced" class="toggle-option">
+            <mat-icon>search</mat-icon>
+            Advanced Search
+          </mat-button-toggle>
         </mat-button-toggle-group>
       </div>
 
@@ -139,6 +143,144 @@
           </mat-form-field>
         </div>
       </div>
+
+      <!-- Advanced Filter Section -->
+      <div *ngIf="toggle == 'advanced'" class="filter-section advanced-filter-section" [formGroup]="advancedFilterForm">
+        <div class="advanced-filter-grid">
+          <!-- Row 1: Time filters -->
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Day of Week</mat-label>
+            <mat-icon matPrefix>today</mat-icon>
+            <mat-select formControlName="dayOfWeek">
+              <mat-option value="">Any Day</mat-option>
+              <mat-option *ngFor="let day of availableDays" [value]="day">{{ day }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Start Time</mat-label>
+            <mat-icon matPrefix>schedule</mat-icon>
+            <mat-select formControlName="startTime">
+              <mat-option value="">Any</mat-option>
+              <mat-option *ngFor="let time of availableStartTimes" [value]="time">{{ time }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>End Time</mat-label>
+            <mat-icon matPrefix>schedule</mat-icon>
+            <mat-select formControlName="endTime">
+              <mat-option value="">Any</mat-option>
+              <mat-option *ngFor="let time of availableEndTimes" [value]="time">{{ time }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Row 2: Room filters -->
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Room</mat-label>
+            <mat-icon matPrefix>meeting_room</mat-icon>
+            <input type="text" matInput formControlName="roomName"
+                   placeholder="e.g., Room A" [matAutocomplete]="autoAdvRoom">
+            <mat-autocomplete #autoAdvRoom="matAutocomplete">
+              <mat-option *ngFor="let room of filteredAdvancedRooms | async" [value]="room">{{ room }}</mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Building</mat-label>
+            <mat-icon matPrefix>business</mat-icon>
+            <mat-select formControlName="building">
+              <mat-option value="">Any</mat-option>
+              <mat-option *ngFor="let b of availableBuildings" [value]="b">{{ b }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Room Capacity</mat-label>
+            <mat-icon matPrefix>event_seat</mat-icon>
+            <mat-select formControlName="capacity">
+              <mat-option value="">Any</mat-option>
+              <mat-option *ngFor="let c of availableCapacities" [value]="c">{{ c }} seats</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Row 3: People filters -->
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Teacher</mat-label>
+            <mat-icon matPrefix>person</mat-icon>
+            <input type="text" matInput formControlName="teacherName"
+                   placeholder="e.g., Prof. Smith" [matAutocomplete]="autoAdvTeacher">
+            <mat-autocomplete #autoAdvTeacher="matAutocomplete">
+              <mat-option *ngFor="let t of filteredAdvancedTeachers | async" [value]="t">{{ t }}</mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Student Group</mat-label>
+            <mat-icon matPrefix>groups</mat-icon>
+            <input type="text" matInput formControlName="studentGroup"
+                   placeholder="e.g., 313 AA" [matAutocomplete]="autoAdvGroup">
+            <mat-autocomplete #autoAdvGroup="matAutocomplete">
+              <mat-option *ngFor="let g of filteredAdvancedStudentGroups | async" [value]="g">{{ g }}</mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Subject</mat-label>
+            <mat-icon matPrefix>menu_book</mat-icon>
+            <input type="text" matInput formControlName="subject"
+                   placeholder="e.g., Mathematics" [matAutocomplete]="autoAdvSubject">
+            <mat-autocomplete #autoAdvSubject="matAutocomplete">
+              <mat-option *ngFor="let s of filteredAdvancedSubjects | async" [value]="s">{{ s }}</mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <!-- Row 4: Type & Year filters -->
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Lesson Type</mat-label>
+            <mat-icon matPrefix>category</mat-icon>
+            <mat-select formControlName="lessonType">
+              <mat-option value="">Any</mat-option>
+              <mat-option *ngFor="let type of availableLessonTypes" [value]="type">{{ type }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Year</mat-label>
+            <mat-icon matPrefix>school</mat-icon>
+            <mat-select formControlName="year">
+              <mat-option value="">Any</mat-option>
+              <mat-option *ngFor="let y of availableYears" [value]="y">{{ y }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Toggle switches -->
+        <div class="advanced-toggle-row">
+          <mat-slide-toggle formControlName="pinnedOnly" color="primary">
+            <mat-icon>push_pin</mat-icon> Pinned Only
+          </mat-slide-toggle>
+          <mat-slide-toggle formControlName="rulesOnly" color="accent">
+            <mat-icon>rule</mat-icon> Has Rules Only
+          </mat-slide-toggle>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="advanced-actions">
+          <button mat-raised-button color="primary" type="button" (click)="applyAdvancedFilter()">
+            <mat-icon>search</mat-icon>
+            Search
+          </button>
+          <button mat-stroked-button type="button" (click)="clearAdvancedFilters()">
+            <mat-icon>clear_all</mat-icon>
+            Clear Filters
+          </button>
+          <span *ngIf="advancedResultCount > 0" class="result-badge">
+            <mat-icon>check_circle</mat-icon>
+            {{ advancedResultCount }} lesson{{ advancedResultCount !== 1 ? 's' : '' }} found
+          </span>
+        </div>
+      </div>
     </mat-card-content>
   </mat-card>
 
@@ -146,7 +288,7 @@
     <mat-card-header>
       <mat-card-title class="timetable-title">
         <mat-icon>calendar_view_week</mat-icon>
-        {{ toggle === 'student' ? 'Student' : 'Teacher' }} Schedule
+        {{ toggle === 'student' ? 'Student' : toggle === 'teacher' ? 'Teacher' : 'Advanced Search' }} Schedule
       </mat-card-title>
       <div class="timetable-actions">
         <!-- Quick action buttons in header -->
@@ -167,10 +309,10 @@
       </div>
 
       <!-- Empty State -->
-      <div *ngIf="!isLoading && displayedTimetable.length === 0" class="empty-state">
+      <div *ngIf="!isLoading && displayedTimetable.length === 0 && toggle != 'advanced'" class="empty-state">
         <mat-icon class="empty-icon">event_busy</mat-icon>
         <h3>No Schedule Found</h3>
-        <p>Please select a {{ toggle === 'student' ? 'student group and subgroup' : 'teacher' }} to view the timetable.</p>
+        <p>Please select a {{ toggle === 'student' ? 'student group and subgroup' : toggle === 'teacher' ? 'teacher' : 'filter criteria and click Search' }} to view the timetable.</p>
       </div>
 
       <!-- Timetable Container -->

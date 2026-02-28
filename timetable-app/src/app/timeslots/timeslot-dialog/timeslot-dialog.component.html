@@ -8,7 +8,7 @@
         <mat-form-field appearance="outline">
             <mat-label>Timeslot Weekday</mat-label>
             <mat-select formControlName="dayOfWeek">
-                <mat-option *ngFor="let key of bindedWeekdaysMapKeys" [value]="weekdaysMap.get(key)">{{key}}
+                <mat-option *ngFor="let day of weekdays" [value]="day">{{day}}
                 </mat-option>
             </mat-select>
         </mat-form-field>

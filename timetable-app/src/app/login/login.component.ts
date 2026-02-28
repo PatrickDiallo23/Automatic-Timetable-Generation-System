@@ -23,13 +23,22 @@ export class LoginComponent implements OnInit {
     private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
+    // Clear client-side session first to prevent stale token from being attached
+    // to subsequent requests by the JWT interceptor
+    const hadPreviousSession = !!localStorage.getItem('currentUser');
+    localStorage.removeItem('currentUser');
+    this.loginService.setAuthenticated(false);
 
-    this.loginService.logout();
+    // Fire-and-forget the backend logout (best-effort cleanup of server-side state)
+    if (hadPreviousSession) {
+      this.loginService.logout().subscribe({
+        error: () => { /* Server logout is best-effort — token already cleared client-side */ }
+      });
+    }
 
     this.returnUrl =
-      this.route.snapshot.queryParams['returnUrl'] || '/dashboard'; // check if we need it
+      this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
 
-    // Clear any previous errors
     this.loginError = '';
   }
 

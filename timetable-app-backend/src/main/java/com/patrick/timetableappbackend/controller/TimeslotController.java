@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.DayOfWeek;
+
 import java.util.List;
 
 @RestController
@@ -104,9 +104,8 @@ public class TimeslotController {
     public ResponseEntity<Timeslot> createTimeslot(
             @Parameter(description = "Timeslot request containing day of week, start time, and end time", required = true)
             @RequestBody TimeslotRequest timeslot) {
-        DayOfWeek dayOfWeek = DayOfWeek.of(timeslot.getDayOfWeek());
         Timeslot requestTimeslot = Timeslot.builder()
-                .dayOfWeek(dayOfWeek)
+                .dayOfWeek(timeslot.getDayOfWeek())
                 .startTime(timeslot.getStartTime())
                 .endTime(timeslot.getEndTime())
                 .build();

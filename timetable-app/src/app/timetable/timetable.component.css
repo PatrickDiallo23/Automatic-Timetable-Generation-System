@@ -721,3 +721,124 @@
 .edited-row.has-rules-row {
   background: linear-gradient(90deg, #e3f2fd 0%, rgba(92, 107, 192, 0.08) 100%) !important;
 }
+
+/* ==============================
+   Advanced Filter Section
+   ============================== */
+
+.advanced-filter-section {
+  padding-top: 8px;
+}
+
+.advanced-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0 16px;
+}
+
+.advanced-toggle-row {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  padding: 8px 0 16px;
+}
+
+.advanced-toggle-row mat-slide-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.advanced-toggle-row mat-icon {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+  vertical-align: middle;
+}
+
+.advanced-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 8px;
+}
+
+.result-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-left: auto;
+}
+
+.result-badge mat-icon {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+}
+
+/* Advanced result table action buttons */
+.adv-action-btn {
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: 1px solid;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-right: 6px;
+  transition: all 0.2s ease;
+}
+
+.adv-edit-btn {
+  background: #e3f2fd;
+  color: #1565c0;
+  border-color: #90caf9;
+}
+
+.adv-edit-btn:hover {
+  background: #bbdefb;
+}
+
+.adv-analyze-btn {
+  background: #fff3e0;
+  color: #e65100;
+  border-color: #ffcc80;
+}
+
+.adv-analyze-btn:hover {
+  background: #ffe0b2;
+}
+
+/* Responsive adjustments for advanced filter */
+@media (max-width: 960px) {
+  .advanced-filter-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .advanced-filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .advanced-toggle-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .advanced-actions {
+    flex-wrap: wrap;
+  }
+
+  .result-badge {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+}

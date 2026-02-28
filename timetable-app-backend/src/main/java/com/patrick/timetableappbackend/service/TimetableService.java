@@ -3,7 +3,6 @@ package com.patrick.timetableappbackend.service;
 
 import ai.timefold.solver.core.api.score.analysis.ScoreAnalysis;
 import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
-// import ai.timefold.solver.core.config.solver.termination.TerminationConfig;
 import ai.timefold.solver.core.api.solver.ScoreAnalysisFetchPolicy;
 import ai.timefold.solver.core.api.solver.SolutionManager;
 import ai.timefold.solver.core.api.solver.SolutionUpdatePolicy;
@@ -28,9 +27,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +58,9 @@ public class TimetableService {
     @Value("${timefold.solver.termination.spent-limit}")
     private String duration;
 
-    // TODO: Without any "time to live", the map may eventually grow out of memory.
+    @Value("${timetableApp.job.ttl-hours:8}")
+    private long jobTtlHours;
+
     private final ConcurrentMap<String, Job> jobIdToJob = new ConcurrentHashMap<>();
 
     public Collection<String> getJobIds() {
@@ -145,14 +149,39 @@ public class TimetableService {
         return job.timetable;
     }
 
-    private record Job(Timetable timetable, Throwable exception) {
+    private record Job(Timetable timetable, Throwable exception, Instant createdAt) {
 
         static Job ofTimetable(Timetable timetable) {
-            return new Job(timetable, null);
+            return new Job(timetable, null, Instant.now());
         }
 
         static Job ofException(Throwable error) {
-            return new Job(null, error);
+            return new Job(null, error, Instant.now());
+        }
+    }
+
+    @Scheduled(fixedRateString = "${timetableApp.job.cleanup-interval-ms:1800000}")
+    public void evictExpiredJobs() {
+        Instant cutoff = Instant.now().minus(jobTtlHours, ChronoUnit.HOURS);
+        int evictedCount = 0;
+
+        for (Map.Entry<String, Job> entry : jobIdToJob.entrySet()) {
+            String jobId = entry.getKey();
+            Job job = entry.getValue();
+
+            if (job.createdAt().isBefore(cutoff)) {
+                SolverStatus status = solverManager.getSolverStatus(jobId);
+                if (status == SolverStatus.NOT_SOLVING) {
+                    jobIdToJob.remove(jobId);
+                    evictedCount++;
+                } else {
+                    LOGGER.debug("Skipping eviction of job ({}) — still active with status: {}", jobId, status);
+                }
+            }
+        }
+
+        if (evictedCount > 0) {
+            LOGGER.info("Evicted {} expired job entries. Remaining: {}", evictedCount, jobIdToJob.size());
         }
     }
 

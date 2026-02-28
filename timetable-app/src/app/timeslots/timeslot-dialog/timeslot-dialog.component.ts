@@ -13,12 +13,7 @@ export class TimeslotDialogComponent implements OnInit {
 
   timeslotForm: FormGroup;
 
-  // TODO: provide a better solution for updating Timeslot
   weekdays: string[] = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
-  weekdaysMap: Map<string,number>;
-  bindedWeekdaysMapKeys: string[];
-
-
 
   constructor(
     private fb: FormBuilder,
@@ -27,13 +22,6 @@ export class TimeslotDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<TimeslotDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.weekdaysMap = new Map()
-.set("MONDAY", 0)
-.set("TUESDAY", 1)
-.set("WEDNESDAY", 2)
-.set("THURSDAY", 3)
-.set("FRIDAY", 4);
- this.bindedWeekdaysMapKeys = Array.from(this.weekdaysMap.keys());
     this.timeslotForm = this.fb.group({
       dayOfWeek: '',
       startTime: '',
