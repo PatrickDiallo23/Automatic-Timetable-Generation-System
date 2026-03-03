@@ -420,25 +420,6 @@ public class TimetableConstraintProviderTest {
     }
 
     @Test
-    void lessonDurationConflict() {
-
-        StudentGroup studentGroup3 = new StudentGroup(3L, "Group2", 30L);
-
-        Timeslot timeslot = new Timeslot(8L, DayOfWeek.WEDNESDAY, LocalTime.NOON);
-
-        Room room = new Room(1L, "sala1", 60L);
-
-        Lesson conflictLesson = new Lesson(1, "subject1", LessonType.SEMINAR,
-                new Teacher(1L, "Teacher1", null), studentGroup3, 3, timeslot, room);
-
-        constraintVerifier.verifyThat(TimetableConstraintProvider::lessonDurationConflict)
-                .given(conflictLesson)
-                .penalizesBy(1);
-
-
-    }
-
-    @Test
     void coursesInTheSameBuilding() {
 
         StudentGroup studentGroup = new StudentGroup(1L, "Group1", 30L);
@@ -459,6 +440,106 @@ public class TimetableConstraintProviderTest {
                 .given(tuesdayLesson, thirdTuesdayLesson, fourthTuesdayLesson)
                 .rewardsWith(1);
 
+    }
+
+    @Test
+    void noGapsForHighschool() {
+
+        StudentGroup studentGroup = new StudentGroup(1L, "Group1", 30L);
+
+        // 1-hour timeslots on Tuesday
+        Timeslot ts8am = new Timeslot(20L, DayOfWeek.TUESDAY, LocalTime.of(8, 0), LocalTime.of(9, 0));
+        Timeslot ts9am = new Timeslot(21L, DayOfWeek.TUESDAY, LocalTime.of(9, 0), LocalTime.of(10, 0));
+        // 1-hour gap here (10:00 - 11:00)
+        Timeslot ts11am = new Timeslot(22L, DayOfWeek.TUESDAY, LocalTime.of(11, 0), LocalTime.of(12, 0));
+
+        Room room = new Room(1L, "sala1", 60L);
+
+        Lesson lesson1 = new Lesson(1, "Math", new Teacher(1L, "Teacher1", null), studentGroup, 1, ts8am, room);
+        Lesson lesson2 = new Lesson(2, "Physics", new Teacher(2L, "Teacher2", null), studentGroup, 1, ts9am, room);
+        Lesson lesson3 = new Lesson(3, "Chemistry", new Teacher(3L, "Teacher3", null), studentGroup, 1, ts11am, room);
+
+        // Span = 8:00 to 12:00 = 240 minutes, Total instruction = 3 * 60 = 180 minutes, Gap = 60 minutes
+        constraintVerifier.verifyThat(TimetableConstraintProvider::noGapsForHighschool)
+                .given(lesson1, lesson2, lesson3)
+                .penalizesBy(60);
+    }
+
+    @Test
+    void noGapsForHighschoolNoGap() {
+
+        StudentGroup studentGroup = new StudentGroup(1L, "Group1", 30L);
+
+        // 1-hour timeslots on Tuesday, back-to-back
+        Timeslot ts8am = new Timeslot(20L, DayOfWeek.TUESDAY, LocalTime.of(8, 0), LocalTime.of(9, 0));
+        Timeslot ts9am = new Timeslot(21L, DayOfWeek.TUESDAY, LocalTime.of(9, 0), LocalTime.of(10, 0));
+        Timeslot ts10am = new Timeslot(22L, DayOfWeek.TUESDAY, LocalTime.of(10, 0), LocalTime.of(11, 0));
+
+        Room room = new Room(1L, "sala1", 60L);
+
+        Lesson lesson1 = new Lesson(1, "Math", new Teacher(1L, "Teacher1", null), studentGroup, 1, ts8am, room);
+        Lesson lesson2 = new Lesson(2, "Physics", new Teacher(2L, "Teacher2", null), studentGroup, 1, ts9am, room);
+        Lesson lesson3 = new Lesson(3, "Chemistry", new Teacher(3L, "Teacher3", null), studentGroup, 1, ts10am, room);
+
+        // No gap: span = 180 minutes, total instruction = 180 minutes
+        constraintVerifier.verifyThat(TimetableConstraintProvider::noGapsForHighschool)
+                .given(lesson1, lesson2, lesson3)
+                .penalizesBy(0);
+    }
+
+    @Test
+    void fairLessonsDistribution() {
+
+        StudentGroup studentGroup = new StudentGroup(1L, "Group1", 30L);
+
+        Room room = new Room(1L, "sala1", 60L);
+
+        // 3 lessons on Monday
+        Lesson mondayLesson1 = new Lesson(1, "Math", new Teacher(1L, "Teacher1", null), studentGroup, TIMESLOT1, room);
+        Lesson mondayLesson2 = new Lesson(2, "Physics", new Teacher(2L, "Teacher2", null), studentGroup, TIMESLOT1, room);
+        Lesson mondayLesson3 = new Lesson(3, "Chemistry", new Teacher(3L, "Teacher3", null), studentGroup, TIMESLOT1, room);
+
+        // 1 lesson on Tuesday
+        Lesson tuesdayLesson1 = new Lesson(4, "History", new Teacher(4L, "Teacher4", null), studentGroup, TIMESLOT2, room);
+
+        // Monday: count=3, penalty=9. Tuesday: count=1, penalty=1. Total: 10.
+        constraintVerifier.verifyThat(TimetableConstraintProvider::fairLessonsDistribution)
+                .given(mondayLesson1, mondayLesson2, mondayLesson3, tuesdayLesson1)
+                .penalizesBy(10);
+    }
+
+    @Test
+    void earlyStartForHighschool() {
+        StudentGroup studentGroup = new StudentGroup(1L, "Group1", 30L);
+        Room room = new Room(1L, "sala1", 60L);
+
+        // First lesson starts at 10:00 (120 minutes after 8:00)
+        Timeslot ts10am = new Timeslot(20L, DayOfWeek.MONDAY, LocalTime.of(10, 0), LocalTime.of(11, 0));
+        Timeslot ts11am = new Timeslot(21L, DayOfWeek.MONDAY, LocalTime.of(11, 0), LocalTime.of(12, 0));
+
+        Lesson lesson1 = new Lesson(1, "Math", new Teacher(1L, "Teacher1", null), studentGroup, 1, ts10am, room);
+        Lesson lesson2 = new Lesson(2, "Physics", new Teacher(2L, "Teacher2", null), studentGroup, 1, ts11am, room);
+
+        constraintVerifier.verifyThat(TimetableConstraintProvider::earlyStartForHighschool)
+                .given(lesson1, lesson2)
+                .penalizesBy(120); // 120 minutes penalty
+    }
+
+    @Test
+    void earlyStartForHighschoolNoPenalty() {
+        StudentGroup studentGroup = new StudentGroup(1L, "Group1", 30L);
+        Room room = new Room(1L, "sala1", 60L);
+
+        // First lesson starts exactly at 8:00
+        Timeslot ts8am = new Timeslot(20L, DayOfWeek.MONDAY, LocalTime.of(8, 0), LocalTime.of(9, 0));
+        Timeslot ts9am = new Timeslot(21L, DayOfWeek.MONDAY, LocalTime.of(9, 0), LocalTime.of(10, 0));
+
+        Lesson lesson1 = new Lesson(1, "Math", new Teacher(1L, "Teacher1", null), studentGroup, 1, ts8am, room);
+        Lesson lesson2 = new Lesson(2, "Physics", new Teacher(2L, "Teacher2", null), studentGroup, 1, ts9am, room);
+
+        constraintVerifier.verifyThat(TimetableConstraintProvider::earlyStartForHighschool)
+                .given(lesson1, lesson2)
+                .penalizesBy(0); // 0 penalty
     }
 
 }
