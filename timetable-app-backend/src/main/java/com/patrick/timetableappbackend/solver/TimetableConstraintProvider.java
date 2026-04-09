@@ -22,6 +22,19 @@ import com.patrick.timetableappbackend.solver.justifications.TeacherTimeEfficien
 import com.patrick.timetableappbackend.solver.justifications.NoGapsHighSchoolJustification;
 import com.patrick.timetableappbackend.solver.justifications.FairLessonsDistributionJustification;
 import com.patrick.timetableappbackend.solver.justifications.EarlyStartHighSchoolJustification;
+import com.patrick.timetableappbackend.solver.justifications.CapacityRoomConflictJustification;
+import com.patrick.timetableappbackend.solver.justifications.CourseStudentsGroupedInTheSameRoomJustification;
+import com.patrick.timetableappbackend.solver.justifications.CoursesGroupedInTheSameTimeslotJustification;
+import com.patrick.timetableappbackend.solver.justifications.CoursesInTheSameBuildingJustification;
+import com.patrick.timetableappbackend.solver.justifications.GapsLongerThan4HoursJustification;
+import com.patrick.timetableappbackend.solver.justifications.LabsGroupedInTheSameTimeslotJustification;
+import com.patrick.timetableappbackend.solver.justifications.LabsStudentsGroupedInTheSameRoomJustification;
+import com.patrick.timetableappbackend.solver.justifications.MaximizePreferredTimeslotAssignmentsJustification;
+import com.patrick.timetableappbackend.solver.justifications.MaximumCoursesForStudentsJustification;
+import com.patrick.timetableappbackend.solver.justifications.MaximumCoursesTeachedJustification;
+import com.patrick.timetableappbackend.solver.justifications.OverlappingTimeslotJustification;
+import com.patrick.timetableappbackend.solver.justifications.SeminarStudentsGroupedInTheSameRoomJustification;
+import com.patrick.timetableappbackend.solver.justifications.SeminarsGroupedInTheSameTimeslotJustification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -249,7 +262,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                         )
                 )
                 .penalizeConfigurable()
-                //.justifyWith((lesson1, lesson2, score) -> new OverlappingJustification(lesson, timeslot))
+                .justifyWith((lesson1, lesson2, score) -> new OverlappingTimeslotJustification(lesson1, lesson2))
                 .asConstraint("overlappingTimeslot");
     }
 
@@ -261,7 +274,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 //check if student's group number is bigger than room's capacity
                 .filter(lesson -> lesson.getStudentGroup().getNumberOfStudents() > lesson.getRoom().getCapacity())
                 .penalizeConfigurable()
-                //.justifyWith((parameters) -> new Justification(room)
+                .justifyWith((lesson, score) -> new CapacityRoomConflictJustification(lesson))
                 .asConstraint("capacityRoomConflict");
     }
 
@@ -292,7 +305,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 .penalizeConfigurable((lesson) -> {
                     return 1;
                 })
-                //.justifyWith
+                .justifyWith((lesson, score) -> new MaximizePreferredTimeslotAssignmentsJustification(lesson))
                 .asConstraint("maximizePreferredTimeslotAssignments");
     }
 
@@ -324,7 +337,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 }))
 //                .reward(HardSoftScore.ONE_SOFT)
                 .rewardConfigurable()
-                //.justifyWith()
+                .justifyWith((lesson1, lesson2, score) -> new CoursesInTheSameBuildingJustification(lesson1, lesson2))
                 .asConstraint("coursesInTheSameBuilding");
     }
 
@@ -382,6 +395,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                     return totalHours > MAX_TEACHED_HOURS_PER_DAY;
                 })
                 .penalizeConfigurable((teacherDay, totalHours) -> totalHours - MAX_TEACHED_HOURS_PER_DAY)
+                .justifyWith((teacherDay, totalHours, score) -> new MaximumCoursesTeachedJustification(teacherDay, totalHours))
                 .asConstraint("maximmumCoursesTeached");
     }
 
@@ -399,6 +413,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                     return totalHours > MAX_HOURS_PER_DAY;
                 })
                 .penalizeConfigurable((studentDay, totalHours) -> totalHours - MAX_HOURS_PER_DAY)
+                .justifyWith((studentDay, totalHours, score) -> new MaximumCoursesForStudentsJustification(studentDay, totalHours))
                 .asConstraint("maximumCoursesForStudents");
     }
 
@@ -419,7 +434,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 })
 //                .penalize(HardSoftScore.ONE_HARD, ((timeslot, room, series, studentTotal) -> studentTotal - room.getCapacity()))
                 .penalizeConfigurable((timeslot, room, series, studentTotal) -> studentTotal - room.getCapacity().intValue())
-                //.justifyWith()
+                .justifyWith((timeslot, room, series, studentTotal, score) -> new CourseStudentsGroupedInTheSameRoomJustification(timeslot, room, series, studentTotal))
                 .asConstraint("courseStudentsGroupedInTheSameRoom");
     }
 
@@ -439,7 +454,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 })
 //                .penalize(HardSoftScore.ONE_HARD, ((timeslot, room, series, studentTotal) -> studentTotal - room.getCapacity()))
                 .penalizeConfigurable((timeslot, room, series, studentTotal) -> (int) (studentTotal - room.getCapacity()))
-                //.justifyWith()
+                .justifyWith((timeslot, room, series, studentTotal, score) -> new SeminarStudentsGroupedInTheSameRoomJustification(timeslot, room, series, studentTotal))
                 .asConstraint("seminarStudentsGroupedInTheSameRoom");
     }
 
@@ -459,7 +474,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 })
 //                .penalize(HardSoftScore.ONE_HARD, ((timeslot, room, group, studentTotal) -> studentTotal - room.getCapacity()))
                 .penalizeConfigurable((timeslot, room, group, studentTotal) -> (int) (studentTotal - room.getCapacity()))
-                //.justifyWith()
+                .justifyWith((timeslot, room, group, studentTotal, score) -> new LabsStudentsGroupedInTheSameRoomJustification(timeslot, room, group, studentTotal))
                 .asConstraint("labsStudentsGroupedInTheSameRoom");
     }
 
@@ -496,7 +511,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                         countDistinct(lesson -> TimeslotRoom.ofTR(lesson.getTimeslot(), lesson.getRoom())))
                 .filter((group, subject, timeslotAndRoomCount) -> timeslotAndRoomCount > 1)
                 .penalizeConfigurable((group, subject, timeslotAndRoomCount) -> timeslotAndRoomCount - 1)
-                //.justifyWith()
+                .justifyWith((group, subject, timeslotAndRoomCount, score) -> new CoursesGroupedInTheSameTimeslotJustification(group, subject, timeslotAndRoomCount))
                 .asConstraint("coursesGroupedInTheSameTimeslot");
     }
 
@@ -514,7 +529,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                         countDistinct(lesson -> TimeslotRoom.ofTR(lesson.getTimeslot(), lesson.getRoom())))
                 .filter((group, subject, timeslotAndRoomCount) -> timeslotAndRoomCount > 1)
                 .penalizeConfigurable((group, subject, timeslotAndRoomCount) -> timeslotAndRoomCount - 1)
-                //.justifyWith()
+                .justifyWith((group, subject, timeslotAndRoomCount, score) -> new SeminarsGroupedInTheSameTimeslotJustification(group, subject, timeslotAndRoomCount))
                 .asConstraint("seminarsGroupedInTheSameTimeslot");
     }
 
@@ -532,7 +547,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                         countDistinct(lesson -> TimeslotRoom.ofTR(lesson.getTimeslot(), lesson.getRoom())))
                 .filter((group, subject, timeslotAndRoomCount) -> timeslotAndRoomCount > 1)
                 .penalizeConfigurable((group, subject, timeslotAndRoomCount) -> timeslotAndRoomCount - 1)
-                //.justifyWith()
+                .justifyWith((group, subject, timeslotAndRoomCount, score) -> new LabsGroupedInTheSameTimeslotJustification(group, subject, timeslotAndRoomCount))
                 .asConstraint("labsGroupedInTheSameTimeslot");
     }
 
@@ -583,7 +598,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 })
 //                .penalize(HardSoftScore.ONE_SOFT)
                 .penalizeConfigurable()
-                //.justifyWith()
+                .justifyWith((lesson1, lesson2, score) -> new GapsLongerThan4HoursJustification(lesson1, lesson2))
                 .asConstraint("gapsLongerThan4Hours");
     }
 
