@@ -82,10 +82,7 @@ export class ConfirmationComponent implements OnInit, OnDestroy {
           this.problemDuration = importedData.duration || 60; // Default duration if not specified
           this.calculateImportedDataCounts();
           this.importDataLoaded = true;
-          console.log(
-            `Loaded imported ${this.importType.toUpperCase()} data:`,
-            this.data
-          );
+
         } else {
           // No imported data found, redirect back to dashboard
           this.coreService.openSnackBar(

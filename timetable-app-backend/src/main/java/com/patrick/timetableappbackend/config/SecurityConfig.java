@@ -44,7 +44,7 @@ public class SecurityConfig {
     // interceptor
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.info("securityFilterChain implemented");
+
 
         http.authorizeHttpRequests(auth -> auth
                         .requestMatchers(WHITE_LIST_URL).permitAll()

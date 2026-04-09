@@ -24,7 +24,7 @@ public class LogoutService implements LogoutHandler {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return;
         }
-        log.info("Logout Handler...");
+
         SecurityContextHolder.clearContext();
 
     }

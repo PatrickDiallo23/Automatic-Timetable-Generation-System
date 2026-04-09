@@ -96,7 +96,7 @@ export class LoginComponent implements OnInit {
       verticalPosition: 'bottom',
       panelClass: ['snackbar-success']
     });
-    console.log('Login successful!');
+
   }
 
   // Handle forgot password

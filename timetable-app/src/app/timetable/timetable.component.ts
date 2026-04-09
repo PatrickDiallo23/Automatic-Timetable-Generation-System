@@ -140,7 +140,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
       this.populateTeachers();
       this.filterTimetable('', '');
       this.isLoading = false;
-      console.log('Loaded timetable from session storage (jobId matches)');
+
     } else if (this.jobId != null && this.jobId != '') {
       console.log(this.jobId);
       this.timetableService.getTimetable(this.jobId).subscribe((timetable) => {
@@ -161,7 +161,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
           this.score = null;
           console.warn('Score is missing from API response');
         }
-      console.log(this.score);
+
 
         // Populate student groups
         this.populateStudentGroups();
@@ -236,7 +236,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
       const selectedStudentGroup = studentGroup;
       const selectedSemiGroup = studentSemiGroup;
 
-      console.log(selectedStudentGroup);
+
 
       const filteredTimetable = this.timetableData?.lessons?.filter(
         (lesson) =>
@@ -311,7 +311,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
       return 0; // Default return value if timeslots are not found
     });
 
-    console.log(sortedTimetable);
+
     sortedTimetable?.forEach((lesson, index) => {
       const timeslot = this.timetableData?.timeslots?.find(
         (slot) => slot.id === lesson.timeslot
@@ -473,7 +473,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
         (lesson) => lesson.teacher?.name === selectedTeacher
       );
 
-      console.log(filteredTimetable);
+
       this.displayedTimetable = filteredTimetable || [];
       setTimeout(() => {
         this.displayTeacherTimetable(filteredTimetable);
@@ -525,10 +525,10 @@ export class TimetableComponent implements OnInit, OnDestroy {
       if (timeslotA && timeslotB) {
         const dayOrderA =
           dayOrder[timeslotA.dayOfWeek as keyof typeof dayOrder];
-        console.log(dayOrderA);
+
         const dayOrderB =
           dayOrder[timeslotB.dayOfWeek as keyof typeof dayOrder];
-        console.log(dayOrderB);
+
 
         if (dayOrderA !== dayOrderB) {
           return dayOrderA - dayOrderB;
@@ -541,7 +541,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
       return 0; // Default return value if timeslots are not found
     });
 
-    console.log(sortedTimetable);
+
     sortedTimetable?.forEach((lesson, index) => {
       const timeslot = this.timetableData?.timeslots?.find(
         (slot) => slot.id === lesson.timeslot
@@ -605,7 +605,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
       this.displayedTimetable = [];
     } else if (this.toggle === 'teacher') {
       if (timetableContainer) timetableContainer.innerHTML = '';
-      console.log(value);
+
       this.filterTeachers('');
       this.populateTeachers();
       this.teacherFormGroup.controls['teacherControl'].reset();

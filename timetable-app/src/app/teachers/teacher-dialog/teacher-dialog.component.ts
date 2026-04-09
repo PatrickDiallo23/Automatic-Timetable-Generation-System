@@ -44,7 +44,6 @@ export class TeacherDialogComponent implements OnInit {
     console.log(this.teacherForm.value);
     }
 //     this.teacherForm.patchValue(this.data);
-//     console.log(this.teacherForm.value);
   }
 
   get preferredTimeslots(): FormArray {

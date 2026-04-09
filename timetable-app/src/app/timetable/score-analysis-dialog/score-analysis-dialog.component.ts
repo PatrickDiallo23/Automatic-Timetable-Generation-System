@@ -20,7 +20,7 @@ export class ScoreAnalysisDialogComponent implements OnInit {
           components[m[2] as 'hard' | 'medium' | 'soft'] = parseInt(m[1], 10);
         }
       );
-      console.log(components);
+
       return components;
     };
 
