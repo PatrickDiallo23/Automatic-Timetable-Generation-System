@@ -57,6 +57,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { RestrictionRulesComponent } from './restriction-rules/restriction-rules.component';
 import { RestrictionRuleDialogComponent } from './restriction-rules/restriction-rule-dialog/restriction-rule-dialog.component';
+import { ImproveTimetableDialogComponent } from './timetable/improve-timetable-dialog/improve-timetable-dialog.component';
 
 
 @NgModule({
@@ -87,6 +88,7 @@ import { RestrictionRuleDialogComponent } from './restriction-rules/restriction-
     ImpactAnalysisDialogComponent,
     RestrictionRulesComponent,
     RestrictionRuleDialogComponent,
+    ImproveTimetableDialogComponent,
   ],
   imports: [
     BrowserModule,

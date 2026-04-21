@@ -10,6 +10,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { ScoreAnalysisDialogComponent } from './score-analysis-dialog/score-analysis-dialog.component';
 import { EditLessonDialogComponent, EditLessonDialogData, EditLessonDialogResult } from './edit-lesson-dialog/edit-lesson-dialog.component';
 import { ImpactAnalysisDialogComponent, ImpactAnalysisDialogData, LessonChangeInfo } from './impact-analysis-dialog/impact-analysis-dialog.component';
+import { ImproveTimetableDialogComponent } from './improve-timetable-dialog/improve-timetable-dialog.component';
 import * as XLSX from 'xlsx';
 
 
@@ -86,6 +87,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
   });
 
   isLoading: boolean = false;
+  improvingDuration?: number;
 
   // Edit functionality properties
   editHistory: EditLessonDialogResult[] = [];
@@ -1033,6 +1035,60 @@ export class TimetableComponent implements OnInit, OnDestroy {
         alert('Export failed. Please try again.');
       }
     }
+
+  improveTimetable(): void {
+    if (!this.timetableData || !this.timetableData.lessons) {
+      this.coreService.openSnackBar('No timetable data available to improve.');
+      return;
+    }
+
+    const previousDuration = this.timetableData.duration || 5;
+
+    const dialogRef = this.dialog.open(ImproveTimetableDialogComponent, {
+      width: '400px',
+      data: { previousDuration: previousDuration },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result && result.duration) {
+        this.startImprovement(result.duration);
+      }
+    });
+  }
+
+  private startImprovement(duration: number): void {
+    // If not copied, ensure changes are reflected in the UI model immediately
+    this.timetableData.duration = duration;
+    this.improvingDuration = duration;
+    this.isLoading = true;
+
+    // Clear display while improving
+    this.displayedTimetable = [];
+    const timetableContainer = document.getElementById('timetable');
+    if (timetableContainer) timetableContainer.innerHTML = '';
+
+    this.timetableService.generateTimetable(this.timetableData).subscribe({
+      next: (response: any) => {
+        const theJobId = response.jobId;
+        this.jobId = theJobId;
+        localStorage.setItem('jobId', theJobId);
+
+        this.coreService.openSnackBar(`Improving Timetable... Please wait ${duration} minutes!`);
+
+        // Wait for the duration, then fetch the results
+        setTimeout(() => {
+          this.improvingDuration = undefined;
+          this.refreshTimetable();
+        }, (duration * 60000) + 3000);
+      },
+      error: (err: any) => {
+        console.error('Error starting improvement process:', err);
+        this.isLoading = false;
+        this.improvingDuration = undefined;
+        this.coreService.openSnackBar('Failed to start improvement process. Check console.');
+      }
+    });
+  }
 
   refreshTimetable(): void {
       this.isLoading = true;

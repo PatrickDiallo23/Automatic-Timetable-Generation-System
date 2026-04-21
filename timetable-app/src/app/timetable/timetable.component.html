@@ -305,7 +305,11 @@
       <!-- Loading State -->
       <div *ngIf="isLoading" class="loading-state">
         <mat-spinner diameter="40"></mat-spinner>
-        <p>Loading timetable...</p>
+        <p *ngIf="!improvingDuration">Loading timetable...</p>
+        <div *ngIf="improvingDuration" style="margin-top: 15px; text-align: center;">
+          <p style="font-weight: bold; color: #673ab7; margin-bottom: 10px;">Improving Timetable...</p>
+          <app-countdown-timer [duration]="improvingDuration"></app-countdown-timer>
+        </div>
       </div>
 
       <!-- Empty State -->
@@ -345,6 +349,11 @@
         <button mat-raised-button color="primary" class="action-button" (click)="triggerImport()">
             <mat-icon>upload</mat-icon>
             Import Custom Solution JSON
+        </button>
+
+        <button mat-raised-button color="primary" class="action-button" (click)="improveTimetable()" matTooltip="Rerun solver using the current timetable as a starting point">
+          <mat-icon>auto_awesome</mat-icon>
+          Improve Generation
         </button>
 
         <button mat-raised-button color="accent" class="action-button" 

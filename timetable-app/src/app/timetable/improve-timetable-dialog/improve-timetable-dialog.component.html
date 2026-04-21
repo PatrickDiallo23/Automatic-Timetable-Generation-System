@@ -1,0 +1,48 @@
+<h2 mat-dialog-title>Improve Timetable Generation</h2>
+<mat-dialog-content>
+  <p>The solver will rerun using the current timetable as the starting point. This enables further optimization of existing schedules.</p>
+  <p>Please enter how long the solver should run (in minutes):</p>
+  <div class="basic-settings">
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>Duration (Minutes)</mat-label>
+      <input matInput type="number" [(ngModel)]="durationMinutes" min="1" max="120" />
+      <mat-error *ngIf="durationMinutes <= 0 || durationMinutes > 120">
+        Please enter a value between 1 and 120.
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+  <!-- TODO: Future Advanced Configuration Options -->
+  <!-- 
+  <p class="advanced-header">Advanced Solver Options</p>
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Solver Strategy Overrides</mat-panel-title>
+        <mat-panel-description>Configure heuristics and search strategies</mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <mat-form-field appearance="fill" style="width: 100%; margin-top: 10px;">
+        <mat-label>Local Search Algorithm</mat-label>
+        <mat-select [(ngModel)]="solverOverrides.localSearchType">
+          <mat-option value="LATE_ACCEPTANCE">Late Acceptance (Best for general)</mat-option>
+          <mat-option value="TABU_SEARCH">Tabu Search (Good for escaping local optima)</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" style="width: 100%;">
+        <mat-label>Termination Criteria</mat-label>
+        <mat-select [(ngModel)]="solverOverrides.terminationConfig.type">
+          <mat-option value="MINUTES">Time limit</mat-option>
+          <mat-option value="UNIMPROVED_TIME">Unimproved time limit</mat-option>
+          <mat-option value="BEST_SCORE">Best score target</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-expansion-panel>
+  </mat-accordion>
+  -->
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" [disabled]="durationMinutes <= 0 || durationMinutes > 120" (click)="onConfirm()">Start Optimizing</button>
+</mat-dialog-actions>
