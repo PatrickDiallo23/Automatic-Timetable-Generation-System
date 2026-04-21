@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ConstraintService } from '../constraint.service';
 import { CoreService } from 'src/app/core/core.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { CONSTRAINT_DICTIONARY, ConstraintMeta } from '../constraint.meta';
 
 @Component({
   selector: 'app-constraint-dialog',
@@ -12,6 +13,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 export class ConstraintDialogComponent implements OnInit {
   
   constraintForm: FormGroup;
+
+  allConstraints: ConstraintMeta[] = CONSTRAINT_DICTIONARY;
+  availableConstraints: ConstraintMeta[] = CONSTRAINT_DICTIONARY;
+  selectedMeta?: ConstraintMeta;
 
   weight: string[] = [
     'ZERO',
@@ -28,14 +33,31 @@ export class ConstraintDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.constraintForm = this.fb.group({
-      description: '',
-      weight: '',
+      description: [''],
+      weight: [''],
+    });
+
+    this.constraintForm.get('description')?.valueChanges.subscribe(val => {
+       this.selectedMeta = this.allConstraints.find(c => c.id === val);
+       // Only auto-patch weight if we are making a new entry rather than editing
+       if (this.selectedMeta && (!this.data || !this.data.id)) {
+          this.constraintForm.patchValue({ weight: this.selectedMeta.recommendedWeight }, {emitEvent: false});
+       }
     });
   }
 
   ngOnInit(): void {
-    this.constraintForm.patchValue(this.data);
-    console.log(this.data);
+    if (this.data && this.data.id) {
+       // We are in edit mode
+       this.constraintForm.patchValue(this.data);
+       this.availableConstraints = this.allConstraints;
+    } else {
+       // We are in creation mode
+       this.constraintService.getAllConstraints().subscribe((existing) => {
+           const existingIds = existing.map(c => c.description);
+           this.availableConstraints = this.allConstraints.filter(c => !existingIds.includes(c.id));
+       });
+    }
   }
 
   onFormSubmit() {

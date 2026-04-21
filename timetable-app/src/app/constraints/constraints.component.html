@@ -26,8 +26,13 @@
 
 <mat-table [dataSource]="dataSource" class="table">
     <ng-container matColumnDef="description">
-        <mat-header-cell *matHeaderCellDef>Constraint Description</mat-header-cell>
-        <mat-cell *matCellDef="let constraint">{{ constraint.description }}</mat-cell>
+        <mat-header-cell *matHeaderCellDef>Constraint</mat-header-cell>
+        <mat-cell *matCellDef="let constraint">
+            <div style="display: flex; flex-direction: column; justify-content: center; line-height: 1.4; padding: 10px 0;">
+                <span style="font-weight: 500; font-size: 15px;">{{ getConstraintTitle(constraint.description) }}</span>
+                <span style="font-size: 13px; color: #757575;">{{ constraint.description }}</span>
+            </div>
+        </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="weight">
