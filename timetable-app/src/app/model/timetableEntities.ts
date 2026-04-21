@@ -132,6 +132,9 @@ export interface TimetableConstraintConfiguration {
   noGapsForHighschool: HardMediumSoftScore;
   fairLessonsDistribution: HardMediumSoftScore;
   earlyStartForHighschool: HardMediumSoftScore;
+  foreignLanguageSameTimeslot: HardMediumSoftScore;
+  schoolRoomConflict: HardMediumSoftScore;
+  schoolTeacherConflict: HardMediumSoftScore;
 }
 
 export interface BenchmarkRequest {

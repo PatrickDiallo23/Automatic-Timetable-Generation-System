@@ -12,6 +12,7 @@ import com.patrick.timetableappbackend.model.Teacher;
 import com.patrick.timetableappbackend.model.TeacherTimeslot;
 import com.patrick.timetableappbackend.model.Timeslot;
 
+import com.patrick.timetableappbackend.solver.justifications.ForeignLanguageSameTimeslotJustification;
 import com.patrick.timetableappbackend.solver.justifications.RoomConflictJustification;
 import com.patrick.timetableappbackend.solver.justifications.StudentGroupSubjectVarietyJustification;
 import com.patrick.timetableappbackend.solver.justifications.StudentGroupConflictJustification;
@@ -58,6 +59,7 @@ import static ai.timefold.solver.core.api.score.stream.ConstraintCollectors.toLi
 public class TimetableConstraintProvider implements ConstraintProvider {
 
     private static final Map<Long, Set<TeacherTimeslot>> TEACHER_PREFERENCES_CACHE = new ConcurrentHashMap<>();
+    private static final String FOREIGN_LANGUAGE_PREFIX = "Lb.";
     final int MAX_HOURS_PER_DAY = 10;
     final int MAX_TEACHED_HOURS_PER_DAY = 12;
     final Duration MAX_GAP = Duration.ofHours(3);
@@ -100,7 +102,12 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 // Highschool-specific constraints
                 noGapsForHighschool(constraintFactory),
                 fairLessonsDistribution(constraintFactory),
-                earlyStartForHighschool(constraintFactory)
+                earlyStartForHighschool(constraintFactory),
+
+                // Foreign language grouping constraints
+                foreignLanguageSameTimeslot(constraintFactory),
+                schoolRoomConflict(constraintFactory),
+                schoolTeacherConflict(constraintFactory)
 
                 //add other constraints (with penalty or reward) if needed
 
@@ -686,13 +693,16 @@ public class TimetableConstraintProvider implements ConstraintProvider {
     }
 
     Constraint noGapsForHighschool(ConstraintFactory constraintFactory) {
+        // No gaps for highschool students
         return constraintFactory.forEach(Lesson.class)
+                // Group by student group and day of week
                 .groupBy(
                         lesson -> new StudentDayOfWeek(
                                 lesson.getStudentGroup(),
                                 lesson.getTimeslot().getDayOfWeek()),
                         lessonDayStatsCollector()
                 )
+                // if there are gaps between lessons, penalize
                 .filter((studentDay, stats) -> stats.gapMinutes() > 0)
                 .penalizeConfigurable((studentDay, stats) -> (int) stats.gapMinutes())
                 .justifyWith((studentDay, stats, score) ->
@@ -705,13 +715,16 @@ public class TimetableConstraintProvider implements ConstraintProvider {
     }
 
     Constraint fairLessonsDistribution(ConstraintFactory constraintFactory) {
+        // Fair distribution of lessons throughout the day
         return constraintFactory.forEach(Lesson.class)
+                // Group by student group and day of week
                 .groupBy(
                         lesson -> new StudentDayOfWeek(
                                 lesson.getStudentGroup(),
                                 lesson.getTimeslot().getDayOfWeek()),
                         count()
                 )
+                // Penalize if the number of lessons is not fair (try to minimize the count)
                 .penalizeConfigurable((studentDay, lessonCount) -> lessonCount * lessonCount)
                 .justifyWith((studentDay, lessonCount, score) ->
                         new FairLessonsDistributionJustification(
@@ -723,7 +736,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
     }
 
     Constraint earlyStartForHighschool(ConstraintFactory constraintFactory) {
-        // We assume 08:00 is the absolute earliest the school can start
+        // Assuming that 08:00 is the absolute earliest the school can start
         java.time.LocalTime schoolDayStart = java.time.LocalTime.of(8, 0);
 
         return constraintFactory.forEach(Lesson.class)
@@ -748,6 +761,93 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 .asConstraint("earlyStartForHighschool");
     }
 
+    // ── Foreign Language Grouping Constraints ──────────────────────────────────
+
+    /**
+     * Checks if a lesson is a foreign language lesson (subject starts with "Lb.").
+     * Covers: "Lb. ger/fr", "Lb. fr", "Lb. ger", etc.
+     */
+    private boolean isForeignLanguage(Lesson lesson) {
+        return lesson.getSubject() != null
+                && lesson.getSubject().startsWith(FOREIGN_LANGUAGE_PREFIX);
+    }
+
+    /**
+     * Checks if two lessons are both foreign language lessons of the same academic year.
+     * Used by school conflict constraints to exempt these pairs from room/teacher conflicts,
+     * since the solver needs freedom to place them in the same timeslot.
+     */
+    private boolean areSameYearForeignLanguagePair(Lesson lesson1, Lesson lesson2) {
+        return isForeignLanguage(lesson1)
+                && isForeignLanguage(lesson2)
+                && lesson1.getStudentGroup().getYear() != null
+                && lesson1.getStudentGroup().getYear() == lesson2.getStudentGroup().getYear();
+    }
+
+    Constraint foreignLanguageSameTimeslot(ConstraintFactory constraintFactory) {
+        // Foreign language lessons must be in the same timeslot for the same academic year
+        return constraintFactory
+                // 1. Start with only foreign language lessons
+                .forEach(Lesson.class)
+                .filter(this::isForeignLanguage)
+                
+                // 2. Join ONLY with other foreign language lessons
+                .join(
+                        constraintFactory.forEach(Lesson.class).filter(this::isForeignLanguage),
+                        // Match them if they share the same Academic Year (e.g., Year 5)
+                        Joiners.equal(lesson -> lesson.getStudentGroup().getYear()),
+                        // Ensure we only check unique pairs (A vs B, not B vs A)
+                        Joiners.lessThan(Lesson::getId)
+                )
+                
+                // 3. Apply critical logic rules
+                .filter((lesson1, lesson2) -> 
+                        // Rule A: They must belong to DIFFERENT classes (e.g., 5A vs 5B) 
+                        // Otherwise we'd penalize a single class for having lessons on different days.
+                        !lesson1.getStudentGroup().getId().equals(lesson2.getStudentGroup().getId()) 
+                        && 
+                        // Rule B: Penalize if they did NOT end up in the exact same timeslot
+                        !lesson1.getTimeslot().getId().equals(lesson2.getTimeslot().getId())
+                )
+                .penalizeConfigurable()
+                .justifyWith((lesson1, lesson2, score) -> 
+                        new ForeignLanguageSameTimeslotJustification(lesson1, lesson2))
+                .asConstraint("foreignLanguageSameTimeslot");
+    }
+
+    /**
+     * School-specific room conflict: identical to {@link #roomConflict} but EXEMPTS pairs where
+     * both lessons are foreign language lessons of the same academic year.
+     */
+    Constraint schoolRoomConflict(ConstraintFactory constraintFactory) {
+        return constraintFactory
+                .forEachUniquePair(Lesson.class,
+                        Joiners.equal(lesson -> lesson.getTimeslot().getId()),
+                        Joiners.equal(lesson -> lesson.getRoom().getId()))
+                // Exempt same-year foreign language pairs from room conflict
+                .filter((lesson1, lesson2) -> !areSameYearForeignLanguagePair(lesson1, lesson2))
+                .penalizeConfigurable()
+                .justifyWith((lesson1, lesson2, score) ->
+                        new RoomConflictJustification(lesson1.getRoom(), lesson1, lesson2))
+                .asConstraint("schoolRoomConflict");
+    }
+
+    /**
+     * School-specific teacher conflict: identical to {@link #teacherConflict} but EXEMPTS pairs
+     * where both lessons are foreign language lessons of the same academic year.
+     */
+    Constraint schoolTeacherConflict(ConstraintFactory constraintFactory) {
+        return constraintFactory
+                .forEachUniquePair(Lesson.class,
+                        Joiners.equal(lesson -> lesson.getTimeslot().getId()),
+                        Joiners.equal(lesson -> lesson.getTeacher().getId()))
+                // Exempt same-year foreign language pairs from teacher conflict
+                .filter((lesson1, lesson2) -> !areSameYearForeignLanguagePair(lesson1, lesson2))
+                .penalizeConfigurable()
+                .justifyWith((lesson1, lesson2, score) ->
+                        new TeacherConflictJustification(lesson1.getTeacher(), lesson1, lesson2))
+                .asConstraint("schoolTeacherConflict");
+    }
 
     public record TeacherDayOfWeek(Teacher teacher, DayOfWeek dayOfWeek) {
 
