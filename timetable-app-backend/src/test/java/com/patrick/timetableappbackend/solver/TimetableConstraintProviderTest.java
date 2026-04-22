@@ -20,13 +20,6 @@ import java.time.LocalTime;
 import java.util.Set;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@TestPropertySource(properties = {
-    "spring.datasource.url=jdbc:postgresql://localhost:5432/timetable_test",
-    "spring.datasource.username=test",
-    "spring.datasource.password=test",
-    "spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect",
-    "spring.jpa.hibernate.ddl-auto=create-drop"
-})
 public class TimetableConstraintProviderTest {
 
     private static final Room ROOM1 = new Room(1, "Room1");
