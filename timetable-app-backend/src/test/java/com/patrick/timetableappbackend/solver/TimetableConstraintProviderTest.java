@@ -20,6 +20,7 @@ import java.time.LocalTime;
 import java.util.Set;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@TestPropertySource(locations = "classpath:application-test.properties")
 public class TimetableConstraintProviderTest {
 
     private static final Room ROOM1 = new Room(1, "Room1");
