@@ -1,6 +1,8 @@
 package com.patrick.timetableappbackend.solver;
 
 import ai.timefold.solver.test.api.score.stream.ConstraintVerifier;
+
+import com.patrick.timetableappbackend.config.ConstraintConfig;
 import com.patrick.timetableappbackend.model.Lesson;
 import com.patrick.timetableappbackend.model.LessonType;
 import com.patrick.timetableappbackend.model.Room;
@@ -10,24 +12,20 @@ import com.patrick.timetableappbackend.model.TeacherTimeslot;
 import com.patrick.timetableappbackend.model.Timeslot;
 import com.patrick.timetableappbackend.model.Timetable;
 import com.patrick.timetableappbackend.model.Year;
-import com.patrick.timetableappbackend.repository.UserRepo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.TestPropertySource;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.Set;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@TestPropertySource(locations = "classpath:application-test.properties")
+@SpringBootTest(
+    webEnvironment = SpringBootTest.WebEnvironment.NONE,
+    classes = ConstraintConfig.class
+)
 public class TimetableConstraintProviderTest {
-
-    @MockBean
-    private UserRepo userRepository;
 
     private static final Room ROOM1 = new Room(1, "Room1");
     private static final Room ROOM2 = new Room(2, "Room2");
