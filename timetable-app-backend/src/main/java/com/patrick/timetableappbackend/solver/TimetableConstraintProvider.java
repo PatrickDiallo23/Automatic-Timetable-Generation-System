@@ -747,6 +747,10 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                         // Find the start time of the earliest lesson for this group/day
                         ai.timefold.solver.core.api.score.stream.ConstraintCollectors.<Lesson, java.time.LocalTime>min(lesson -> lesson.getTimeslot().getStartTime())
                 )
+                // Only penalize if the earliest lesson actually starts after 08:00
+                .filter((studentDay, earliestStartTime) ->
+                        earliestStartTime.isAfter(schoolDayStart)
+                )
                 // Penalize by the number of minutes past 08:00 AM the first lesson starts
                 .penalizeConfigurable((studentDay, earliestStartTime) ->
                         (int) java.time.Duration.between(schoolDayStart, earliestStartTime).toMinutes()

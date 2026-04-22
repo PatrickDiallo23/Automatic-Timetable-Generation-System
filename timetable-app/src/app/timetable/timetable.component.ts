@@ -793,10 +793,14 @@ export class TimetableComponent implements OnInit, OnDestroy {
       ];
 
       if (this.isAdmin(this.user)) {
-        cells.push(`<td style="padding: 10px 14px; white-space: nowrap;">
-          <button class="adv-action-btn adv-edit-btn" data-lesson-id="${lesson.id}">Edit</button>
-          <button class="adv-action-btn adv-analyze-btn" data-lesson-id="${lesson.id}">Analyze</button>
-        </td>`);
+        cells.push(`<td class="actions-cell" style="padding: 10px 14px; white-space: nowrap;">
+            <button class="adv-action-btn adv-edit-btn" data-lesson-id="${lesson.id}" title="Edit Lesson">
+              <i class="material-icons">edit</i>
+            </button>
+            <button class="adv-action-btn adv-analyze-btn" data-lesson-id="${lesson.id}" title="Analyze Impact">
+              <i class="material-icons">analytics</i>
+            </button>
+          </td>`);
       }
 
       row.innerHTML = cells.join('');
@@ -1328,6 +1332,9 @@ export class TimetableComponent implements OnInit, OnDestroy {
       this.timetableData.lessons[lessonIndex].room = editResult.newRoom;
       this.timetableData.lessons[lessonIndex].timeslot = editResult.newTimeslot;
 
+      // Store the previous score on the edit result for impact analysis
+      (editResult as any).previousScore = previousScore;
+
       // Add to edit history for undo
       this.editHistory.push(editResult);
       this.recentlyEditedLessonIds.add(editResult.lesson.id!);
@@ -1406,12 +1413,13 @@ export class TimetableComponent implements OnInit, OnDestroy {
 
         const dialogData: ImpactAnalysisDialogData = {
           change: changeInfo,
-          previousScore: null, // We don't have the previous score stored
+          previousScore: editResult ? (editResult as any).previousScore || null : null,
           newScore: this.score || null,
           violations: [],
           analysisData: analysis,
           rooms: this.timetableData?.rooms || [],
           timeslots: this.timetableData?.timeslots || [],
+          isModified: !!editResult,
         };
 
         this.dialog.open(ImpactAnalysisDialogComponent, {

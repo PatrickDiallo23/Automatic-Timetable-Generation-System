@@ -7,8 +7,8 @@
   <!-- Change Summary -->
   <div class="change-summary">
     <h4 class="section-title">
-      <mat-icon>swap_horiz</mat-icon>
-      Change Applied
+      <mat-icon>{{ data.isModified ? 'swap_horiz' : 'info' }}</mat-icon>
+      {{ data.isModified ? 'Change Applied' : 'Current Assignment' }}
     </h4>
     <div class="change-details">
       <div class="lesson-name">
@@ -16,25 +16,41 @@
         <strong>{{ data.change.lesson.subject }}</strong>
         <span class="lesson-meta">({{ data.change.lesson.teacher.name }} • {{ data.change.lesson.studentGroup.studentGroup }})</span>
       </div>
-      <div class="change-row">
-        <span class="change-label">Room:</span>
-        <span class="change-from">{{ data.change.originalRoom?.name || 'Unassigned' }}</span>
-        <mat-icon class="change-arrow">arrow_forward</mat-icon>
-        <span class="change-to">{{ data.change.newRoom?.name || 'Unassigned' }}</span>
-      </div>
-      <div class="change-row">
-        <span class="change-label">Time:</span>
-        <span class="change-from">{{ formatTimeslot(data.change.originalTimeslot) }}</span>
-        <mat-icon class="change-arrow">arrow_forward</mat-icon>
-        <span class="change-to">{{ formatTimeslot(data.change.newTimeslot) }}</span>
-      </div>
+
+      <!-- Show from → to only when modified -->
+      <ng-container *ngIf="data.isModified; else currentAssignment">
+        <div class="change-row">
+          <span class="change-label">Room:</span>
+          <span class="change-from">{{ data.change.originalRoom?.name || 'Unassigned' }}</span>
+          <mat-icon class="change-arrow">arrow_forward</mat-icon>
+          <span class="change-to">{{ data.change.newRoom?.name || 'Unassigned' }}</span>
+        </div>
+        <div class="change-row">
+          <span class="change-label">Time:</span>
+          <span class="change-from">{{ formatTimeslot(data.change.originalTimeslot) }}</span>
+          <mat-icon class="change-arrow">arrow_forward</mat-icon>
+          <span class="change-to">{{ formatTimeslot(data.change.newTimeslot) }}</span>
+        </div>
+      </ng-container>
+
+      <!-- Show current state when not modified -->
+      <ng-template #currentAssignment>
+        <div class="change-row">
+          <span class="change-label">Room:</span>
+          <span class="current-value">{{ data.change.newRoom?.name || 'Unassigned' }}</span>
+        </div>
+        <div class="change-row">
+          <span class="change-label">Time:</span>
+          <span class="current-value">{{ formatTimeslot(data.change.newTimeslot) }}</span>
+        </div>
+      </ng-template>
     </div>
   </div>
 
   <mat-divider class="section-divider"></mat-divider>
 
-  <!-- Score Comparison -->
-  <div class="score-comparison">
+  <!-- Score Impact: previousScore → newScore (only when lesson was modified) -->
+  <div class="score-comparison" *ngIf="data.isModified && data.previousScore">
     <h4 class="section-title">
       <mat-icon>score</mat-icon>
       Score Impact
@@ -42,7 +58,7 @@
     <div class="score-grid">
       <div class="score-item">
         <span class="score-type hard">Hard</span>
-        <span class="score-value">{{ data.previousScore?.hardScore || 0 }}</span>
+        <span class="score-value">{{ data.previousScore.hardScore || 0 }}</span>
         <mat-icon class="score-arrow">arrow_forward</mat-icon>
         <span class="score-value" [class]="getScoreClass(getScoreDiff().hard)">
           {{ data.newScore?.hardScore || 0 }}
@@ -53,7 +69,7 @@
       </div>
       <div class="score-item">
         <span class="score-type medium">Medium</span>
-        <span class="score-value">{{ data.previousScore?.mediumScore || 0 }}</span>
+        <span class="score-value">{{ data.previousScore.mediumScore || 0 }}</span>
         <mat-icon class="score-arrow">arrow_forward</mat-icon>
         <span class="score-value" [class]="getScoreClass(getScoreDiff().medium)">
           {{ data.newScore?.mediumScore || 0 }}
@@ -64,7 +80,7 @@
       </div>
       <div class="score-item">
         <span class="score-type soft">Soft</span>
-        <span class="score-value">{{ data.previousScore?.softScore || 0 }}</span>
+        <span class="score-value">{{ data.previousScore.softScore || 0 }}</span>
         <mat-icon class="score-arrow">arrow_forward</mat-icon>
         <span class="score-value" [class]="getScoreClass(getScoreDiff().soft)">
           {{ data.newScore?.softScore || 0 }}
@@ -74,9 +90,38 @@
         </span>
       </div>
     </div>
+    <mat-divider class="section-divider"></mat-divider>
   </div>
 
-  <mat-divider class="section-divider"></mat-divider>
+  <!-- Lesson Score Breakdown (always shown when there are violations) -->
+  <div class="score-breakdown" *ngIf="hasViolations()">
+    <h4 class="section-title">
+      <mat-icon>assessment</mat-icon>
+      Lesson Score Contribution
+    </h4>
+    <div class="breakdown-grid">
+      <div class="breakdown-item">
+        <span class="breakdown-label hard">Hard</span>
+        <span class="breakdown-value" [class]="getBreakdownClass(lessonScoreBreakdown.hard)">
+          {{ lessonScoreBreakdown.hard }}
+        </span>
+      </div>
+      <div class="breakdown-item">
+        <span class="breakdown-label medium">Medium</span>
+        <span class="breakdown-value" [class]="getBreakdownClass(lessonScoreBreakdown.medium)">
+          {{ lessonScoreBreakdown.medium }}
+        </span>
+      </div>
+      <div class="breakdown-item">
+        <span class="breakdown-label soft">Soft</span>
+        <span class="breakdown-value" [class]="getBreakdownClass(lessonScoreBreakdown.soft)">
+          {{ lessonScoreBreakdown.soft }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <mat-divider class="section-divider" *ngIf="hasViolations()"></mat-divider>
 
   <!-- Violation Summary -->
   <div class="violation-summary" *ngIf="hasViolations()">
@@ -104,7 +149,7 @@
   <div class="no-violations" *ngIf="!hasViolations()">
     <mat-icon class="success-icon">check_circle</mat-icon>
     <h4>No Constraint Violations</h4>
-    <p>This change does not introduce any new constraint violations for this lesson.</p>
+    <p>This lesson does not have any constraint violations.</p>
   </div>
 
   <!-- Violation Details -->

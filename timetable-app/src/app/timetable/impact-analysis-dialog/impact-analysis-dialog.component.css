@@ -112,6 +112,15 @@
   color: #2e7d32;
 }
 
+.current-value {
+  background: #e3f2fd;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #1565c0;
+  font-weight: 500;
+}
+
 /* Score Comparison */
 .score-grid {
   display: flex;
@@ -160,6 +169,40 @@
 .score-improved { color: #2e7d32; }
 .score-worsened { color: #c62828; }
 .score-unchanged { color: #666; }
+
+/* Lesson Score Breakdown */
+.breakdown-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.breakdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f5f5f5;
+  padding: 10px 16px;
+  border-radius: 8px;
+  flex: 1;
+  min-width: 120px;
+}
+
+.breakdown-label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  min-width: 60px;
+}
+
+.breakdown-label.hard { color: #f44336; }
+.breakdown-label.medium { color: #ff9800; }
+.breakdown-label.soft { color: #4caf50; }
+
+.breakdown-value {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
 
 /* Violation Summary */
 .summary-badges {
