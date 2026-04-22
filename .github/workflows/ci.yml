@@ -12,23 +12,6 @@ jobs:
       run:
         working-directory: ./timetable-app-backend
 
-    # PostgreSQL service container — required because @SpringBootTest loads the
-    # full application context which includes JPA/datasource auto-configuration.
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_DB: timetable_test
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
