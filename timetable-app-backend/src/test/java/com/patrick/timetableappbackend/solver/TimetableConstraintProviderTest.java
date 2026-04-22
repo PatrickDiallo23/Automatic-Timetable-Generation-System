@@ -21,11 +21,11 @@ import java.util.Set;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @TestPropertySource(properties = {
-    "spring.datasource.url=jdbc:postgresql://localhost:5432/timetable_politehnica_school",
-    "spring.datasource.username=new_user",
-    "spring.datasource.password=new_user_password",
+    "spring.datasource.url=jdbc:postgresql://localhost:5432/timetable_test",
+    "spring.datasource.username=test",
+    "spring.datasource.password=test",
     "spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect",
-    "spring.jpa.hibernate.ddl-auto=update"
+    "spring.jpa.hibernate.ddl-auto=create-drop"
 })
 public class TimetableConstraintProviderTest {
 
