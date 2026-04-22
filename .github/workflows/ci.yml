@@ -24,11 +24,7 @@ jobs:
           cache: 'maven'
 
       - name: Run Maven Tests and Build
-        env:
-          DATABASE_URL: jdbc:postgresql://localhost:5432/timetable_test
-          DATABASE_USERNAME: test
-          DATABASE_PASSWORD: test
-        run: mvn -B clean verify -Pci,!enterprise -Dspring.profiles.active=ci
+        run: mvn -B clean verify -Pci,!enterprise
 
       # TODO: Implement Code Coverage Reporting
       # Example: Upload JaCoCo reports to Codecov or add a GitHub Action to comment coverage directly on the PR.
