@@ -16,6 +16,7 @@ import com.patrick.timetableappbackend.model.Year;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
@@ -25,6 +26,7 @@ import java.util.Set;
     webEnvironment = SpringBootTest.WebEnvironment.NONE,
     classes = ConstraintConfig.class
 )
+@TestPropertySource(locations = "classpath:application-test.properties")
 public class TimetableConstraintProviderTest {
 
     private static final Room ROOM1 = new Room(1, "Room1");
