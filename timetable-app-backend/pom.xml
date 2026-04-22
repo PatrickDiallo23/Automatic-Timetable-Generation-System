@@ -18,6 +18,7 @@
 		<spring-cloud.version>2023.0.0</spring-cloud.version>
 		<!--	*** Last version that uses enterprise functionalities for free ***  -->
 		<timefold-solver.version>1.9.0</timefold-solver.version>
+		<timefold.move-thread-count>AUTO</timefold.move-thread-count>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -39,15 +40,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>ai.timefold.solver.enterprise</groupId>
-			<artifactId>timefold-solver-enterprise-spring-boot-starter</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>ai.timefold.solver.enterprise</groupId>
-			<artifactId>timefold-solver-enterprise-core</artifactId>
-			<version>1.9.0</version>
 		</dependency>
 		<dependency>
 			<groupId>ai.timefold.solver</groupId>
@@ -162,13 +154,7 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<dependency>
-				<groupId>ai.timefold.solver.enterprise</groupId>
-				<artifactId>timefold-solver-enterprise-bom</artifactId>
-				<version>${timefold-solver.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
@@ -201,12 +187,65 @@
 		</plugins>
 	</build>
 
-	<repositories>
-		<repository>
-			<id>timefold-solver-enterprise</id>
-			<name>Timefold Solver Enterprise Edition</name>
-			<url>https://timefold.jfrog.io/artifactory/releases/</url>
-		</repository>
-	</repositories>
+	<profiles>
+		<profile>
+			<id>enterprise</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<dependencyManagement>
+				<dependencies>
+					<dependency>
+						<groupId>ai.timefold.solver.enterprise</groupId>
+						<artifactId>timefold-solver-enterprise-bom</artifactId>
+						<version>${timefold-solver.version}</version>
+						<type>pom</type>
+						<scope>import</scope>
+					</dependency>
+				</dependencies>
+			</dependencyManagement>
+			<dependencies>
+				<dependency>
+					<groupId>ai.timefold.solver.enterprise</groupId>
+					<artifactId>timefold-solver-enterprise-spring-boot-starter</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>ai.timefold.solver.enterprise</groupId>
+					<artifactId>timefold-solver-enterprise-core</artifactId>
+					<version>1.9.0</version>
+				</dependency>
+			</dependencies>
+			<repositories>
+				<repository>
+					<id>timefold-solver-enterprise</id>
+					<name>Timefold Solver Enterprise Edition</name>
+					<url>https://timefold.jfrog.io/artifactory/releases/</url>
+				</repository>
+			</repositories>
+		</profile>
+		<profile>
+			<id>ci</id>
+			<properties>
+				<timefold.move-thread-count>NONE</timefold.move-thread-count>
+			</properties>
+			<dependencyManagement>
+				<dependencies>
+					<dependency>
+						<groupId>ai.timefold.solver</groupId>
+						<artifactId>timefold-solver-bom</artifactId>
+						<version>${timefold-solver.version}</version>
+						<type>pom</type>
+						<scope>import</scope>
+					</dependency>
+				</dependencies>
+			</dependencyManagement>
+			<dependencies>
+				<dependency>
+					<groupId>ai.timefold.solver</groupId>
+					<artifactId>timefold-solver-spring-boot-starter</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 
 </project>
