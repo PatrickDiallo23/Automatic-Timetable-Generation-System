@@ -2,7 +2,7 @@ name: Fullstack CI
 
 on:
   pull_request:
-    branches: [ "main", "master" ]
+    branches: [ "main", "master", "feature/rule_based_value_range_provider_option_3" ]
 
 jobs:
   backend-build-and-test:
