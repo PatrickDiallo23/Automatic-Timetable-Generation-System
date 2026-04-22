@@ -12,6 +12,23 @@ jobs:
       run:
         working-directory: ./timetable-app-backend
 
+    # PostgreSQL service container — required because @SpringBootTest loads the
+    # full application context which includes JPA/datasource auto-configuration.
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: timetable_test
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,7 +41,11 @@ jobs:
           cache: 'maven'
 
       - name: Run Maven Tests and Build
-        run: mvn -B clean verify -Pci,!enterprise
+        env:
+          DATABASE_URL: jdbc:postgresql://localhost:5432/timetable_test
+          DATABASE_USERNAME: test
+          DATABASE_PASSWORD: test
+        run: mvn -B clean verify -Pci,!enterprise -Dspring.profiles.active=ci
 
       # TODO: Implement Code Coverage Reporting
       # Example: Upload JaCoCo reports to Codecov or add a GitHub Action to comment coverage directly on the PR.
