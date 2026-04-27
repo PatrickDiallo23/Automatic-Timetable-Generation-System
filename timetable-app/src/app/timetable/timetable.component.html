@@ -63,7 +63,11 @@
             <mat-icon>person</mat-icon>
             Teacher View
           </mat-button-toggle>
-          <mat-button-toggle value="advanced" class="toggle-option">
+          <mat-button-toggle *ngIf="isAdmin(user)" value="room" class="toggle-option">
+            <mat-icon>room</mat-icon>
+            Room View
+          </mat-button-toggle>
+          <mat-button-toggle *ngIf="isAdmin(user)" value="advanced" class="toggle-option">
             <mat-icon>search</mat-icon>
             Advanced Search
           </mat-button-toggle>
@@ -144,6 +148,46 @@
         </div>
       </div>
 
+      <!-- Room Filter Section -->
+      <div *ngIf="toggle == 'room'" class="filter-section">
+        <div class="filter-row">
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Room Name</mat-label>
+            <mat-icon matPrefix>room</mat-icon>
+            <div [formGroup]="roomFormGroup">
+              <input
+                type="text"
+                placeholder="e.g., Sala5A"
+                #room
+                matInput
+                formControlName="roomControl"
+                [matAutocomplete]="autoRoom"
+                (focus)="selectInput($event)">
+            </div>
+            <mat-autocomplete #autoRoom="matAutocomplete"
+                              (optionSelected)="filterRooms(room.value, roomBuilding.value)">
+              <mat-option *ngFor="let roomName of filteredRooms | async" [value]="roomName">
+                <mat-icon>meeting_room</mat-icon>
+                {{ roomName }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Room Building</mat-label>
+            <mat-icon matPrefix>house</mat-icon>
+            <mat-select #roomBuilding
+                        (selectionChange)="filterRooms(room.value, roomBuilding.value)">
+              <mat-option value="">Any Building</mat-option>
+              <mat-option *ngFor="let building of availableBuildings" [value]="building">
+                <mat-icon>house</mat-icon>
+                {{ building }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
       <!-- Advanced Filter Section -->
       <div *ngIf="toggle == 'advanced'" class="filter-section advanced-filter-section" [formGroup]="advancedFilterForm">
         <div class="advanced-filter-grid">
@@ -216,13 +260,32 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Student Group Name</mat-label>
+            <mat-icon matPrefix>groups</mat-icon>
+            <input type="text" matInput formControlName="studentGroupName"
+                   placeholder="e.g., AB 4, Cls. 5" [matAutocomplete]="autoAdvGroupName">
+            <mat-autocomplete #autoAdvGroupName="matAutocomplete">
+              <mat-option *ngFor="let g of filteredAdvancedStudentGroupNames | async" [value]="g">{{ g }}</mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
             <mat-label>Student Group</mat-label>
             <mat-icon matPrefix>groups</mat-icon>
             <input type="text" matInput formControlName="studentGroup"
-                   placeholder="e.g., 313 AA" [matAutocomplete]="autoAdvGroup">
+                   placeholder="e.g., 313 AA, 5A" [matAutocomplete]="autoAdvGroup">
             <mat-autocomplete #autoAdvGroup="matAutocomplete">
               <mat-option *ngFor="let g of filteredAdvancedStudentGroups | async" [value]="g">{{ g }}</mat-option>
             </mat-autocomplete>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Student Subgroup</mat-label>
+            <mat-icon matPrefix>groups</mat-icon>
+            <mat-select formControlName="studentSubgroup">
+              <mat-option value="">Any</mat-option>
+              <mat-option *ngFor="let sg of availableStudentSubgroups" [value]="sg">{{ sg }}</mat-option>
+            </mat-select>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="filter-field">

@@ -41,10 +41,13 @@ export class TimetableComponent implements OnInit, OnDestroy {
   selectedStudentGroup?: string;
   selectedSemiGroup?: string;
   studentGroups: string[] = [];
+  studentGroupNames: string[] = [];
   filteredStudentGroups?: Observable<string[]>;
 
   teachers: string[] = [];
   filteredTeachers?: Observable<string[]>;
+
+  filteredRooms?: Observable<string[]>;
 
   // Advanced filter data sources
   availableDays: string[] = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
@@ -53,12 +56,16 @@ export class TimetableComponent implements OnInit, OnDestroy {
   availableRoomNames: string[] = [];
   availableBuildings: string[] = [];
   availableCapacities: number[] = [];
+  availableStudentGroupNames: string[] = [];
+  availableStudentSubgroups: string[] = ['SEMI_GROUP0','SEMI_GROUP1','SEMI_GROUP2'];
   availableSubjects: string[] = [];
   availableLessonTypes: string[] = Object.values(LessonType);
   availableYears: string[] = Object.values(Year);
   filteredAdvancedRooms?: Observable<string[]>;
   filteredAdvancedTeachers?: Observable<string[]>;
+  filteredAdvancedStudentGroupNames?: Observable<string[]>;
   filteredAdvancedStudentGroups?: Observable<string[]>;
+  filteredAdvancedStudentSubgroups?: Observable<string[]>;
   filteredAdvancedSubjects?: Observable<string[]>;
   advancedResultCount: number = 0;
 
@@ -70,6 +77,9 @@ export class TimetableComponent implements OnInit, OnDestroy {
   teacherFormGroup = new FormGroup({
     teacherControl: new FormControl(''),
   });
+  roomFormGroup = new FormGroup({
+    roomControl: new FormControl(''),
+  });
   advancedFilterForm = new FormGroup({
     dayOfWeek: new FormControl(''),
     startTime: new FormControl(''),
@@ -78,7 +88,9 @@ export class TimetableComponent implements OnInit, OnDestroy {
     building: new FormControl(''),
     capacity: new FormControl(''),
     teacherName: new FormControl(''),
+    studentGroupName: new FormControl(''),
     studentGroup: new FormControl(''),
+    studentSubgroup: new FormControl(''),
     subject: new FormControl(''),
     lessonType: new FormControl(''),
     year: new FormControl(''),
@@ -95,9 +107,6 @@ export class TimetableComponent implements OnInit, OnDestroy {
   recentlyEditedLessonIds: Set<number> = new Set();
   private readonly TIMETABLE_STORAGE_KEY = 'timetable_session_data';
   private readonly EDIT_HISTORY_STORAGE_KEY = 'timetable_edit_history';
-
-  // todo: filter timetable on day and student series
-  // persist timetable result so that it can be used by admin and USER (student or teacher) - did this with cookies
 
   constructor(
     private loginService: LoginService,
@@ -168,6 +177,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
         // Populate student groups
         this.populateStudentGroups();
         this.populateTeachers();
+        this.populateRooms();
 
         // Filter timetable initially
         this.filterTimetable('', '');
@@ -190,6 +200,12 @@ export class TimetableComponent implements OnInit, OnDestroy {
       startWith(''),
       map((value) => this._filterTeachers(value || ''))
     );
+    this.filteredRooms = this.roomFormGroup.controls[
+      'roomControl'
+    ].valueChanges.pipe(
+      startWith(''),
+      map((value) => this._filterRooms(value || ''))
+    );
 
     // Advanced filter autocomplete sources
     this.filteredAdvancedRooms = this.advancedFilterForm.controls['roomName'].valueChanges.pipe(
@@ -200,9 +216,17 @@ export class TimetableComponent implements OnInit, OnDestroy {
       startWith(''),
       map((value) => this.teachers.filter(t => t.toLowerCase().includes((value || '').toLowerCase())))
     );
+    this.filteredAdvancedStudentGroupNames = this.advancedFilterForm.controls['studentGroupName'].valueChanges.pipe(
+      startWith(''),
+      map((value) => this.availableStudentGroupNames.filter(g => g.toLowerCase().includes((value || '').toLowerCase())))
+    );
     this.filteredAdvancedStudentGroups = this.advancedFilterForm.controls['studentGroup'].valueChanges.pipe(
       startWith(''),
       map((value) => this.studentGroups.filter(g => g.toLowerCase().includes((value || '').toLowerCase())))
+    );
+    this.filteredAdvancedStudentSubgroups = this.advancedFilterForm.controls['studentSubgroup'].valueChanges.pipe(
+      startWith(''),
+      map((value) => this.availableStudentSubgroups.filter(sg => sg.toLowerCase().includes((value || '').toLowerCase())))
     );
     this.filteredAdvancedSubjects = this.advancedFilterForm.controls['subject'].valueChanges.pipe(
       startWith(''),
@@ -504,6 +528,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
       THURSDAY: 4,
       FRIDAY: 5,
     };
+    const isAdmin = this.isAdmin(this.user);
 
     const table = document.createElement('table');
     table.classList.add('timetable-table');
@@ -515,6 +540,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
       <th><i class="material-icons" style="vertical-align: middle; margin-right: 8px; font-size: 18px;">book</i>Subject & Type</th>
       <th><i class="material-icons" style="vertical-align: middle; margin-right: 8px; font-size: 18px;">schedule</i>Day & Time</th>
       <th><i class="material-icons" style="vertical-align: middle; margin-right: 8px; font-size: 18px;">room</i>Room & Building</th>
+      ${isAdmin ? '<th><i class="material-icons" style="vertical-align: middle; margin-right: 8px;">settings</i>Actions</th>' : ''}
     `;
     const sortedTimetable = lessons?.sort((a, b) => {
       const timeslotA = this.timetableData?.timeslots?.find(
@@ -549,8 +575,12 @@ export class TimetableComponent implements OnInit, OnDestroy {
         (slot) => slot.id === lesson.timeslot
       );
       const room = this.timetableData?.rooms?.find((r) => r.id === lesson.room);
+      const isEdited = this.isLessonEdited(lesson.id);
 
       const row = table.insertRow();
+      if (isEdited) {
+        row.classList.add('edited-row');
+      }
       if (lesson.pinned) {
         row.classList.add('pinned-row');
       }
@@ -560,8 +590,9 @@ export class TimetableComponent implements OnInit, OnDestroy {
       }
       
       row.innerHTML = `
-        <td class="${lesson.pinned ? 'pinned-cell' : ''} ${hasRules ? 'has-rules-cell' : ''}">
+        <td class="${isEdited ? 'edited-cell' : ''} ${lesson.pinned ? 'pinned-cell' : ''} ${hasRules ? 'has-rules-cell' : ''}">
           ${lesson.pinned ? '<div class="pinned-indicator"><i class="material-icons" title="Pinned - This lesson is locked">push_pin</i></div>' : ''}
+          ${isEdited ? '<div class="edited-indicator"><i class="material-icons">edit_note</i></div>' : ''}
           <div style="display: flex; align-items: center;">
             <i class="material-icons" style="font-size: 18px; margin-right: 8px; color: #673ab7;">group</i>
             <div>
@@ -569,7 +600,8 @@ export class TimetableComponent implements OnInit, OnDestroy {
               <div style="font-size: 0.85rem; color: #666;">Subgroup ${lesson.studentGroup?.semiGroup?.replace('SEMI_GROUP', '') || 'N/A'}</div>
             </div>
           </div>
-          ${lesson.pinned ? '<span class="pinned-badge"><i class="material-icons" style="font-size: 12px; vertical-align: middle;">lock</i> Pinned</span>' : ''}
+          ${lesson.pinned && !isEdited ? '<span class="pinned-badge"><i class="material-icons" style="font-size: 12px; vertical-align: middle;">lock</i> Pinned</span>' : ''}
+          ${isEdited ? '<span class="edited-badge"><i class="material-icons" style="font-size: 12px; vertical-align: middle;">check_circle</i> Modified</span>' : ''}
           ${hasRules ? '<span class="rules-badge"><i class="material-icons" style="font-size: 12px; vertical-align: middle;">gavel</i> ' + lesson.appliedRuleIds!.length + ' Rule' + (lesson.appliedRuleIds!.length > 1 ? 's' : '') + '</span>' : ''}
         </td>
         <td>
@@ -584,13 +616,217 @@ export class TimetableComponent implements OnInit, OnDestroy {
           <div style="font-weight: 500; margin-bottom: 2px;">${room?.name}</div>
           <div style="font-size: 0.85rem; color: #666;">${room?.building}</div>
         </td>
+        ${isAdmin ? `
+        <td class="actions-cell">
+          <button class="action-btn edit-btn" data-lesson-id="${lesson.id}" title="Edit Lesson">
+            <i class="material-icons">edit</i>
+          </button>
+          <button class="action-btn analyze-btn" data-lesson-id="${lesson.id}" title="Analyze Impact">
+            <i class="material-icons">analytics</i>
+          </button>
+        </td>
+        ` : ''}
       `;
 
       row.style.animation = `fadeIn 0.3s ease-in-out ${index * 0.05}s both`;
     });
 
     timetableContainer?.appendChild(table);
+    // Attach event listeners if admin
+    if (isAdmin) {
+      this.attachActionButtonListeners(sortedTimetable || []);
+    }
   }
+
+  populateRooms() {
+    console.log(this.timetableData);
+    const rooms = this.timetableData?.rooms;
+    if (!rooms) {
+      this.availableRoomNames = [];
+      this.availableBuildings = [];
+      return;
+    }
+
+    const roomNameSet = new Set<string>();
+    const buildingSet = new Set<string>();
+    rooms.forEach((room) => {
+      console.log(room);
+      const roomName = room.name;
+      if (roomName) {
+        roomNameSet.add(roomName);
+      }
+      const buildingName = room.building;
+      if (buildingName) {
+        buildingSet.add(buildingName);
+      }
+    });
+
+    this.availableRoomNames = Array.from(roomNameSet).sort((a, b) => a.localeCompare(b));
+    this.availableBuildings = Array.from(buildingSet).sort((a, b) => a.localeCompare(b));
+
+    console.log(this.availableRoomNames);
+    console.log(this.availableBuildings);
+  }
+
+  filterRooms(room: string, building: string) {
+  this.isLoading = true;
+  const selectedRoom = room;
+  const selectedBuilding = building;
+
+  let filteredTimetable = this.timetableData?.lessons || [];
+
+  if (selectedRoom || selectedBuilding) {
+    filteredTimetable = filteredTimetable.filter((lesson) => {
+      // Resolve room ID to Room object
+      const resolvedRoom = this.timetableData?.rooms?.find(r => r.id === lesson.room);
+
+      const matchesRoom = !selectedRoom ||
+        resolvedRoom?.name?.toLowerCase().includes(selectedRoom.toLowerCase());
+      const matchesBuilding = !selectedBuilding ||
+        resolvedRoom?.building?.toLowerCase().includes(selectedBuilding.toLowerCase());
+
+      return matchesRoom && matchesBuilding;
+    });
+  } else {
+    // No filter selected — clear display
+    this.displayedTimetable = [];
+    const timetableContainer = document.getElementById('timetable');
+    if (timetableContainer) timetableContainer.innerHTML = '';
+    this.isLoading = false;
+    return;
+  }
+
+  this.displayedTimetable = filteredTimetable;
+  setTimeout(() => {
+    this.displayRoomTimetable(filteredTimetable);
+    this.isLoading = false;
+  }, 300);
+}
+
+  displayRoomTimetable(lessons: Lesson[] | undefined) {
+    const timetableContainer = document.getElementById('timetable');
+    if (timetableContainer) timetableContainer.innerHTML = '';
+
+    if (!lessons || lessons?.length == 0) {
+      return;
+    }
+
+    const isAdmin = this.isAdmin(this.user);
+
+    const table = document.createElement('table');
+    table.classList.add('timetable-table');
+
+    // Table header
+    const thead = table.createTHead();
+    const headerRow = thead.insertRow();
+    const headers = [
+      { icon: 'meeting_room', label: 'Room & Building' },
+      { icon: 'schedule',     label: 'Day & Time' },
+      { icon: 'groups',       label: 'Student Group' },
+      { icon: 'book',         label: 'Subject & Type' },
+      { icon: 'person',       label: 'Teacher' },
+    ];
+    if (isAdmin) headers.push({ icon: 'settings', label: 'Actions' });
+
+    headers.forEach(({ icon, label }) => {
+      const th = document.createElement('th');
+      th.innerHTML = `<i class="material-icons" style="vertical-align: middle; margin-right: 8px; font-size: 18px;">${icon}</i>${label}`;
+      headerRow.appendChild(th);
+    });
+
+    const dayOrder: { [key: string]: number } = {
+      MONDAY: 1, TUESDAY: 2, WEDNESDAY: 3, THURSDAY: 4, FRIDAY: 5,
+    };
+
+    const sortedTimetable = lessons?.sort((a, b) => {
+      const timeslotA = this.timetableData?.timeslots?.find((slot) => slot.id === a.timeslot);
+      const timeslotB = this.timetableData?.timeslots?.find((slot) => slot.id === b.timeslot);
+
+      if (timeslotA && timeslotB) {
+        const dayOrderA = dayOrder[timeslotA.dayOfWeek as keyof typeof dayOrder];
+        const dayOrderB = dayOrder[timeslotB.dayOfWeek as keyof typeof dayOrder];
+
+        if (dayOrderA !== dayOrderB) {
+          return dayOrderA - dayOrderB;
+        } else {
+          return (timeslotA.startTime ?? '').localeCompare(timeslotB.startTime ?? '');
+        }
+      }
+      return 0;
+    });
+
+    sortedTimetable?.forEach((lesson, index) => {
+      const timeslot = this.timetableData?.timeslots?.find((slot) => slot.id === lesson.timeslot);
+      const room = this.timetableData?.rooms?.find((r) => r.id === lesson.room);
+      const isEdited = this.isLessonEdited(lesson.id);
+      const hasRules = lesson.appliedRuleIds && lesson.appliedRuleIds.length > 0;
+
+      const row = table.insertRow();
+      if (isEdited) row.classList.add('edited-row');
+      if (lesson.pinned) row.classList.add('pinned-row');
+      if (hasRules) row.classList.add('has-rules-row');
+
+      row.innerHTML = `
+        <td class="${lesson.pinned ? 'pinned-cell' : ''} ${hasRules ? 'has-rules-cell' : ''}">
+          ${lesson.pinned ? '<div class="pinned-indicator"><i class="material-icons" title="Pinned - This lesson is locked">push_pin</i></div>' : ''}
+          <div style="display: flex; align-items: center;">
+            <i class="material-icons" style="font-size: 18px; margin-right: 8px; color: #673ab7;">meeting_room</i>
+            <div>
+              <div style="font-weight: 600; color: #673ab7;">${room?.name || 'N/A'}</div>
+              <div style="font-size: 0.85rem; color: #666;">${room?.building || 'N/A'}</div>
+            </div>
+          </div>
+          ${lesson.pinned ? '<span class="pinned-badge"><i class="material-icons" style="font-size: 12px; vertical-align: middle;">lock</i> Pinned</span>' : ''}
+          ${hasRules ? '<span class="rules-badge"><i class="material-icons" style="font-size: 12px; vertical-align: middle;">gavel</i> ' + lesson.appliedRuleIds!.length + ' Rule' + (lesson.appliedRuleIds!.length > 1 ? 's' : '') + '</span>' : ''}
+        </td>
+      <td>
+        <div style="font-weight: 500; margin-bottom: 2px;">${this.formatDay(timeslot?.dayOfWeek)}</div>
+        <div style="font-size: 0.9rem; color: #666;">${timeslot?.startTime} - ${timeslot?.endTime}</div>
+      </td>
+      <td>
+        <div style="display: flex; align-items: center;">
+          <i class="material-icons" style="font-size: 18px; margin-right: 8px; color: #673ab7;">group</i>
+          <div>
+            <div style="font-weight: 600; color: #673ab7;">${lesson.studentGroup?.studentGroup || 'N/A'}</div>
+            <div style="font-size: 0.85rem; color: #666;">Subgroup ${lesson.studentGroup?.semiGroup?.replace('SEMI_GROUP', '') || 'N/A'}</div>
+          </div>
+        </div>
+      </td>
+      <td class="${isEdited ? 'edited-cell' : ''}">
+        ${isEdited ? '<div class="edited-indicator"><i class="material-icons">edit_note</i></div>' : ''}
+        <div class="lesson-content">
+          <div style="font-weight: 600; color: #673ab7; margin-bottom: 4px;">${lesson.subject}</div>
+          <div style="font-size: 0.85rem; color: #666; font-style: italic;">${lesson.lessonType}</div>
+        </div>
+        ${isEdited ? '<span class="edited-badge"><i class="material-icons" style="font-size: 12px; vertical-align: middle;">check_circle</i> Modified</span>' : ''}
+      </td>
+      <td>
+        <div style="display: flex; align-items: center;">
+          <i class="material-icons" style="font-size: 18px; margin-right: 8px; color: #673ab7;">account_circle</i>
+          ${lesson.teacher?.name || 'N/A'}
+        </div>
+      </td>
+      ${isAdmin ? `
+      <td class="actions-cell">
+        <button class="action-btn edit-btn" data-lesson-id="${lesson.id}" title="Edit Lesson">
+          <i class="material-icons">edit</i>
+        </button>
+        <button class="action-btn analyze-btn" data-lesson-id="${lesson.id}" title="Analyze Impact">
+          <i class="material-icons">analytics</i>
+        </button>
+      </td>
+      ` : ''}
+    `;
+
+    row.style.animation = `fadeIn 0.3s ease-in-out ${index * 0.05}s both`;
+  });
+
+  timetableContainer?.appendChild(table);
+
+  if (isAdmin) {
+    this.attachActionButtonListeners(sortedTimetable || []);
+  }
+}
 
   toogle(value: string) {
     this.isLoading = true;
@@ -611,6 +847,13 @@ export class TimetableComponent implements OnInit, OnDestroy {
       this.filterTeachers('');
       this.populateTeachers();
       this.teacherFormGroup.controls['teacherControl'].reset();
+      this.displayedTimetable = [];
+    } else if (this.toggle === 'room') {
+      if (timetableContainer) timetableContainer.innerHTML = '';
+
+      this.filterRooms('', '');
+      this.populateRooms();
+      this.roomFormGroup.controls['roomControl'].reset();
       this.displayedTimetable = [];
     } else {
       // advanced
@@ -641,6 +884,14 @@ export class TimetableComponent implements OnInit, OnDestroy {
     );
   }
 
+  private _filterRooms(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.availableRoomNames.filter((option) =>
+      option.toLowerCase().includes(filterValue)
+    );
+  }
+
   selectInput(event: FocusEvent): void {
     const target = event.target as HTMLInputElement;
     target.select();
@@ -659,6 +910,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
     this.availableBuildings = [...new Set(rooms.map(r => r.building).filter(Boolean))] as string[];
     this.availableCapacities = [...new Set(rooms.map(r => r.capacity).filter((c): c is number => c !== undefined))].sort((a, b) => a - b);
     this.availableSubjects = [...new Set(lessons.map(l => l.subject).filter(Boolean))].sort();
+    this.availableStudentGroupNames = [...new Set(lessons.map(l => l.studentGroup?.name).filter(Boolean))].sort() as string[];
   }
 
   applyAdvancedFilter(): void {
@@ -690,7 +942,9 @@ export class TimetableComponent implements OnInit, OnDestroy {
       if (f.building && room?.building !== f.building) return false;
       if (f.capacity && room?.capacity !== Number(f.capacity)) return false;
       if (f.teacherName && !teacher?.name?.toLowerCase().includes(f.teacherName.toLowerCase())) return false;
-      if (f.studentGroup && !studentGroup?.name?.toLowerCase().includes(f.studentGroup.toLowerCase())) return false;
+      if (f.studentGroup && !studentGroup?.studentGroup?.toLowerCase().includes(f.studentGroup.toLowerCase())) return false;
+      if (f.studentGroupName && !studentGroup?.name?.toLowerCase().includes(f.studentGroupName.toLowerCase())) return false;
+      if (f.studentSubgroup && !studentGroup?.semiGroup?.toLowerCase().includes(f.studentSubgroup.toLowerCase())) return false;
       if (f.subject && !lesson.subject?.toLowerCase().includes(f.subject.toLowerCase())) return false;
       if (f.lessonType && lesson.lessonType !== f.lessonType) return false;
       if (f.year && lesson.year !== f.year) return false;
@@ -948,6 +1202,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
       });
   }
 
+  // TODO: enhance export feature to support student group, teacher and room timetables
   exportTimetable(): void {
       if (!this.timetableData || !this.timetableData.lessons) {
         alert('No timetable data available to export.');
@@ -965,14 +1220,15 @@ export class TimetableComponent implements OnInit, OnDestroy {
           },
           timetableData: this.timetableData
         };
-
+        const currentDate = new Date();
+        const fileName = `timetable-export-${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}_${currentDate.getHours()}-${currentDate.getMinutes()}}`;
         const jsonBlob = new Blob([JSON.stringify(exportData, null, 2)], {
           type: 'application/json',
         });
         const jsonUrl = URL.createObjectURL(jsonBlob);
         const jsonLink = document.createElement('a');
         jsonLink.href = jsonUrl;
-        jsonLink.download = `timetable-export-${new Date().toISOString().split('T')[0]}.json`;
+        jsonLink.download = fileName + '.json';
         jsonLink.click();
         URL.revokeObjectURL(jsonUrl);
 
@@ -1026,10 +1282,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Timetable');
 
-        XLSX.writeFile(
-          workbook,
-          `timetable-export-${new Date().toISOString().split('T')[0]}.xlsx`
-        );
+        XLSX.writeFile(workbook, fileName + '.xlsx');
 
         // Show success message
         this.coreService.openSnackBar("Timetable exported successfully!");
@@ -1518,6 +1771,20 @@ export class TimetableComponent implements OnInit, OnDestroy {
         this.displayedTimetable = filteredTimetable || [];
         this.displayTimetable(filteredTimetable);
       }
+    } else if (this.toggle == 'room') {
+      const room = this.roomFormGroup.get('roomControl')?.value;
+      if (room) {
+        const timetableContainer = document.getElementById('timetable');
+        if (timetableContainer) timetableContainer.innerHTML = '';
+
+        const filteredTimetable = this.timetableData?.lessons?.filter((lesson) => {
+            const resolvedRoom = this.timetableData?.rooms?.find(r => r.id === lesson.room);
+            return resolvedRoom?.name === room;
+        });
+
+        this.displayedTimetable = filteredTimetable || [];
+        this.displayRoomTimetable(filteredTimetable);
+        }
     } else {
       const teacher = this.teacherFormGroup.get('teacherControl')?.value;
       if (teacher) {
