@@ -36,7 +36,17 @@ export class LessonDialogComponent implements OnInit {
     Year.THIRD,
     Year.FOURTH,
     Year.FIFTH,
-    Year.SIXTH
+    Year.SIXTH,
+    Year.SEVENTH,
+    Year.EIGHTH,
+    Year.NINTH,
+    Year.TENTH,
+    Year.ELEVENTH,
+    Year.TWELVETH,
+    Year.PREPARATORY,
+    Year.SMALL_GROUP,
+    Year.MIDDLE_GROUP,
+    Year.SENIOR_GROUP
   ];
   lessonType: LessonType[] = [
     LessonType.COURSE,

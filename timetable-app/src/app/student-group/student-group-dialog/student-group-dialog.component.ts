@@ -20,7 +20,17 @@ export class StudentGroupDialogComponent implements OnInit {
     Year.THIRD,
     Year.FOURTH,
     Year.FIFTH,
-    Year.SIXTH
+    Year.SIXTH,
+    Year.SEVENTH,
+    Year.EIGHTH,
+    Year.NINTH,
+    Year.TENTH,
+    Year.ELEVENTH,
+    Year.TWELVETH,
+    Year.PREPARATORY,
+    Year.SMALL_GROUP,
+    Year.MIDDLE_GROUP,
+    Year.SENIOR_GROUP
   ];
 
   semiGroups: SemiGroup[] = [SemiGroup.SEMI_GROUP0, SemiGroup.SEMI_GROUP1, SemiGroup.SEMI_GROUP2];
