@@ -60,10 +60,10 @@
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "configurations": {
                         "production": {
-                            "browserTarget": "timetable-app:build:production"
+                          "buildTarget": "timetable-app:build:production"
                         },
                         "development": {
-                            "browserTarget": "timetable-app:build:development"
+                          "buildTarget": "timetable-app:build:development"
                         }
                     },
                     "options": {},
@@ -72,7 +72,7 @@
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "browserTarget": "timetable-app:build"
+                      "buildTarget": "timetable-app:build"
                     }
                 },
                 "test": {
