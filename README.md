@@ -50,8 +50,8 @@ leading to a more harmonious academic environment.
 
 Before setting up the project locally, ensure you have the following installed:
 
-- **Node.js** (version 16.x or later)
-- **Angular CLI** (version 16.x)
+- **Node.js** (version 17.x or later)
+- **Angular CLI** (version 17.x)
 - **Java** (JDK 21 or later)
 - **Maven** (version 3.2.5 or later)
 - **PostgreSQL**
