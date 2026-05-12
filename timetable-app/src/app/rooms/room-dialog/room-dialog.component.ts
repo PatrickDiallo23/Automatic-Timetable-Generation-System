@@ -12,6 +12,7 @@ import { RoomService } from '../room.service';
 export class RoomDialogComponent implements OnInit {
   
   roomForm: FormGroup;
+  hasAddedItem = false;
 
   constructor(
     private fb: FormBuilder,
@@ -28,10 +29,12 @@ export class RoomDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.roomForm.patchValue(this.data);
+    if (this.data) {
+      this.roomForm.patchValue(this.data);
+    }
   }
 
-  onFormSubmit() {
+  onFormSubmit(keepOpen: boolean = false) {
     if (this.roomForm.valid) {
       if (this.data) {
         this.roomService
@@ -49,7 +52,12 @@ export class RoomDialogComponent implements OnInit {
         this.roomService.createRoom(this.roomForm.value).subscribe({
           next: (val: any) => {
             this.coreService.openSnackBar('Room added successfully');
-            this.dialogRef.close(true);
+            if (keepOpen) {
+              this.hasAddedItem = true;
+              this.dialogRef.disableClose = true; // Prevent accidental closure after rapid entry starts
+            } else {
+              this.dialogRef.close(true);
+            }
           },
           error: (err: any) => {
             console.error(err);
@@ -57,5 +65,9 @@ export class RoomDialogComponent implements OnInit {
         });
       }
     }
+  }
+
+  closeDialog() {
+    this.dialogRef.close(this.hasAddedItem);
   }
 }

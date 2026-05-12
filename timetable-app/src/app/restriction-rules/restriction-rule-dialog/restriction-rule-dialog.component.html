@@ -3,7 +3,7 @@
     {{ data ? 'Edit Rule' : 'Create New Rule' }}
 </h1>
 
-<form [formGroup]="ruleForm" (ngSubmit)="onFormSubmit()">
+<form [formGroup]="ruleForm" (ngSubmit)="onFormSubmit(false)">
     <div mat-dialog-content class="dialog-content">
 
         <!-- Rule Name -->
@@ -157,7 +157,10 @@
     </div>
 
     <div mat-dialog-actions align="end" class="dialog-actions">
-        <button mat-button type="button" [mat-dialog-close]="false">Cancel</button>
+        <button mat-button type="button" (click)="closeDialog()">{{ hasAddedItem ? 'Done' : 'Cancel' }}</button>
+        <button mat-raised-button color="accent" type="button" *ngIf="!data" [disabled]="!ruleForm.valid" (click)="onFormSubmit(true)">
+            Save & Add Another
+        </button>
         <button mat-raised-button color="primary" type="submit" [disabled]="!ruleForm.valid">
             <mat-icon>{{ data ? 'save' : 'add' }}</mat-icon>
             {{ data ? 'Update Rule' : 'Create Rule' }}

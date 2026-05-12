@@ -55,6 +55,8 @@ export class LessonDialogComponent implements OnInit {
     LessonType.SEMINAR
   ];
 
+  hasAddedItem = false;
+
   constructor(
     private fb: FormBuilder,
     private lessonService: LessonService,
@@ -174,8 +176,8 @@ export class LessonDialogComponent implements OnInit {
     return this.groupedTimeslots.get(day) || [];
   }
 
-  private _filterTeachers(value: string): Teacher[] {
-    const filterValue = value.toLowerCase();
+  private _filterTeachers(value: any): Teacher[] {
+    const filterValue = (typeof value === 'string' ? value : (value?.name || '')).toLowerCase();
     return this.teachers.filter(
       (teacher) =>
         teacher.name &&
@@ -183,8 +185,8 @@ export class LessonDialogComponent implements OnInit {
     );
   }
 
-  private _filterStudentGroups(value: string): StudentGroup[] {
-    const filterValue = value.toLowerCase();
+  private _filterStudentGroups(value: any): StudentGroup[] {
+    const filterValue = (typeof value === 'string' ? value : (value?.studentGroup || '')).toLowerCase();
     return this.studentGroups.filter(
       (group) =>
         group.studentGroup &&
@@ -200,7 +202,7 @@ export class LessonDialogComponent implements OnInit {
     return group && group.studentGroup ? group.studentGroup : '';
   }
 
-  onFormSubmit() {
+  onFormSubmit(keepOpen: boolean = false) {
     if (this.lessonForm.valid) {
       const formValue = this.lessonForm.value;
       
@@ -242,7 +244,12 @@ export class LessonDialogComponent implements OnInit {
         this.lessonService.createLesson(lessonData).subscribe({
           next: (val: any) => {
             this.coreService.openSnackBar('Lesson added successfully');
-            this.dialogRef.close(true);
+            if (keepOpen) {
+              this.hasAddedItem = true;
+              this.dialogRef.disableClose = true;
+            } else {
+              this.dialogRef.close(true);
+            }
           },
           error: (err: any) => {
             console.error(err);
@@ -250,6 +257,10 @@ export class LessonDialogComponent implements OnInit {
         });
       }
     }
+  }
+
+  closeDialog() {
+    this.dialogRef.close(this.hasAddedItem);
   }
 }
 

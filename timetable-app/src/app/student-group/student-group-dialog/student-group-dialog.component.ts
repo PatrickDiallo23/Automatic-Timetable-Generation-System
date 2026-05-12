@@ -13,6 +13,7 @@ import { SemiGroup, Year } from 'src/app/model/timetableEntities';
 export class StudentGroupDialogComponent implements OnInit {
   
   studentGroupForm: FormGroup;
+  hasAddedItem = false;
 
   year: Year[] = [
     Year.FIRST,
@@ -52,11 +53,13 @@ export class StudentGroupDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.studentGroupForm.patchValue(this.data);
-    console.log(this.data);
+    if (this.data) {
+      this.studentGroupForm.patchValue(this.data);
+      console.log(this.data);
+    }
   }
 
-  onFormSubmit() {
+  onFormSubmit(keepOpen: boolean = false) {
     if (this.studentGroupForm.valid) {
       if (this.data) {
         this.studentGroupService
@@ -76,7 +79,12 @@ export class StudentGroupDialogComponent implements OnInit {
           .subscribe({
             next: (val: any) => {
               this.coreService.openSnackBar('Student Group added successfully');
-              this.dialogRef.close(true);
+              if (keepOpen) {
+                this.hasAddedItem = true;
+                this.dialogRef.disableClose = true;
+              } else {
+                this.dialogRef.close(true);
+              }
             },
             error: (err: any) => {
               console.error(err);
@@ -84,5 +92,9 @@ export class StudentGroupDialogComponent implements OnInit {
           });
       }
     }
+  }
+
+  closeDialog() {
+    this.dialogRef.close(this.hasAddedItem);
   }
 }

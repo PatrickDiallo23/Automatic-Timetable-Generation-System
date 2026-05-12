@@ -13,6 +13,7 @@ import { CONSTRAINT_DICTIONARY, ConstraintMeta } from '../constraint.meta';
 export class ConstraintDialogComponent implements OnInit {
   
   constraintForm: FormGroup;
+  hasAddedItem = false;
 
   allConstraints: ConstraintMeta[] = CONSTRAINT_DICTIONARY;
   availableConstraints: ConstraintMeta[] = CONSTRAINT_DICTIONARY;
@@ -60,9 +61,9 @@ export class ConstraintDialogComponent implements OnInit {
     }
   }
 
-  onFormSubmit() {
+  onFormSubmit(keepOpen: boolean = false) {
     if (this.constraintForm.valid) {
-      if (this.data) {
+      if (this.data && this.data.id) {
         this.constraintService
           .updateConstraint(this.data.id, this.constraintForm.value)
           .subscribe({
@@ -80,7 +81,20 @@ export class ConstraintDialogComponent implements OnInit {
           .subscribe({
             next: (val: any) => {
               this.coreService.openSnackBar('Constraint added successfully');
-              this.dialogRef.close(true);
+              if (keepOpen) {
+                this.hasAddedItem = true;
+                this.dialogRef.disableClose = true;
+                
+                // After adding, we should probably update the available constraints 
+                // so the user can't select the same one again immediately.
+                const addedId = this.constraintForm.value.description;
+                this.availableConstraints = this.availableConstraints.filter(c => c.id !== addedId);
+                
+                // Reset form slightly so they don't submit the exact same constraint
+                this.constraintForm.reset();
+              } else {
+                this.dialogRef.close(true);
+              }
             },
             error: (err: any) => {
               console.error(err);
@@ -88,5 +102,9 @@ export class ConstraintDialogComponent implements OnInit {
           });
       }
     }
+  }
+
+  closeDialog() {
+    this.dialogRef.close(this.hasAddedItem);
   }
 }

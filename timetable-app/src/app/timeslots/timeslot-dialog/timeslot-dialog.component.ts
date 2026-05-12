@@ -12,6 +12,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 export class TimeslotDialogComponent implements OnInit {
 
   timeslotForm: FormGroup;
+  hasAddedItem = false;
 
   weekdays: string[] = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
 
@@ -30,11 +31,13 @@ export class TimeslotDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.timeslotForm.patchValue(this.data);
-    console.log(this.data);
+    if (this.data) {
+      this.timeslotForm.patchValue(this.data);
+      console.log(this.data);
+    }
   }
 
-  onFormSubmit() {
+  onFormSubmit(keepOpen: boolean = false) {
     if (this.timeslotForm.valid) {
       if (this.data) {
         //TODO: solve the update
@@ -53,7 +56,12 @@ export class TimeslotDialogComponent implements OnInit {
         this.timeslotService.createTimeslot(this.timeslotForm.value).subscribe({
           next: (val: any) => {
             this.coreService.openSnackBar('Timeslot added successfully');
-            this.dialogRef.close(true);
+            if (keepOpen) {
+              this.hasAddedItem = true;
+              this.dialogRef.disableClose = true;
+            } else {
+              this.dialogRef.close(true);
+            }
           },
           error: (err: any) => {
             console.error(err);
@@ -61,5 +69,9 @@ export class TimeslotDialogComponent implements OnInit {
         });
       }
     }
+  }
+
+  closeDialog() {
+    this.dialogRef.close(this.hasAddedItem);
   }
 }

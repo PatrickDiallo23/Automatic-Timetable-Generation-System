@@ -38,6 +38,7 @@ export class RestrictionRuleDialogComponent implements OnInit {
   targetTypes = Object.values(RuleTargetType);
   availableFields: RuleCriteriaField[] = [];
   availableOperators: RuleOperator[] = [];
+  hasAddedItem = false;
 
   rooms: Room[] = [];
   timeslots: Timeslot[] = [];
@@ -321,7 +322,7 @@ export class RestrictionRuleDialogComponent implements OnInit {
 
   // ── Form Submission ─────────────────────────────────────────────
 
-  onFormSubmit(): void {
+  onFormSubmit(keepOpen: boolean = false): void {
     if (this.ruleForm.valid) {
       const formValue = this.ruleForm.value;
 
@@ -344,12 +345,21 @@ export class RestrictionRuleDialogComponent implements OnInit {
         this.ruleService.createRule(ruleData).subscribe({
           next: () => {
             this.coreService.openSnackBar('Rule created successfully');
-            this.dialogRef.close(true);
+            if (keepOpen) {
+              this.hasAddedItem = true;
+              this.dialogRef.disableClose = true;
+            } else {
+              this.dialogRef.close(true);
+            }
           },
           error: (err: any) => console.error(err),
         });
       }
     }
+  }
+
+  closeDialog() {
+    this.dialogRef.close(this.hasAddedItem);
   }
 
   // ── Helpers ─────────────────────────────────────────────────────
