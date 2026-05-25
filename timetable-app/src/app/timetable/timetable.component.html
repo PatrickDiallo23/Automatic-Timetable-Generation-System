@@ -403,10 +403,35 @@
 
     <mat-card-content>
       <div class="admin-actions">
-        <button mat-raised-button color="primary" class="action-button" (click)="exportTimetable()">
+        <button mat-raised-button color="primary" class="action-button" [matMenuTriggerFor]="exportMenu">
           <mat-icon>download</mat-icon>
           Export Timetable
+          <mat-icon>arrow_drop_down</mat-icon>
         </button>
+        <mat-menu #exportMenu="matMenu">
+          <button mat-menu-item (click)="exportFullTimetable()">
+            <mat-icon>table_chart</mat-icon>
+            <span>Full Timetable (Excel + JSON)</span>
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="exportByStudentGroup()">
+            <mat-icon>groups</mat-icon>
+            <span>By Student Group (Excel)</span>
+          </button>
+          <button mat-menu-item (click)="exportByTeacher()">
+            <mat-icon>school</mat-icon>
+            <span>By Teacher (Excel)</span>
+          </button>
+          <button mat-menu-item (click)="exportByRoom()">
+            <mat-icon>meeting_room</mat-icon>
+            <span>By Room (Excel)</span>
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="exportStructuredJSON()">
+            <mat-icon>data_object</mat-icon>
+            <span>Structured JSON</span>
+          </button>
+        </mat-menu>
 
         <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)" accept=".json">
         <button mat-raised-button color="primary" class="action-button" (click)="triggerImport()">

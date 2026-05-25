@@ -22,6 +22,20 @@ export const CONSTRAINT_DICTIONARY: ConstraintMeta[] = [
         recommendationReason: "Prevents assigning one teacher to multiple disparate classes concurrently."
     },
     {
+        id: "roomConflict",
+        title: "Room Conflict",
+        description: "A room can accommodate at most one lesson at the same time.",
+        recommendedWeight: "HARD",
+        recommendationReason: "Prevents physical double-booking of rooms."
+    },
+    {
+        id: "teacherConflict",
+        title: "Teacher Conflict",
+        description: "A teacher can teach at most one lesson at the same time.",
+        recommendedWeight: "HARD",
+        recommendationReason: "Prevents assigning one teacher to multiple disparate classes concurrently."
+    },
+    {
         id: "studentGroupConflictAdvanced",
         title: "Student Group Conflict",
         description: "A specific student cohort can attend at most one lesson at the same time.",

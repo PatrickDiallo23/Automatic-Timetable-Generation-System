@@ -117,8 +117,8 @@ export interface Constraint {
 }
 
 export interface TimetableConstraintConfiguration {
-//   roomConflict: HardMediumSoftScore;
-//   teacherConflict: HardMediumSoftScore;
+  roomConflict: HardMediumSoftScore;
+  teacherConflict: HardMediumSoftScore;
 //   studentGroupConflict: HardMediumSoftScore;
   studentGroupConflictAdvanced: HardMediumSoftScore;
   capacityRoomConflict: HardMediumSoftScore;

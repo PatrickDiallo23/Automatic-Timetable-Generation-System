@@ -658,6 +658,42 @@ export class ExcelImportService {
     return lessons;
   }
 
+  /**
+   * All canonical constraint keys from TimetableConstraintConfiguration.
+   * Any Configuration sheet row whose `setting` matches one of these is
+   * routed into `config.constraints`; everything else is treated as a
+   * top-level solver setting (e.g. `duration`).
+   */
+  private readonly CONSTRAINT_KEYS = new Set<string>([
+    'roomConflict',
+    'teacherConflict',
+    'studentGroupConflictAdvanced',
+    'capacityRoomConflict',
+    'courseStudentsGroupedInTheSameRoom',
+    'seminarStudentsGroupedInTheSameRoom',
+    'labsStudentsGroupedInTheSameRoom',
+    'roomConflictUniversity',
+    'teacherConflictUniversity',
+    'overlappingTimeslot',
+    'maximumCoursesForStudents',
+    'maximmumCoursesTeached',
+    'maximizePreferredTimeslotAssignments',
+    'coursesGroupedInTheSameTimeslot',
+    'seminarsGroupedInTheSameTimeslot',
+    'teacherRoomStability',
+    'teacherTimeEfficiency',
+    'studentGroupVariety',
+    'gapsLongerThan4Hours',
+    'labsGroupedInTheSameTimeslot',
+    'coursesInTheSameBuilding',
+    'noGapsForHighschool',
+    'fairLessonsDistribution',
+    'earlyStartForHighschool',
+    'foreignLanguageSameTimeslot',
+    'schoolRoomConflict',
+    'schoolTeacherConflict',
+  ]);
+
   private extractConfiguration(
     workbook: XLSX.WorkBook,
     warnings: string[]
@@ -679,13 +715,7 @@ export class ExcelImportService {
       if (this.hasValue(row.setting) && this.hasValue(row.value)) {
         if (row.setting === 'duration') {
           config.duration = Number(row.value);
-        } else if (
-          row.setting.includes('Conflict') ||
-          row.setting.includes('Grouped') ||
-          row.setting.includes('After') ||
-          row.setting.includes('Building')
-        ) {
-          // These are constraint configurations
+        } else if (this.CONSTRAINT_KEYS.has(row.setting)) {
           config.constraints[row.setting] = String(row.value);
         } else {
           config[row.setting] = row.value;

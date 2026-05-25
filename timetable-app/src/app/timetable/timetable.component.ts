@@ -11,6 +11,7 @@ import { ScoreAnalysisDialogComponent } from './score-analysis-dialog/score-anal
 import { EditLessonDialogComponent, EditLessonDialogData, EditLessonDialogResult } from './edit-lesson-dialog/edit-lesson-dialog.component';
 import { ImpactAnalysisDialogComponent, ImpactAnalysisDialogData, LessonChangeInfo } from './impact-analysis-dialog/impact-analysis-dialog.component';
 import { ImproveTimetableDialogComponent } from './improve-timetable-dialog/improve-timetable-dialog.component';
+import { TimetableExportService } from '../core/timetable-export.service';
 import * as XLSX from 'xlsx';
 
 
@@ -112,7 +113,8 @@ export class TimetableComponent implements OnInit, OnDestroy {
     private loginService: LoginService,
     private timetableService: TimetableService,
     private coreService: CoreService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private exportService: TimetableExportService,
   ) {}
 
   ngOnInit(): void {
@@ -1202,96 +1204,41 @@ export class TimetableComponent implements OnInit, OnDestroy {
       });
   }
 
-  // TODO: enhance export feature to support student group, teacher and room timetables
-  exportTimetable(): void {
-      if (!this.timetableData || !this.timetableData.lessons) {
-        alert('No timetable data available to export.');
-        return;
-      }
-      try {
-        // Export JSON with better formatting
-        const exportData = {
-          exportInfo: {
-            exportDate: new Date().toISOString(),
-            exportedBy: this.user.email,
-            totalLessons: this.timetableData.lessons.length,
-            totalRooms: this.timetableData.rooms?.length || 0,
-            totalTimeslots: this.timetableData.timeslots?.length || 0
-          },
-          timetableData: this.timetableData
-        };
-        const currentDate = new Date();
-        const fileName = `timetable-export-${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}_${currentDate.getHours()}-${currentDate.getMinutes()}}`;
-        const jsonBlob = new Blob([JSON.stringify(exportData, null, 2)], {
-          type: 'application/json',
-        });
-        const jsonUrl = URL.createObjectURL(jsonBlob);
-        const jsonLink = document.createElement('a');
-        jsonLink.href = jsonUrl;
-        jsonLink.download = fileName + '.json';
-        jsonLink.click();
-        URL.revokeObjectURL(jsonUrl);
+  // ── Export methods (delegating to TimetableExportService) ──
 
-        // Enhanced Excel export with better structure
-        const lessons = this.timetableData.lessons || [];
-        const timeslotMap = new Map(
-          (this.timetableData.timeslots || []).map((slot) => [slot.id, slot])
-        );
-        const roomMap = new Map(
-          (this.timetableData.rooms || []).map((room) => [room.id, room])
-        );
+  exportFullTimetable(): void {
+    this.runExport(() => this.exportService.exportFullTimetable(this.timetableData, this.user.email || ''));
+  }
 
-        const excelData = lessons.map((lesson) => {
-          const timeslot = timeslotMap.get(lesson.timeslot);
-          const room = roomMap.get(lesson.room);
-          return {
-            'Subject': lesson.subject,
-            'Lesson Type': lesson.lessonType,
-            'Teacher': lesson.teacher?.name || 'N/A',
-            'Student Group': lesson.studentGroup?.studentGroup || 'N/A',
-            'Subgroup': lesson.studentGroup?.semiGroup?.replace('SEMI_GROUP', 'Subgroup ') || 'N/A',
-            'Day': this.formatDay(timeslot?.dayOfWeek),
-            'Start Time': timeslot?.startTime || 'N/A',
-            'End Time': timeslot?.endTime || 'N/A',
-            'Room': room?.name || 'N/A',
-            'Building': room?.building || 'N/A',
-            'Pinned': lesson.pinned ? 'Yes' : 'No',
-            'Rules': lesson.appliedRuleIds?.length ? lesson.appliedRuleIds.length + ' rule(s)' : '-',
-          };
-        });
+  exportByStudentGroup(): void {
+    this.runExport(() => this.exportService.exportByStudentGroup(this.timetableData));
+  }
 
-        const worksheet = XLSX.utils.json_to_sheet(excelData);
+  exportByTeacher(): void {
+    this.runExport(() => this.exportService.exportByTeacher(this.timetableData));
+  }
 
-        // Set column widths for better formatting
-        const columnWidths = [
-          { wch: 20 }, // Subject
-          { wch: 15 }, // Lesson Type
-          { wch: 20 }, // Teacher
-          { wch: 15 }, // Student Group
-          { wch: 12 }, // Subgroup
-          { wch: 12 }, // Day
-          { wch: 12 }, // Start Time
-          { wch: 12 }, // End Time
-          { wch: 15 }, // Room
-          { wch: 15 }, // Building
-          { wch: 8 },  // Pinned
-          { wch: 10 }, // Rules
-        ];
-        worksheet['!cols'] = columnWidths;
+  exportByRoom(): void {
+    this.runExport(() => this.exportService.exportByRoom(this.timetableData));
+  }
 
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Timetable');
+  exportStructuredJSON(): void {
+    this.runExport(() => this.exportService.exportStructuredJSON(this.timetableData, this.user.email || ''));
+  }
 
-        XLSX.writeFile(workbook, fileName + '.xlsx');
-
-        // Show success message
-        this.coreService.openSnackBar("Timetable exported successfully!");
-
-      } catch (error) {
-        console.error('Export failed:', error);
-        alert('Export failed. Please try again.');
-      }
+  private runExport(exportFn: () => void): void {
+    if (!this.timetableData?.lessons?.length) {
+      this.coreService.openSnackBar('No timetable data available to export.');
+      return;
     }
+    try {
+      exportFn();
+      this.coreService.openSnackBar('Timetable exported successfully!');
+    } catch (error) {
+      console.error('Export failed:', error);
+      this.coreService.openSnackBar('Export failed. Please try again.');
+    }
+  }
 
   improveTimetable(): void {
     if (!this.timetableData || !this.timetableData.lessons) {

@@ -1,0 +1,118 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# docker-compose.yml  —  BASE configuration (shared by dev & prod)
+#
+# Usage:
+#   Dev:  docker compose --env-file .env.dev -f docker-compose.yml -f docker-compose.dev.yml up --build
+#   Prod: docker compose --env-file .env.prod -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# This file defines services, networks, and volumes that are common to
+# both environments. Environment-specific settings live in the override files.
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── PostgreSQL Database ─────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: timetable_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${POSTGRES_DB}
+      POSTGRES_USER:     ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Optional: seed SQL scripts placed in ./docker/postgres/init/
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - backend_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ── Spring Boot Backend ─────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./timetable-app-backend
+      dockerfile: Dockerfile
+      target: production
+    container_name: timetable_backend
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL:      ${DATABASE_URL}
+      SPRING_DATASOURCE_USERNAME: ${DATABASE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DATABASE_PASSWORD}
+      TIMETABLEAPP_SECRETKEY:     ${JWT_SECRET_KEY}
+      SPRING_PROFILES_ACTIVE:     ${SPRING_PROFILES_ACTIVE}
+      JAVA_OPTS:                  ${JAVA_OPTS:-}
+      # Override Timefold termination limit via env
+      TIMEFOLD_TERMINATION_LIMIT: ${TIMEFOLD_TERMINATION_LIMIT:-6m}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend_net
+      - frontend_net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8200/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s   # Spring Boot + Timefold init can be slow
+
+  # ── Angular Frontend (Nginx serving static files) ──────────────────────────
+  frontend:
+    build:
+      context: ./timetable-app
+      dockerfile: Dockerfile
+      target: production
+    container_name: timetable_frontend
+    restart: unless-stopped
+    networks:
+      - frontend_net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    depends_on:
+      - backend
+
+  # ── Nginx Load Balancer ─────────────────────────────────────────────────────
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: timetable_nginx
+    restart: unless-stopped
+    ports:
+      - "${NGINX_PORT:-4200}:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - frontend_net
+    depends_on:
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost/nginx-health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+# ── Networks ──────────────────────────────────────────────────────────────────
+networks:
+  backend_net:
+    driver: bridge
+    internal: true     # Postgres is NOT reachable from host (security)
+  frontend_net:
+    driver: bridge
+
+# ── Volumes ───────────────────────────────────────────────────────────────────
+volumes:
+  postgres_data:
+    driver: local

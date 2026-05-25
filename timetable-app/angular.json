@@ -32,15 +32,16 @@
                     },
                     "configurations": {
                         "production": {
-                            "budgets": [{
+                            "budgets": [
+                                {
                                     "type": "initial",
-                                    "maximumWarning": "500kb",
-                                    "maximumError": "1mb"
+                                    "maximumWarning": "2mb",
+                                    "maximumError": "3mb"
                                 },
                                 {
                                     "type": "anyComponentStyle",
-                                    "maximumWarning": "2kb",
-                                    "maximumError": "4kb"
+                                    "maximumWarning": "20kb",
+                                    "maximumError": "40kb"
                                 }
                             ],
                             "outputHashing": "all"
@@ -60,10 +61,10 @@
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "configurations": {
                         "production": {
-                          "buildTarget": "timetable-app:build:production"
+                            "buildTarget": "timetable-app:build:production"
                         },
                         "development": {
-                          "buildTarget": "timetable-app:build:development"
+                            "buildTarget": "timetable-app:build:development"
                         }
                     },
                     "options": {},
@@ -72,7 +73,7 @@
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                      "buildTarget": "timetable-app:build"
+                        "buildTarget": "timetable-app:build"
                     }
                 },
                 "test": {

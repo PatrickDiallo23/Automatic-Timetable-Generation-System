@@ -19,6 +19,7 @@ import { TimetableComponent } from './timetable/timetable.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
@@ -105,6 +106,7 @@ import { ImproveTimetableDialogComponent } from './timetable/improve-timetable-d
     FormsModule,
     MatInputModule,
     MatButtonModule,
+    MatMenuModule,
     ReactiveFormsModule,
     MatToolbarModule,
     MatIconModule,
