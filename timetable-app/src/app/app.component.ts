@@ -64,7 +64,7 @@ export class AppComponent implements OnInit {
   }
 
   startProcess() {
-    // console.log(this.showSidebar);
+
     this.loginService.setShowSidebar(!this.showSidebar);
     if (this.showSidebar == false) {
       this.router.navigate(['/dashboard']);

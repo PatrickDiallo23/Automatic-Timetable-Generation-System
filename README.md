@@ -50,8 +50,8 @@ leading to a more harmonious academic environment.
 
 Before setting up the project locally, ensure you have the following installed:
 
-- **Node.js** (version 16.x or later)
-- **Angular CLI** (version 16.x)
+- **Node.js** (version 17.x or later)
+- **Angular CLI** (version 17.x)
 - **Java** (JDK 21 or later)
 - **Maven** (version 3.2.5 or later)
 - **PostgreSQL**
@@ -158,6 +158,7 @@ timetableApp.secretKey=<YOUR_GENERATED_SECRET_KEY>
 ```
 
 **Note**: Make sure that you created some users with "ADMIN" or "USER" role before using the application.
+**Note2**: You can use `pom.xml.bak` to switch to the Enterprise Edition of the application. `pom.xml` will run the build for the Community Edition.
 
 3. Build the backend:
 ```bash
@@ -180,20 +181,136 @@ npm install
 
 ## Running the Application
 
-### 1.Run the Backend
+You can run the application either **locally (bare-metal)** for direct development, or fully **containerized via Docker/Podman** for parity with production.
 
-   Navigate to the backend directory and start the Spring Boot application:
+### Option A: Running with Docker (Recommended for Dev & Prod)
+
+The project includes a robust, production-ready containerization setup with **Docker Compose**, including a multi-stage build, automated health checks, security hardening, and an Nginx reverse proxy/load balancer.
+
+#### Prerequisites
+- **Docker Desktop** (or **Podman** with Compose support)
+
+#### 1. Development Mode (Hot-Reload & Remote Debugging Enabled)
+In development mode, a single backend instance runs alongside a pre-configured PostgreSQL database, with remote debugger ports enabled (5005) and Swagger UI fully accessible.
+
+You can manage the dev stack with the following simple command-line interface:
+- **Start the stack** (forces an initial build if `--build` is specified):
+  ```bash
+  ./dev.sh           # Foreground with live logging
+  ./dev.sh --build   # Force rebuild and run
+  ./dev.sh --detach  # Run in background (no log tail)
+  ```
+- **Stop the stack**:
+  ```bash
+  ./dev.sh stop      # Stops running dev containers
+  ```
+- **Wipe and reset the database** (recreates clean PostgreSQL state):
+  ```bash
+  ./dev.sh clean     # Stops containers and destroys Postgres volume (WIPES DB)
+  ```
+- **Restart the stack**:
+  ```bash
+  ./dev.sh restart
+  ```
+- **View status**:
+  ```bash
+  ./dev.sh ps
+  ```
+- **Tail logs**:
+  ```bash
+  ./dev.sh logs             # Tail logs of all containers
+  ./dev.sh logs backend     # Tail logs of a specific service (e.g. backend, frontend)
+  ```
+- **Open terminal inside container**:
+  ```bash
+  ./dev.sh shell            # Terminal into the backend container
+  ./dev.sh shell frontend   # Terminal into the frontend container
+  ```
+
+**Access Points (Dev):**
+- **Frontend SPA**: [http://localhost:4200](http://localhost:4200)
+- **Backend API**: [http://localhost:8200/actuator/health](http://localhost:8200/actuator/health)
+- **Swagger Documentation**: [http://localhost:4200/swagger-ui.html](http://localhost:4200/swagger-ui.html)
+- **Database (PostgreSQL)**: `localhost:5433` (exposed to host)
+- **Remote JVM Debugger**: `localhost:5005` (attach your IDE for hot-swap/debugging)
+
+**Creating Users in Development:**
+Because the application uses BCrypt for password hashing, you cannot insert plain-text passwords directly. You can use the following command to create an admin (`admin@gmail.com`) and a regular user (`user@gmail.com`), both with the password `admin123` (hashed):
 
 ```bash
+docker exec -it timetable_postgres psql -U timetable_user -d timetable_dev -c "INSERT INTO users (email, password, role) VALUES ('admin@gmail.com', '\$2a\$12\$WUDvKsIM5iOE1GlamK6UG.JzrlpUy3Y9y0u0ONiavuwclirStSw06', 'ADMIN'), ('user@gmail.com', '\$2a\$12\$WUDvKsIM5iOE1GlamK6UG.JzrlpUy3Y9y0u0ONiavuwclirStSw06', 'USER') ON CONFLICT (email) DO NOTHING;"
+```
+
+**Database Backups**
+
+```bash
+# Backup
+docker exec -t timetable_postgres pg_dump -U timetable_user timetable_dev > backup.sql
+
+# Restore later (wipes current data)
+cat backup.sql | docker exec -i timetable_postgres psql -U timetable_user -d timetable_dev
+```
+
+#### 2. Production Mode (Hardened, Load-Balanced, Resource-Limited)
+In production, Swagger UI is blocked for security, log rotation is enabled, cgroup memory limits are enforced for high-performance Timefold solving, and Nginx acts as a round-robin load balancer between **two active backend replicas**.
+
+1. Copy the production environment template and populate real passwords:
+   ```bash
+   cp .env.prod.example .env.prod
+   # Edit .env.prod to set strong passwords/secrets
+   ```
+2. Manage the production stack:
+   - **Validate Compose configuration**:
+     ```bash
+     ./prod.sh --check
+     ```
+   - **Deploy / start production stack** (runs in background by default):
+     ```bash
+     ./prod.sh --build     # Force rebuild and deploy
+     ./prod.sh             # Reuses cached images and deploy
+     ```
+   - **Stop production stack**:
+     ```bash
+     ./prod.sh stop
+     ```
+   - **Wipe production database** (prompts with an interactive confirmation before wiping):
+     ```bash
+     ./prod.sh clean
+     ```
+   - **Tail production logs**:
+     ```bash
+     ./prod.sh logs
+     ./prod.sh logs backend
+     ```
+   - **Check health status**:
+     ```bash
+     ./prod.sh ps
+     ```
+   - **Access container shell**:
+     ```bash
+     ./prod.sh shell backend
+     ```
+
+---
+
+### Option B: Running Locally (Bare-Metal)
+
+#### 1. Run the Backend
+
+Navigate to the backend directory and start the Spring Boot application:
+
+```bash
+cd timetable-app-backend
 mvn spring-boot:run
 ```
 The backend server will start on http://localhost:8200. The SWAGGER UI will be available at http://localhost:8200/swagger-ui.html.
 
-### 2. Run the Frontend
+#### 2. Run the Frontend
 
-   Navigate to the frontend directory and start the Angular application:
+Navigate to the frontend directory and start the Angular application:
 
 ```bash
+cd timetable-app
 ng serve
 ```
 

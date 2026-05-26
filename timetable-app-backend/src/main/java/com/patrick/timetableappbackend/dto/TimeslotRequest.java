@@ -15,7 +15,7 @@ import java.time.LocalTime;
 @Schema(description = "Request object for creating or updating a timeslot, containing day of the week, start time, and end time.")
 public class TimeslotRequest {
     @Schema(description = "Day of the week for the timeslot", example = "MONDAY", allowableValues = "MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY")
-    private int dayOfWeek;
+    private java.time.DayOfWeek dayOfWeek;
     @Schema(description = "Start time of the timeslot", example = "08:00")
     private LocalTime startTime;
     @Schema(description = "End time of the timeslot", example = "10:00")

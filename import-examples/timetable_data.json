@@ -225,9 +225,10 @@
             "lessonType": "COURSE",
             "year": "FIRST",
             "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "possibleTimeslots": []
+            "timeslot": 4,
+            "room": 2,
+            "pinned": true,
+            "appliedRuleIds": []
         },
         {
             "id": 2,
@@ -250,7 +251,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 3,
@@ -284,7 +286,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 6,
@@ -307,7 +310,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 7,
@@ -330,7 +334,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 8,
@@ -353,7 +358,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 9,
@@ -376,7 +382,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 10,
@@ -399,7 +406,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 11,
@@ -422,7 +430,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 12,
@@ -445,7 +454,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 13,
@@ -468,7 +478,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 14,
@@ -491,7 +502,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 15,
@@ -514,7 +526,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 16,
@@ -537,7 +550,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 17,
@@ -560,7 +574,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 18,
@@ -583,7 +598,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 19,
@@ -606,7 +622,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 20,
@@ -629,7 +646,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 21,
@@ -652,7 +670,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 22,
@@ -675,7 +694,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 23,
@@ -698,7 +718,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 24,
@@ -721,7 +742,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 25,
@@ -744,7 +766,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": [1]
         },
         {
             "id": 26,
@@ -767,7 +790,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": [1]
         },
         {
             "id": 27,
@@ -790,7 +814,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": [1]
         },
         {
             "id": 28,
@@ -813,7 +838,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 29,
@@ -836,7 +862,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 30,
@@ -859,7 +886,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 31,
@@ -882,7 +910,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 32,
@@ -905,7 +934,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 33,
@@ -928,7 +958,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 34,
@@ -951,7 +982,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 35,
@@ -974,7 +1006,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 36,
@@ -997,7 +1030,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 37,
@@ -1020,7 +1054,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 38,
@@ -1043,7 +1078,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 39,
@@ -1066,7 +1102,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 40,
@@ -1089,7 +1126,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 41,
@@ -1112,7 +1150,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 42,
@@ -1135,7 +1174,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 43,
@@ -1158,7 +1198,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 44,
@@ -1181,7 +1222,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 45,
@@ -1204,7 +1246,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 46,
@@ -1227,7 +1270,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 47,
@@ -1250,7 +1294,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 48,
@@ -1273,7 +1318,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 49,
@@ -1296,7 +1342,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 50,
@@ -1319,7 +1366,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": [1]
         },
         {
             "id": 51,
@@ -1342,7 +1390,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": [1]
         },
         {
             "id": 52,
@@ -1365,7 +1414,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": [1]
         },
         {
             "id": 53,
@@ -1388,7 +1438,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 54,
@@ -1411,7 +1462,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 55,
@@ -1434,7 +1486,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 56,
@@ -1457,7 +1510,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 57,
@@ -1480,7 +1534,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 58,
@@ -1503,7 +1558,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 59,
@@ -1526,7 +1582,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 60,
@@ -1549,7 +1606,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 61,
@@ -1572,7 +1630,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 62,
@@ -1595,7 +1654,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 63,
@@ -1618,7 +1678,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 64,
@@ -1641,7 +1702,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 65,
@@ -1664,7 +1726,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 66,
@@ -1687,7 +1750,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 67,
@@ -1710,7 +1774,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 68,
@@ -1733,7 +1798,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 69,
@@ -1756,7 +1822,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 70,
@@ -1779,7 +1846,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 71,
@@ -1802,7 +1870,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 72,
@@ -1825,7 +1894,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 73,
@@ -1848,7 +1918,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 74,
@@ -1871,7 +1942,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 75,
@@ -1894,7 +1966,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": [1]
         },
         {
             "id": 76,
@@ -1917,7 +1990,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": [1]
         },
         {
             "id": 77,
@@ -1940,7 +2014,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": [1]
         },
         {
             "id": 78,
@@ -1963,7 +2038,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 79,
@@ -1986,7 +2062,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 80,
@@ -2009,7 +2086,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 81,
@@ -2032,7 +2110,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 82,
@@ -2055,7 +2134,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 83,
@@ -2078,7 +2158,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 84,
@@ -2101,7 +2182,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 85,
@@ -2124,7 +2206,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 86,
@@ -2147,7 +2230,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 87,
@@ -2170,7 +2254,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 88,
@@ -2193,7 +2278,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 89,
@@ -2216,7 +2302,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 90,
@@ -2239,7 +2326,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 91,
@@ -2262,7 +2350,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 92,
@@ -2285,7 +2374,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 93,
@@ -2308,7 +2398,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 94,
@@ -2331,7 +2422,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 96,
@@ -2354,7 +2446,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 97,
@@ -2377,7 +2470,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 100,
@@ -2400,7 +2494,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": [1]
         },
         {
             "id": 102,
@@ -2423,7 +2518,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": [1]
         },
         {
             "id": 95,
@@ -2446,7 +2542,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 98,
@@ -2469,7 +2566,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 99,
@@ -2492,7 +2590,8 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": []
         },
         {
             "id": 101,
@@ -2515,13 +2614,14 @@
             "duration": 1,
             "timeslot": null,
             "room": null,
-            "possibleTimeslots": []
+            "pinned": false,
+            "appliedRuleIds": [1]
         }
     ],
     "timetableConstraintConfiguration": {
         "roomConflict": "1hard/0medium/0soft",
         "teacherConflict": "1hard/0medium/0soft",
-        "studentGroupConflict": "1hard/0medium/0soft",
+        "studentGroupConflictWithGroupBy": "1hard/0medium/0soft",
         "capacityRoomConflict": "0hard/0medium/0soft",
         "courseStudentsGroupedInTheSameRoom": "0hard/0medium/0soft",
         "seminarStudentsGroupedInTheSameRoom": "0hard/0medium/0soft",
@@ -2546,5 +2646,34 @@
     },
     "score": null,
     "solverStatus": null,
-    "duration": 2
+    "duration": 2,
+    "restrictionRules": [
+        {
+            "id": 1,
+            "name": "Sport Room Only",
+            "targetType": "ROOM",
+            "criteriaField": "NAME",
+            "operator": "IN",
+            "criteriaValue": "Room F, Room E",
+            "active": true
+        },
+        {
+            "id": 2,
+            "name": "Morning Lesson",
+            "targetType": "TIMESLOT",
+            "criteriaField": "START_TIME",
+            "operator": "LESS_THAN_OR_EQUAL",
+            "criteriaValue": "12:00",
+            "active": false
+        },
+        {
+            "id": 3,
+            "name": "random rule",
+            "targetType": "ROOM",
+            "criteriaField": "CAPACITY",
+            "operator": "LESS_THAN",
+            "criteriaValue": "40",
+            "active": false
+        }
+    ]
 }

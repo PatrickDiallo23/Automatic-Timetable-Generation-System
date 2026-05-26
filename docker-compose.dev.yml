@@ -1,0 +1,70 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# docker-compose.dev.yml  —  Development overrides
+#
+# Start:
+#   docker compose --env-file .env.dev -f docker-compose.yml -f docker-compose.dev.yml up --build
+#
+# Features:
+#   • Backend source bind-mounted for hot reload (devtools)
+#   • Remote JVM debug port exposed
+#   • Postgres port exposed directly on host
+#   • Swagger UI accessible
+#   • Resource limits relaxed
+#   • Nginx timeout increased (devtools restart can be slow)
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  postgres:
+    ports:
+      # Expose Postgres directly so you can use psql / DBeaver from host
+      - "${PG_EXPOSED_PORT:-5433}:5432"
+
+  backend:
+    # Override build target to use the JDK stage for development
+    build:
+      target: deps
+    # Override command to run Spring Boot via Maven for hot-reload (JVM remote debug enabled)
+    command: ["./mvnw", "spring-boot:run", "-Dspring-boot.run.profiles=dev", "-Dspring-boot.run.jvmArguments=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"]
+    volumes:
+      # Mount source code for true hot-reloading
+      - ./timetable-app-backend:/app
+      # Mount maven cache so it doesn't download the internet every time
+      - maven_cache:/root/.m2
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DEVTOOLS_RESTART_ENABLED: "true"
+      SPRING_DEVTOOLS_LIVERELOAD_ENABLED: "true"
+      JAVA_OPTS: >-
+        -Xms256m -Xmx1g
+    ports:
+      # Expose backend directly (useful to test APIs without Nginx)
+      - "8200:8200"
+      # Remote debugger port
+      - "${BACKEND_DEBUG_PORT:-5005}:5005"
+    # In dev, just restart on failure (don't impose tight resource limits)
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+
+  frontend:
+    # No bind-mount for Angular: the ng serve dev server runs on the host.
+    # The frontend container is only used for the production-like static serve.
+    # For active Angular development, run `ng serve` on the host instead.
+    environment:
+      NODE_ENV: development
+
+  nginx:
+    # In dev, also expose Swagger UI locations (not blocked)
+    # Swagger is accessible at http://localhost:${NGINX_PORT}/swagger-ui.html
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    # Lower health check frequency during development
+    healthcheck:
+      interval: 60s
+
+volumes:
+  maven_cache:

@@ -2,6 +2,28 @@
 
 <button mat-raised-button color="primary" class="roomForm" (click)="openAddEditRoomForm()">Add Room</button>
 
+<div class="filter-container">
+    <mat-form-field class="filter-field">
+        <mat-label>Name</mat-label>
+        <input matInput [(ngModel)]="filterValues.name" (keyup)="applyFilter('name', filterValues.name)" placeholder="Search Name">
+    </mat-form-field>
+
+    <mat-form-field class="filter-field">
+        <mat-label>Building</mat-label>
+        <input matInput [(ngModel)]="filterValues.building" (keyup)="applyFilter('building', filterValues.building)" placeholder="Search Building">
+    </mat-form-field>
+
+    <mat-form-field class="filter-field">
+        <mat-label>Min. Capacity</mat-label>
+        <input matInput type="number" [(ngModel)]="filterValues.capacity" (keyup)="applyFilter('capacity', filterValues.capacity)" placeholder="Ex. 30">
+    </mat-form-field>
+
+    <button mat-flat-button class="reset-button" (click)="resetFilters()">
+        <mat-icon>refresh</mat-icon>
+        Reset Filters
+    </button>
+</div>
+
 <mat-table [dataSource]="dataSource" class="table">
     <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef>Room name</mat-header-cell>

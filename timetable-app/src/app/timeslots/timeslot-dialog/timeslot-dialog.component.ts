@@ -12,13 +12,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 export class TimeslotDialogComponent implements OnInit {
 
   timeslotForm: FormGroup;
+  hasAddedItem = false;
 
-  // TODO: provide a better solution for updating Timeslot
   weekdays: string[] = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
-  weekdaysMap: Map<string,number>;
-  bindedWeekdaysMapKeys: string[];
-
-
 
   constructor(
     private fb: FormBuilder,
@@ -27,13 +23,6 @@ export class TimeslotDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<TimeslotDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.weekdaysMap = new Map()
-.set("MONDAY", 0)
-.set("TUESDAY", 1)
-.set("WEDNESDAY", 2)
-.set("THURSDAY", 3)
-.set("FRIDAY", 4);
- this.bindedWeekdaysMapKeys = Array.from(this.weekdaysMap.keys());
     this.timeslotForm = this.fb.group({
       dayOfWeek: '',
       startTime: '',
@@ -42,11 +31,13 @@ export class TimeslotDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.timeslotForm.patchValue(this.data);
-    console.log(this.data);
+    if (this.data) {
+      this.timeslotForm.patchValue(this.data);
+      console.log(this.data);
+    }
   }
 
-  onFormSubmit() {
+  onFormSubmit(keepOpen: boolean = false) {
     if (this.timeslotForm.valid) {
       if (this.data) {
         //TODO: solve the update
@@ -65,7 +56,12 @@ export class TimeslotDialogComponent implements OnInit {
         this.timeslotService.createTimeslot(this.timeslotForm.value).subscribe({
           next: (val: any) => {
             this.coreService.openSnackBar('Timeslot added successfully');
-            this.dialogRef.close(true);
+            if (keepOpen) {
+              this.hasAddedItem = true;
+              this.dialogRef.disableClose = true;
+            } else {
+              this.dialogRef.close(true);
+            }
           },
           error: (err: any) => {
             console.error(err);
@@ -73,5 +69,9 @@ export class TimeslotDialogComponent implements OnInit {
         });
       }
     }
+  }
+
+  closeDialog() {
+    this.dialogRef.close(this.hasAddedItem);
   }
 }

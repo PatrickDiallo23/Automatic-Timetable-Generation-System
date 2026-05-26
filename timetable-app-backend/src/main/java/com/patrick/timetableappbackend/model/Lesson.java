@@ -1,6 +1,7 @@
 package com.patrick.timetableappbackend.model;
 
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
+import ai.timefold.solver.core.api.domain.entity.PlanningPin;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
@@ -10,10 +11,13 @@ import com.patrick.timetableappbackend.utils.LessonStrengthComparator;
 import com.patrick.timetableappbackend.utils.RoomStrengthComparator;
 import com.patrick.timetableappbackend.utils.TimeslotStrengthComparator;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -67,6 +71,10 @@ public class Lesson {
 
     private int duration;
 
+    @PlanningPin
+    @Builder.Default
+    private boolean pinned = false;
+
     @JsonIdentityReference
     @ManyToOne() // cascade = CascadeType.MERGE
     @JoinColumn(name = "timeslot_id")
@@ -78,6 +86,17 @@ public class Lesson {
     @JoinColumn(name = "room_id")
     @PlanningVariable(strengthComparatorClass = RoomStrengthComparator.class)
     private Room room;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "lesson_applied_rule_ids", joinColumns = @JoinColumn(name = "lesson_id"))
+    @Column(name = "rule_id")
+    @Builder.Default
+    private List<Long> appliedRuleIds = new ArrayList<>();
+
+    @JsonIgnore
+    @Transient
+    @Builder.Default
+    private List<RestrictionRule> appliedRules = new ArrayList<>();
 
     @JsonIgnore
     @Transient
@@ -178,15 +197,50 @@ public class Lesson {
     }
 
     @ValueRangeProvider
-    public List<Timeslot> getPossibleTimeslots() {
-        if (this.timetable == null || this.timetable.getTimeslots() == null) {
-            return new ArrayList<>(List.of());
+    @JsonIgnore
+    public List<Room> getPossibleRooms() {
+        if (timetable == null || timetable.getRooms() == null) {
+            return List.of();
         }
-        return this.timetable.getTimeslots().stream().filter(this::matchesTimeslot).toList();
+        List<RestrictionRule> roomRules = getActiveRulesForTarget(RuleTargetType.ROOM);
+        if (roomRules.isEmpty()) {
+            return timetable.getRooms();
+        }
+        return timetable.getRooms().stream()
+                .filter(room -> roomRules.stream().anyMatch(rule -> rule.matches(room)))
+                .toList();
     }
 
-    private boolean matchesTimeslot(Timeslot timeslot) {
+    @ValueRangeProvider
+    @JsonIgnore
+    public List<Timeslot> getPossibleTimeslots() {
+        if (timetable == null || timetable.getTimeslots() == null) {
+            return List.of();
+        }
+        List<Timeslot> durationFiltered = timetable.getTimeslots().stream()
+                .filter(this::matchesDuration)
+                .toList();
+        List<RestrictionRule> timeslotRules = getActiveRulesForTarget(RuleTargetType.TIMESLOT);
+        if (timeslotRules.isEmpty()) {
+            return durationFiltered;
+        }
+        return durationFiltered.stream()
+                .filter(ts -> timeslotRules.stream().anyMatch(rule -> rule.matches(ts)))
+                .toList();
+    }
+
+    private boolean matchesDuration(Timeslot timeslot) {
         var timeslotDuration = Duration.between(timeslot.getStartTime(), timeslot.getEndTime());
         return (timeslotDuration.abs().toHours() == duration);
+    }
+
+    private List<RestrictionRule> getActiveRulesForTarget(RuleTargetType targetType) {
+        if (appliedRules == null || appliedRules.isEmpty()) {
+            return List.of();
+        }
+        return appliedRules.stream()
+                .filter(RestrictionRule::isActive)
+                .filter(rule -> rule.getTargetType() == targetType)
+                .toList();
     }
 }

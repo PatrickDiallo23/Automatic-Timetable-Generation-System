@@ -2,6 +2,18 @@
 
 <button mat-raised-button color="primary" class="teacherForm" (click)="openAddEditTeacherForm()">Add Teacher</button>
 
+<div class="filter-container">
+    <mat-form-field class="filter-field">
+        <mat-label>Name</mat-label>
+        <input matInput [(ngModel)]="filterValues.name" (keyup)="applyFilter('name', filterValues.name)" placeholder="Search Name">
+    </mat-form-field>
+    
+    <button mat-flat-button class="reset-button" (click)="resetFilters()">
+        <mat-icon>refresh</mat-icon>
+        Reset Filters
+    </button>
+</div>
+
 <mat-table [dataSource]="dataSource" class="table">
     <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef>Teacher Name</mat-header-cell>

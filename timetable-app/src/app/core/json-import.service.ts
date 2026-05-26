@@ -5,6 +5,9 @@ import {
   Timetable,
   LessonType,
   Year,
+  RuleTargetType,
+  RuleCriteriaField,
+  RuleOperator,
 } from '../model/timetableEntities';
 
 export interface ValidationResult {
@@ -205,6 +208,19 @@ export class JsonImportService {
       errors.push('duration must be a positive number');
     }
 
+    // Validate restrictionRules (optional)
+    if (data.restrictionRules !== undefined) {
+      if (!Array.isArray(data.restrictionRules)) {
+        errors.push('restrictionRules must be an array');
+      } else {
+        data.restrictionRules.forEach((rule: any, index: number) => {
+          if (!this.isValidRestrictionRule(rule)) {
+            errors.push(`Invalid restriction rule at index ${index}`);
+          }
+        });
+      }
+    }
+
     return {
       isValid: errors.length === 0,
       errors,
@@ -231,6 +247,9 @@ export class JsonImportService {
   }
 
   private isValidLesson(lesson: any): boolean {
+    // Required fields validation
+    // Note: 'pinned' is optional and defaults to false if not provided
+    //       'timeslot' and 'room' are optional (set by solver or manually)
     return (
       typeof lesson === 'object' &&
       typeof lesson.subject === 'string' &&
@@ -239,7 +258,13 @@ export class JsonImportService {
       Object.values(LessonType).includes(lesson.lessonType) &&
       Object.values(Year).includes(lesson.year) &&
       typeof lesson.duration === 'number' &&
-      lesson.duration > 0
+      lesson.duration > 0 &&
+      // Validate optional pinned field if present
+      (lesson.pinned === undefined || typeof lesson.pinned === 'boolean') &&
+      // Validate optional appliedRuleIds if present
+      (lesson.appliedRuleIds === undefined ||
+        (Array.isArray(lesson.appliedRuleIds) &&
+          lesson.appliedRuleIds.every((id: any) => typeof id === 'number')))
     );
   }
 
@@ -254,6 +279,18 @@ export class JsonImportService {
       Object.values(Year).includes(studentGroup.year) &&
       typeof studentGroup.numberOfStudents === 'number' &&
       studentGroup.numberOfStudents > 0
+    );
+  }
+
+  private isValidRestrictionRule(rule: any): boolean {
+    return (
+      typeof rule === 'object' &&
+      typeof rule.name === 'string' &&
+      Object.values(RuleTargetType).includes(rule.targetType) &&
+      Object.values(RuleCriteriaField).includes(rule.criteriaField) &&
+      Object.values(RuleOperator).includes(rule.operator) &&
+      typeof rule.criteriaValue === 'string' &&
+      (rule.active === undefined || typeof rule.active === 'boolean')
     );
   }
 }

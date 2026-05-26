@@ -1,0 +1,102 @@
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon class="title-icon">edit</mat-icon>
+  Edit Lesson Assignment
+</h2>
+
+<mat-dialog-content class="dialog-content">
+  <!-- Lesson Info -->
+  <div class="lesson-info">
+    <div class="info-row">
+      <mat-icon class="info-icon">book</mat-icon>
+      <div class="info-content">
+        <span class="info-label">Subject</span>
+        <span class="info-value">{{ data.lesson.subject }}</span>
+      </div>
+    </div>
+    <div class="info-row">
+      <mat-icon class="info-icon">person</mat-icon>
+      <div class="info-content">
+        <span class="info-label">Teacher</span>
+        <span class="info-value">{{ data.lesson.teacher.name }}</span>
+      </div>
+    </div>
+    <div class="info-row">
+      <mat-icon class="info-icon">groups</mat-icon>
+      <div class="info-content">
+        <span class="info-label">Student Group</span>
+        <span class="info-value">{{ data.lesson.studentGroup.studentGroup }} ({{ data.lesson.studentGroup.semiGroup?.replace('SEMI_GROUP', 'Subgroup ') }})</span>
+      </div>
+    </div>
+  </div>
+
+  <mat-divider class="section-divider"></mat-divider>
+
+  <!-- Edit Form -->
+  <form [formGroup]="editForm" class="edit-form">
+    <!-- Room Selection -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Room</mat-label>
+      <mat-icon matPrefix class="field-icon">meeting_room</mat-icon>
+      <mat-select formControlName="roomControl">
+        <mat-option *ngFor="let room of data.rooms" [value]="room.id">
+          <div class="option-content">
+            <span class="option-main">{{ room.name }}</span>
+            <span class="option-sub">{{ room.building }} · Capacity: {{ room.capacity }}</span>
+          </div>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Timeslot Selection -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Timeslot</mat-label>
+      <mat-icon matPrefix class="field-icon">schedule</mat-icon>
+      <mat-select formControlName="timeslotControl">
+        <mat-optgroup *ngFor="let day of dayOrder" [label]="formatDay(day)">
+          <mat-option *ngFor="let ts of groupedTimeslots.get(day)" [value]="ts.id">
+            <div class="option-content">
+              <span class="option-main">{{ formatDay(day) }} · {{ formatTimeslot(ts) }}</span>
+            </div>
+          </mat-option>
+        </mat-optgroup>
+      </mat-select>
+    </mat-form-field>
+  </form>
+
+  <!-- Change Preview -->
+  <div *ngIf="hasChanges()" class="change-preview">
+    <h4 class="preview-title">
+      <mat-icon>compare_arrows</mat-icon>
+      Change Preview
+    </h4>
+    <div class="preview-content">
+      <div class="preview-item">
+        <span class="preview-label">Room:</span>
+        <span class="preview-from">{{ data.currentRoom?.name || 'Unassigned' }}</span>
+        <mat-icon class="preview-arrow">arrow_forward</mat-icon>
+        <span class="preview-to">{{ getRoomById(editForm.get('roomControl')?.value)?.name || 'Unassigned' }}</span>
+      </div>
+      <div class="preview-item">
+        <span class="preview-label">Time:</span>
+        <span class="preview-from">
+          {{ data.currentTimeslot ? formatDay(data.currentTimeslot.dayOfWeek || '') + ' ' + formatTimeslot(data.currentTimeslot) : 'Unassigned' }}
+        </span>
+        <mat-icon class="preview-arrow">arrow_forward</mat-icon>
+        <span class="preview-to">
+          {{ getTimeslotById(editForm.get('timeslotControl')?.value) ? formatDay(getTimeslotById(editForm.get('timeslotControl')?.value)?.dayOfWeek || '') + ' ' + formatTimeslot(getTimeslotById(editForm.get('timeslotControl')?.value)!) : 'Unassigned' }}
+        </span>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-button (click)="onCancel()" class="cancel-btn">
+    <mat-icon>close</mat-icon>
+    Cancel
+  </button>
+  <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!hasChanges()" class="save-btn">
+    <mat-icon>save</mat-icon>
+    Save Changes
+  </button>
+</mat-dialog-actions>

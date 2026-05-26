@@ -1,0 +1,26 @@
+# Build artifacts (will be rebuilt inside Docker)
+target/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# OS artefacts
+.DS_Store
+**/.DS_Store
+
+# Git
+.git/
+.gitignore
+
+# Test reports and coverage
+target/surefire-reports/
+target/site/
+
+# Local environment overrides (never in images)
+local/
+*.local.properties
+
+# Docs
+HELP.md

@@ -109,12 +109,12 @@ public class UserController {
             @RequestHeader(value = "Authorization", required = false) String token
     ) {
         //test the jwtToken
-        log.info(token + " this is the token from getAllUsers method");
+
         if (token == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is required to proceed");
         } else {
             String realToken = token.split(" ")[1].trim();
-            log.info("real token:" + realToken);
+
             String userEmail = jwtService.extractUsername(realToken);
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 

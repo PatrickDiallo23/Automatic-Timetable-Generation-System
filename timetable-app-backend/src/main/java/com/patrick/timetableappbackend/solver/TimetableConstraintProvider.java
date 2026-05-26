@@ -12,6 +12,7 @@ import com.patrick.timetableappbackend.model.Teacher;
 import com.patrick.timetableappbackend.model.TeacherTimeslot;
 import com.patrick.timetableappbackend.model.Timeslot;
 
+import com.patrick.timetableappbackend.solver.justifications.ForeignLanguageSameTimeslotJustification;
 import com.patrick.timetableappbackend.solver.justifications.RoomConflictJustification;
 import com.patrick.timetableappbackend.solver.justifications.StudentGroupSubjectVarietyJustification;
 import com.patrick.timetableappbackend.solver.justifications.StudentGroupConflictJustification;
@@ -19,6 +20,22 @@ import com.patrick.timetableappbackend.solver.justifications.StudentGroupConflic
 import com.patrick.timetableappbackend.solver.justifications.TeacherConflictJustification;
 import com.patrick.timetableappbackend.solver.justifications.TeacherRoomStabilityJustification;
 import com.patrick.timetableappbackend.solver.justifications.TeacherTimeEfficiencyJustification;
+import com.patrick.timetableappbackend.solver.justifications.NoGapsHighSchoolJustification;
+import com.patrick.timetableappbackend.solver.justifications.FairLessonsDistributionJustification;
+import com.patrick.timetableappbackend.solver.justifications.EarlyStartHighSchoolJustification;
+import com.patrick.timetableappbackend.solver.justifications.CapacityRoomConflictJustification;
+import com.patrick.timetableappbackend.solver.justifications.CourseStudentsGroupedInTheSameRoomJustification;
+import com.patrick.timetableappbackend.solver.justifications.CoursesGroupedInTheSameTimeslotJustification;
+import com.patrick.timetableappbackend.solver.justifications.CoursesInTheSameBuildingJustification;
+import com.patrick.timetableappbackend.solver.justifications.GapsLongerThan4HoursJustification;
+import com.patrick.timetableappbackend.solver.justifications.LabsGroupedInTheSameTimeslotJustification;
+import com.patrick.timetableappbackend.solver.justifications.LabsStudentsGroupedInTheSameRoomJustification;
+import com.patrick.timetableappbackend.solver.justifications.MaximizePreferredTimeslotAssignmentsJustification;
+import com.patrick.timetableappbackend.solver.justifications.MaximumCoursesForStudentsJustification;
+import com.patrick.timetableappbackend.solver.justifications.MaximumCoursesTeachedJustification;
+import com.patrick.timetableappbackend.solver.justifications.OverlappingTimeslotJustification;
+import com.patrick.timetableappbackend.solver.justifications.SeminarStudentsGroupedInTheSameRoomJustification;
+import com.patrick.timetableappbackend.solver.justifications.SeminarsGroupedInTheSameTimeslotJustification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,16 +45,21 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static ai.timefold.solver.core.api.score.stream.ConstraintCollectors.compose;
 import static ai.timefold.solver.core.api.score.stream.ConstraintCollectors.count;
 import static ai.timefold.solver.core.api.score.stream.ConstraintCollectors.countDistinct;
+import static ai.timefold.solver.core.api.score.stream.ConstraintCollectors.min;
+import static ai.timefold.solver.core.api.score.stream.ConstraintCollectors.max;
 import static ai.timefold.solver.core.api.score.stream.ConstraintCollectors.sum;
 import static ai.timefold.solver.core.api.score.stream.ConstraintCollectors.toList;
+
 
 
 
 public class TimetableConstraintProvider implements ConstraintProvider {
 
     private static final Map<Long, Set<TeacherTimeslot>> TEACHER_PREFERENCES_CACHE = new ConcurrentHashMap<>();
+    private static final String FOREIGN_LANGUAGE_PREFIX = "Lb.";
     final int MAX_HOURS_PER_DAY = 10;
     final int MAX_TEACHED_HOURS_PER_DAY = 12;
     final Duration MAX_GAP = Duration.ofHours(3);
@@ -48,8 +70,8 @@ public class TimetableConstraintProvider implements ConstraintProvider {
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[]{
                 // Hard constraints
-//                roomConflict(constraintFactory),
-//                teacherConflict(constraintFactory),
+                roomConflict(constraintFactory),
+                teacherConflict(constraintFactory),
                 studentGroupConflictWithGroupBy(constraintFactory),
                 capacityRoomConflict(constraintFactory),
                 courseStudentsGroupedInTheSameRoom(constraintFactory),
@@ -59,7 +81,6 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 roomConflictUniversity(constraintFactory),
                 teacherConflictUniversity(constraintFactory),
                 overlappingTimeslot(constraintFactory),
-                lessonDurationConflict(constraintFactory),
 
                 //medium
                 maximumCoursesForStudents(constraintFactory),
@@ -72,11 +93,21 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 // Soft constraints
                 teacherRoomStability(constraintFactory),
                 teacherTimeEfficiency(constraintFactory),
-//                studentGroupSubjectVariety(constraintFactory),
+                studentGroupSubjectVariety(constraintFactory),
                 coursesInTheSameBuilding(constraintFactory),
                 gapsLongerThan4Hours(constraintFactory),
                 labsGroupedInTheSameTimeslot(constraintFactory),
 //                labAfterSeminar(constraintFactory)
+
+                // Highschool-specific constraints
+                noGapsForHighschool(constraintFactory),
+                fairLessonsDistribution(constraintFactory),
+                earlyStartForHighschool(constraintFactory),
+
+                // Foreign language grouping constraints
+                foreignLanguageSameTimeslot(constraintFactory),
+                schoolRoomConflict(constraintFactory),
+                schoolTeacherConflict(constraintFactory)
 
                 //add other constraints (with penalty or reward) if needed
 
@@ -238,21 +269,8 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                         )
                 )
                 .penalizeConfigurable()
-                //.justifyWith((lesson1, lesson2, score) -> new OverlappingJustification(lesson, timeslot))
+                .justifyWith((lesson1, lesson2, score) -> new OverlappingTimeslotJustification(lesson1, lesson2))
                 .asConstraint("overlappingTimeslot");
-    }
-
-    Constraint lessonDurationConflict(ConstraintFactory constraintFactory) {
-        //for each lesson ensure that a lesson with duration x is assigned to a timeslot with duration x
-        //in future, create a built-in constraint
-        return constraintFactory.forEach(Lesson.class)
-                .filter((lesson -> {
-                    long timeslotHours = Duration.between(lesson.getTimeslot().getStartTime(), lesson.getTimeslot().getEndTime()).toHours();
-                    return lesson.getDuration() != timeslotHours;
-                }))
-                .penalizeConfigurable()
-                //.justifyWith()
-                .asConstraint("lessonDurationConflict");
     }
 
     Constraint capacityRoomConflict(ConstraintFactory constraintFactory) {
@@ -263,7 +281,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 //check if student's group number is bigger than room's capacity
                 .filter(lesson -> lesson.getStudentGroup().getNumberOfStudents() > lesson.getRoom().getCapacity())
                 .penalizeConfigurable()
-                //.justifyWith((parameters) -> new Justification(room)
+                .justifyWith((lesson, score) -> new CapacityRoomConflictJustification(lesson))
                 .asConstraint("capacityRoomConflict");
     }
 
@@ -294,7 +312,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 .penalizeConfigurable((lesson) -> {
                     return 1;
                 })
-                //.justifyWith
+                .justifyWith((lesson, score) -> new MaximizePreferredTimeslotAssignmentsJustification(lesson))
                 .asConstraint("maximizePreferredTimeslotAssignments");
     }
 
@@ -326,7 +344,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 }))
 //                .reward(HardSoftScore.ONE_SOFT)
                 .rewardConfigurable()
-                //.justifyWith()
+                .justifyWith((lesson1, lesson2, score) -> new CoursesInTheSameBuildingJustification(lesson1, lesson2))
                 .asConstraint("coursesInTheSameBuilding");
     }
 
@@ -384,6 +402,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                     return totalHours > MAX_TEACHED_HOURS_PER_DAY;
                 })
                 .penalizeConfigurable((teacherDay, totalHours) -> totalHours - MAX_TEACHED_HOURS_PER_DAY)
+                .justifyWith((teacherDay, totalHours, score) -> new MaximumCoursesTeachedJustification(teacherDay, totalHours))
                 .asConstraint("maximmumCoursesTeached");
     }
 
@@ -401,6 +420,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                     return totalHours > MAX_HOURS_PER_DAY;
                 })
                 .penalizeConfigurable((studentDay, totalHours) -> totalHours - MAX_HOURS_PER_DAY)
+                .justifyWith((studentDay, totalHours, score) -> new MaximumCoursesForStudentsJustification(studentDay, totalHours))
                 .asConstraint("maximumCoursesForStudents");
     }
 
@@ -421,7 +441,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 })
 //                .penalize(HardSoftScore.ONE_HARD, ((timeslot, room, series, studentTotal) -> studentTotal - room.getCapacity()))
                 .penalizeConfigurable((timeslot, room, series, studentTotal) -> studentTotal - room.getCapacity().intValue())
-                //.justifyWith()
+                .justifyWith((timeslot, room, series, studentTotal, score) -> new CourseStudentsGroupedInTheSameRoomJustification(timeslot, room, series, studentTotal))
                 .asConstraint("courseStudentsGroupedInTheSameRoom");
     }
 
@@ -441,7 +461,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 })
 //                .penalize(HardSoftScore.ONE_HARD, ((timeslot, room, series, studentTotal) -> studentTotal - room.getCapacity()))
                 .penalizeConfigurable((timeslot, room, series, studentTotal) -> (int) (studentTotal - room.getCapacity()))
-                //.justifyWith()
+                .justifyWith((timeslot, room, series, studentTotal, score) -> new SeminarStudentsGroupedInTheSameRoomJustification(timeslot, room, series, studentTotal))
                 .asConstraint("seminarStudentsGroupedInTheSameRoom");
     }
 
@@ -461,7 +481,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 })
 //                .penalize(HardSoftScore.ONE_HARD, ((timeslot, room, group, studentTotal) -> studentTotal - room.getCapacity()))
                 .penalizeConfigurable((timeslot, room, group, studentTotal) -> (int) (studentTotal - room.getCapacity()))
-                //.justifyWith()
+                .justifyWith((timeslot, room, group, studentTotal, score) -> new LabsStudentsGroupedInTheSameRoomJustification(timeslot, room, group, studentTotal))
                 .asConstraint("labsStudentsGroupedInTheSameRoom");
     }
 
@@ -498,7 +518,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                         countDistinct(lesson -> TimeslotRoom.ofTR(lesson.getTimeslot(), lesson.getRoom())))
                 .filter((group, subject, timeslotAndRoomCount) -> timeslotAndRoomCount > 1)
                 .penalizeConfigurable((group, subject, timeslotAndRoomCount) -> timeslotAndRoomCount - 1)
-                //.justifyWith()
+                .justifyWith((group, subject, timeslotAndRoomCount, score) -> new CoursesGroupedInTheSameTimeslotJustification(group, subject, timeslotAndRoomCount))
                 .asConstraint("coursesGroupedInTheSameTimeslot");
     }
 
@@ -516,7 +536,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                         countDistinct(lesson -> TimeslotRoom.ofTR(lesson.getTimeslot(), lesson.getRoom())))
                 .filter((group, subject, timeslotAndRoomCount) -> timeslotAndRoomCount > 1)
                 .penalizeConfigurable((group, subject, timeslotAndRoomCount) -> timeslotAndRoomCount - 1)
-                //.justifyWith()
+                .justifyWith((group, subject, timeslotAndRoomCount, score) -> new SeminarsGroupedInTheSameTimeslotJustification(group, subject, timeslotAndRoomCount))
                 .asConstraint("seminarsGroupedInTheSameTimeslot");
     }
 
@@ -534,7 +554,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                         countDistinct(lesson -> TimeslotRoom.ofTR(lesson.getTimeslot(), lesson.getRoom())))
                 .filter((group, subject, timeslotAndRoomCount) -> timeslotAndRoomCount > 1)
                 .penalizeConfigurable((group, subject, timeslotAndRoomCount) -> timeslotAndRoomCount - 1)
-                //.justifyWith()
+                .justifyWith((group, subject, timeslotAndRoomCount, score) -> new LabsGroupedInTheSameTimeslotJustification(group, subject, timeslotAndRoomCount))
                 .asConstraint("labsGroupedInTheSameTimeslot");
     }
 
@@ -585,7 +605,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 })
 //                .penalize(HardSoftScore.ONE_SOFT)
                 .penalizeConfigurable()
-                //.justifyWith()
+                .justifyWith((lesson1, lesson2, score) -> new GapsLongerThan4HoursJustification(lesson1, lesson2))
                 .asConstraint("gapsLongerThan4Hours");
     }
 
@@ -655,6 +675,184 @@ public class TimetableConstraintProvider implements ConstraintProvider {
     }
 
 
+    /**
+     * Incremental collector combining min(startTime), max(endTime) and sum(durationMinutes)
+     * into a single O(1) update — avoids materialising the lesson list.
+     */
+    private static ai.timefold.solver.core.api.score.stream.uni.UniConstraintCollector<Lesson, ?, LessonDayStats>
+            lessonDayStatsCollector() {
+        return compose(
+                min(lesson -> lesson.getTimeslot().getStartTime()),
+                max(lesson -> lesson.getTimeslot().getEndTime()),
+                sum(lesson -> (int) Duration.between(
+                        lesson.getTimeslot().getStartTime(),
+                        lesson.getTimeslot().getEndTime()
+                ).toMinutes()),
+                LessonDayStats::new
+        );
+    }
+
+    Constraint noGapsForHighschool(ConstraintFactory constraintFactory) {
+        // No gaps for highschool students
+        return constraintFactory.forEach(Lesson.class)
+                // Group by student group and day of week
+                .groupBy(
+                        lesson -> new StudentDayOfWeek(
+                                lesson.getStudentGroup(),
+                                lesson.getTimeslot().getDayOfWeek()),
+                        lessonDayStatsCollector()
+                )
+                // if there are gaps between lessons, penalize
+                .filter((studentDay, stats) -> stats.gapMinutes() > 0)
+                .penalizeConfigurable((studentDay, stats) -> (int) stats.gapMinutes())
+                .justifyWith((studentDay, stats, score) ->
+                        new NoGapsHighSchoolJustification(
+                                studentDay.studentGroup(),
+                                studentDay.dayOfWeek(),
+                                stats.gapMinutes())
+                )
+                .asConstraint("noGapsForHighschool");
+    }
+
+    Constraint fairLessonsDistribution(ConstraintFactory constraintFactory) {
+        // Fair distribution of lessons throughout the day
+        return constraintFactory.forEach(Lesson.class)
+                // Group by student group and day of week
+                .groupBy(
+                        lesson -> new StudentDayOfWeek(
+                                lesson.getStudentGroup(),
+                                lesson.getTimeslot().getDayOfWeek()),
+                        count()
+                )
+                // Penalize if the number of lessons is not fair (try to minimize the count)
+                .penalizeConfigurable((studentDay, lessonCount) -> lessonCount * lessonCount)
+                .justifyWith((studentDay, lessonCount, score) ->
+                        new FairLessonsDistributionJustification(
+                                studentDay.studentGroup(),
+                                studentDay.dayOfWeek(),
+                                lessonCount)
+                )
+                .asConstraint("fairLessonsDistribution");
+    }
+
+    Constraint earlyStartForHighschool(ConstraintFactory constraintFactory) {
+        // Assuming that 08:00 is the absolute earliest the school can start
+        java.time.LocalTime schoolDayStart = java.time.LocalTime.of(8, 0);
+
+        return constraintFactory.forEach(Lesson.class)
+                .groupBy(
+                        lesson -> new StudentDayOfWeek(
+                                lesson.getStudentGroup(),
+                                lesson.getTimeslot().getDayOfWeek()),
+                        // Find the start time of the earliest lesson for this group/day
+                        ai.timefold.solver.core.api.score.stream.ConstraintCollectors.<Lesson, java.time.LocalTime>min(lesson -> lesson.getTimeslot().getStartTime())
+                )
+                // Only penalize if the earliest lesson actually starts after 08:00
+                .filter((studentDay, earliestStartTime) ->
+                        earliestStartTime.isAfter(schoolDayStart)
+                )
+                // Penalize by the number of minutes past 08:00 AM the first lesson starts
+                .penalizeConfigurable((studentDay, earliestStartTime) ->
+                        (int) java.time.Duration.between(schoolDayStart, earliestStartTime).toMinutes()
+                )
+                .justifyWith((studentDay, earliestStartTime, score) ->
+                        new EarlyStartHighSchoolJustification(
+                                studentDay.studentGroup(),
+                                studentDay.dayOfWeek(),
+                                earliestStartTime,
+                                (int) java.time.Duration.between(schoolDayStart, earliestStartTime).toMinutes())
+                )
+                .asConstraint("earlyStartForHighschool");
+    }
+
+    // ── Foreign Language Grouping Constraints ──────────────────────────────────
+
+    /**
+     * Checks if a lesson is a foreign language lesson (subject starts with "Lb.").
+     * Covers: "Lb. ger/fr", "Lb. fr", "Lb. ger", etc.
+     */
+    private boolean isForeignLanguage(Lesson lesson) {
+        return lesson.getSubject() != null
+                && lesson.getSubject().startsWith(FOREIGN_LANGUAGE_PREFIX);
+    }
+
+    /**
+     * Checks if two lessons are both foreign language lessons of the same academic year.
+     * Used by school conflict constraints to exempt these pairs from room/teacher conflicts,
+     * since the solver needs freedom to place them in the same timeslot.
+     */
+    private boolean areSameYearForeignLanguagePair(Lesson lesson1, Lesson lesson2) {
+        return isForeignLanguage(lesson1)
+                && isForeignLanguage(lesson2)
+                && lesson1.getStudentGroup().getYear() != null
+                && lesson1.getStudentGroup().getYear() == lesson2.getStudentGroup().getYear();
+    }
+
+    Constraint foreignLanguageSameTimeslot(ConstraintFactory constraintFactory) {
+        // Foreign language lessons must be in the same timeslot for the same academic year
+        return constraintFactory
+                // 1. Start with only foreign language lessons
+                .forEach(Lesson.class)
+                .filter(this::isForeignLanguage)
+                
+                // 2. Join ONLY with other foreign language lessons
+                .join(
+                        constraintFactory.forEach(Lesson.class).filter(this::isForeignLanguage),
+                        // Match them if they share the same Academic Year (e.g., Year 5)
+                        Joiners.equal(lesson -> lesson.getStudentGroup().getYear()),
+                        // Ensure we only check unique pairs (A vs B, not B vs A)
+                        Joiners.lessThan(Lesson::getId)
+                )
+                
+                // 3. Apply critical logic rules
+                .filter((lesson1, lesson2) -> 
+                        // Rule A: They must belong to DIFFERENT classes (e.g., 5A vs 5B) 
+                        // Otherwise we'd penalize a single class for having lessons on different days.
+                        !lesson1.getStudentGroup().getId().equals(lesson2.getStudentGroup().getId()) 
+                        && 
+                        // Rule B: Penalize if they did NOT end up in the exact same timeslot
+                        !lesson1.getTimeslot().getId().equals(lesson2.getTimeslot().getId())
+                )
+                .penalizeConfigurable()
+                .justifyWith((lesson1, lesson2, score) -> 
+                        new ForeignLanguageSameTimeslotJustification(lesson1, lesson2))
+                .asConstraint("foreignLanguageSameTimeslot");
+    }
+
+    /**
+     * School-specific room conflict: identical to {@link #roomConflict} but EXEMPTS pairs where
+     * both lessons are foreign language lessons of the same academic year.
+     */
+    Constraint schoolRoomConflict(ConstraintFactory constraintFactory) {
+        return constraintFactory
+                .forEachUniquePair(Lesson.class,
+                        Joiners.equal(lesson -> lesson.getTimeslot().getId()),
+                        Joiners.equal(lesson -> lesson.getRoom().getId()))
+                // Exempt same-year foreign language pairs from room conflict
+                .filter((lesson1, lesson2) -> !areSameYearForeignLanguagePair(lesson1, lesson2))
+                .penalizeConfigurable()
+                .justifyWith((lesson1, lesson2, score) ->
+                        new RoomConflictJustification(lesson1.getRoom(), lesson1, lesson2))
+                .asConstraint("schoolRoomConflict");
+    }
+
+    /**
+     * School-specific teacher conflict: identical to {@link #teacherConflict} but EXEMPTS pairs
+     * where both lessons are foreign language lessons of the same academic year.
+     */
+    Constraint schoolTeacherConflict(ConstraintFactory constraintFactory) {
+        return constraintFactory
+                .forEachUniquePair(Lesson.class,
+                        Joiners.equal(lesson -> lesson.getTimeslot().getId()),
+                        Joiners.equal(lesson -> lesson.getTeacher().getId()))
+                // Exempt same-year foreign language pairs from teacher conflict
+                .filter((lesson1, lesson2) -> !areSameYearForeignLanguagePair(lesson1, lesson2))
+                .penalizeConfigurable()
+                .justifyWith((lesson1, lesson2, score) ->
+                        new TeacherConflictJustification(lesson1.getTeacher(), lesson1, lesson2))
+                .asConstraint("schoolTeacherConflict");
+    }
+
     public record TeacherDayOfWeek(Teacher teacher, DayOfWeek dayOfWeek) {
 
         static TeacherDayOfWeek ofTD(Teacher teacher, DayOfWeek dayOfWeek) {
@@ -679,6 +877,25 @@ public class TimetableConstraintProvider implements ConstraintProvider {
     public record TeacherDayTimeslot(Teacher teacher, DayOfWeek dayOfWeek, Timeslot timeslot) {
         static TeacherDayTimeslot of(Teacher teacher, DayOfWeek dayOfWeek, Timeslot timeslot) {
             return new TeacherDayTimeslot(teacher, dayOfWeek, timeslot);
+        }
+    }
+
+    /**
+     * Pre-computed stats for a student group on a given day.
+     * Produced by {@link #lessonDayStatsCollector()} — no repeated stream iterations needed.
+     *
+     * @param earliestStart  start time of the first lesson
+     * @param latestEnd      end time of the last lesson
+     * @param totalInstructionMinutes sum of all lesson durations in minutes
+     */
+    public record LessonDayStats(
+            java.time.LocalTime earliestStart,
+            java.time.LocalTime latestEnd,
+            int totalInstructionMinutes
+    ) {
+        /** Gap size in minutes: span − instruction time. Positive means a gap exists. */
+        public long gapMinutes() {
+            return Duration.between(earliestStart, latestEnd).toMinutes() - totalInstructionMinutes;
         }
     }
 }

@@ -35,6 +35,7 @@ public class Teacher {
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
     private String name;
+    //TODO: add speciality and type (primary, external, secondary, supléant)
     // Preferred timeslots that belong only to this teacher
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(

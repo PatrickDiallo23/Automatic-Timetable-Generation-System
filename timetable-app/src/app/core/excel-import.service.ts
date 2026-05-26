@@ -13,6 +13,10 @@ import {
   Timeslot,
   Timetable,
   Year,
+  RestrictionRule,
+  RuleTargetType,
+  RuleCriteriaField,
+  RuleOperator,
 } from '../model/timetableEntities';
 
 export interface ExcelValidationResult {
@@ -158,10 +162,14 @@ export class ExcelImportService {
       const lessons = this.extractLessons(
         workbook,
         errors,
+        warnings,
         teachers,
-        studentGroups
+        studentGroups,
+        timeslots,
+        rooms
       );
       const config = this.extractConfiguration(workbook, warnings);
+      const restrictionRules = this.extractRestrictionRules(workbook, errors);
 
       if (errors.length > 0) {
         return { isValid: false, errors, warnings };
@@ -174,6 +182,7 @@ export class ExcelImportService {
         lessons,
         duration: config.duration || 60, // Default duration
         timetableConstraintConfiguration: config.constraints || {},
+        restrictionRules,
         score: null,
         solverStatus: null
       };
@@ -188,6 +197,82 @@ export class ExcelImportService {
       errors.push('Error processing Excel data: ' + (error as Error).message);
       return { isValid: false, errors, warnings };
     }
+  }
+
+  private extractRestrictionRules(
+    workbook: XLSX.WorkBook,
+    errors: string[]
+  ): RestrictionRule[] {
+    const sheetName = 'RestrictionRules';
+    // Optional sheet, return empty array if missing
+    if (!workbook.Sheets[sheetName]) {
+      return [];
+    }
+
+    const worksheet = workbook.Sheets[sheetName];
+    const data = XLSX.utils.sheet_to_json(worksheet);
+    const rules: RestrictionRule[] = [];
+
+    data.forEach((row: any, index: number) => {
+      try {
+        console.log(`RestrictionRules row ${index + 2}:`, row);
+
+        if (
+          !this.hasValue(row.id) ||
+          !this.hasValue(row.name) ||
+          !this.hasValue(row.targetType) ||
+          !this.hasValue(row.criteriaField) ||
+          !this.hasValue(row.operator) ||
+          !this.hasValue(row.criteriaValue)
+        ) {
+          errors.push(
+            `RestrictionRules sheet row ${index + 2}: Missing required fields`
+          );
+          return;
+        }
+
+        // Validate enums
+        const targetType = String(row.targetType).toUpperCase() as RuleTargetType;
+        if (!Object.values(RuleTargetType).includes(targetType)) {
+          errors.push(
+            `RestrictionRules sheet row ${index + 2}: Invalid targetType '${row.targetType}'`
+          );
+          return;
+        }
+
+        const criteriaField = String(row.criteriaField).toUpperCase() as RuleCriteriaField;
+        if (!Object.values(RuleCriteriaField).includes(criteriaField)) {
+          errors.push(
+            `RestrictionRules sheet row ${index + 2}: Invalid criteriaField '${row.criteriaField}'`
+          );
+          return;
+        }
+
+        const operator = String(row.operator).toUpperCase() as RuleOperator;
+        if (!Object.values(RuleOperator).includes(operator)) {
+          errors.push(
+            `RestrictionRules sheet row ${index + 2}: Invalid operator '${row.operator}'`
+          );
+          return;
+        }
+
+        rules.push({
+          id: Number(row.id),
+          name: String(row.name),
+          targetType,
+          criteriaField,
+          operator,
+          criteriaValue: String(row.criteriaValue),
+          active: this.hasValue(row.active) ? (String(row.active).toLowerCase() === 'true' || row.active === true) : true
+        });
+      } catch (error) {
+        errors.push(
+          `RestrictionRules sheet row ${index + 2}: ${(error as Error).message}`
+        );
+      }
+    });
+
+    return rules;
   }
 
   private extractTimeslots(
@@ -420,8 +505,11 @@ export class ExcelImportService {
   private extractLessons(
     workbook: XLSX.WorkBook,
     errors: string[],
+    warnings: string[],
     teachers: Teacher[],
-    studentGroups: StudentGroup[]
+    studentGroups: StudentGroup[],
+    timeslots: Timeslot[],
+    rooms: Room[]
   ): Lesson[] {
     const sheetName = 'Lessons';
     if (!workbook.Sheets[sheetName]) {
@@ -502,6 +590,51 @@ export class ExcelImportService {
           return;
         }
 
+        // Parse pinned field
+        const isPinned = this.hasValue(row.pinned) 
+          ? (String(row.pinned).toLowerCase() === 'true' || row.pinned === true) 
+          : false;
+
+        // Look up timeslot by ID if provided
+        let timeslotRef: number | null = null;
+        if (this.hasValue(row.timeslotId)) {
+          const timeslotId = Number(row.timeslotId);
+          const foundTimeslot = timeslots.find(ts => ts.id === timeslotId);
+          if (foundTimeslot) {
+            timeslotRef = foundTimeslot.id ?? null;
+          } else {
+            warnings.push(
+              `Lessons sheet row ${index + 2}: Timeslot with ID ${timeslotId} not found. Lesson will be unpinned from timeslot.`
+            );
+          }
+        }
+
+        // Look up room by ID if provided
+        let roomRef: number | null = null;
+        if (this.hasValue(row.roomId)) {
+          const roomId = Number(row.roomId);
+          const foundRoom = rooms.find(r => r.id === roomId);
+          if (foundRoom) {
+            roomRef = foundRoom.id ?? null;
+          } else {
+            warnings.push(
+              `Lessons sheet row ${index + 2}: Room with ID ${roomId} not found. Lesson will be unpinned from room.`
+            );
+          }
+        }
+
+        // Parse applied rule IDs if provided (pipe-delimited, e.g. "1|3|5")
+        let appliedRuleIds: number[] = [];
+        if (this.hasValue(row.appliedRuleIds)) {
+          const ruleIdStr = String(row.appliedRuleIds);
+          appliedRuleIds = ruleIdStr
+            .split('|')
+            .map((id: string) => id.trim())
+            .filter((id: string) => id.length > 0)
+            .map((id: string) => Number(id))
+            .filter((id: number) => !isNaN(id));
+        }
+
         lessons.push({
           id: Number(row.id),
           subject: String(row.subject),
@@ -510,8 +643,10 @@ export class ExcelImportService {
           lessonType,
           year,
           duration: Number(row.duration),
-          timeslot: null,
-          room: null,
+          timeslot: timeslotRef,
+          room: roomRef,
+          pinned: isPinned,
+          appliedRuleIds: appliedRuleIds.length > 0 ? appliedRuleIds : [],
         });
       } catch (error) {
         errors.push(
@@ -522,6 +657,42 @@ export class ExcelImportService {
 
     return lessons;
   }
+
+  /**
+   * All canonical constraint keys from TimetableConstraintConfiguration.
+   * Any Configuration sheet row whose `setting` matches one of these is
+   * routed into `config.constraints`; everything else is treated as a
+   * top-level solver setting (e.g. `duration`).
+   */
+  private readonly CONSTRAINT_KEYS = new Set<string>([
+    'roomConflict',
+    'teacherConflict',
+    'studentGroupConflictAdvanced',
+    'capacityRoomConflict',
+    'courseStudentsGroupedInTheSameRoom',
+    'seminarStudentsGroupedInTheSameRoom',
+    'labsStudentsGroupedInTheSameRoom',
+    'roomConflictUniversity',
+    'teacherConflictUniversity',
+    'overlappingTimeslot',
+    'maximumCoursesForStudents',
+    'maximmumCoursesTeached',
+    'maximizePreferredTimeslotAssignments',
+    'coursesGroupedInTheSameTimeslot',
+    'seminarsGroupedInTheSameTimeslot',
+    'teacherRoomStability',
+    'teacherTimeEfficiency',
+    'studentGroupVariety',
+    'gapsLongerThan4Hours',
+    'labsGroupedInTheSameTimeslot',
+    'coursesInTheSameBuilding',
+    'noGapsForHighschool',
+    'fairLessonsDistribution',
+    'earlyStartForHighschool',
+    'foreignLanguageSameTimeslot',
+    'schoolRoomConflict',
+    'schoolTeacherConflict',
+  ]);
 
   private extractConfiguration(
     workbook: XLSX.WorkBook,
@@ -544,13 +715,7 @@ export class ExcelImportService {
       if (this.hasValue(row.setting) && this.hasValue(row.value)) {
         if (row.setting === 'duration') {
           config.duration = Number(row.value);
-        } else if (
-          row.setting.includes('Conflict') ||
-          row.setting.includes('Grouped') ||
-          row.setting.includes('After') ||
-          row.setting.includes('Building')
-        ) {
-          // These are constraint configurations
+        } else if (this.CONSTRAINT_KEYS.has(row.setting)) {
           config.constraints[row.setting] = String(row.value);
         } else {
           config[row.setting] = row.value;

@@ -2,6 +2,30 @@
 
 <button mat-raised-button color="primary" class="timeslotForm" (click)="openAddEditTimeslotForm()">Add Timeslot</button>
 
+<div class="filter-container">
+    <mat-form-field class="filter-field">
+        <mat-label>Day</mat-label>
+        <mat-select [(ngModel)]="filterValues.dayOfWeek" (selectionChange)="applyFilter('dayOfWeek', $event.value)">
+            <mat-option value="">All</mat-option>
+            <mat-option value="MONDAY">Monday</mat-option>
+            <mat-option value="TUESDAY">Tuesday</mat-option>
+            <mat-option value="WEDNESDAY">Wednesday</mat-option>
+            <mat-option value="THURSDAY">Thursday</mat-option>
+            <mat-option value="FRIDAY">Friday</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="filter-field">
+        <mat-label>Time</mat-label>
+        <input matInput [(ngModel)]="filterValues.time" (keyup)="applyFilter('time', filterValues.time)" placeholder="Ex. 08:00">
+    </mat-form-field>
+
+    <button mat-flat-button class="reset-button" (click)="resetFilters()">
+        <mat-icon>refresh</mat-icon>
+        Reset Filters
+    </button>
+</div>
+
 <mat-table [dataSource]="dataSource" class="table">
     <ng-container matColumnDef="dayOfWeek">
         <mat-header-cell *matHeaderCellDef>Timeslot Week Day</mat-header-cell>

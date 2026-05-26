@@ -2,7 +2,7 @@
     <h1>Room Form</h1>
 </div>
 
-<form [formGroup]="roomForm" (ngSubmit)="onFormSubmit()">
+<form [formGroup]="roomForm" (ngSubmit)="onFormSubmit(false)">
     <div mat-dialog-content class="content">
 
         <mat-form-field appearance="outline">
@@ -26,7 +26,8 @@
 
     </div>
     <div mat-dialog-actions class="action">
-        <button mat-raised-button type="button" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button type="button" (click)="closeDialog()">{{ hasAddedItem ? 'Done' : 'Cancel' }}</button>
+        <button mat-raised-button color="accent" type="button" *ngIf="!data" (click)="onFormSubmit(true)">Save & Add Another</button>
         <button mat-raised-button color="primary" type="submit">{{data ? 'Update': 'Save'}}</button>
     </div>
 </form>

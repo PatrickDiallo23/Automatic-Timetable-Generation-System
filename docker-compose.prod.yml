@@ -1,0 +1,145 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# docker-compose.prod.yml  —  Production overrides
+#
+# Start:
+#   docker compose --env-file .env.prod \
+#     -f docker-compose.yml -f docker-compose.prod.yml \
+#     up -d
+#
+# Features:
+#   • Two backend replicas for load balancing (backend1 + backend2)
+#   • Nginx upstream includes both replicas
+#   • No debug ports, no devtools
+#   • Resource limits tuned for Timefold solver's CPU/RAM appetite
+#   • Log rotation to prevent disk exhaustion
+#   • Security: Postgres stays internal-only (no host port)
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # Postgres stays identical to base — no changes needed for prod.
+  # The volume persists data. Ensure regular backup via pg_dump cron.
+  postgres:
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "1.0"
+        reservations:
+          memory: 512M
+          cpus: "0.5"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # ── Primary backend instance ────────────────────────────────────────────────
+  backend:
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      JAVA_OPTS: ""   # JVM flags already in Dockerfile ENTRYPOINT
+    deploy:
+      resources:
+        limits:
+          # Timefold uses move threads and can spike CPU heavily
+          memory: 3G
+          cpus: "3.0"
+        reservations:
+          memory: 1G
+          cpus: "1.0"
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 5
+        window: 120s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+  # ── Second backend replica (load-balanced by Nginx) ─────────────────────────
+  backend2:
+    build:
+      context: ./timetable-app-backend
+      dockerfile: Dockerfile
+      target: production
+    container_name: timetable_backend2
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL:      ${DATABASE_URL}
+      SPRING_DATASOURCE_USERNAME: ${DATABASE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DATABASE_PASSWORD}
+      TIMETABLEAPP_SECRETKEY:     ${JWT_SECRET_KEY}
+      SPRING_PROFILES_ACTIVE:     prod
+      JAVA_OPTS:                  ""
+      TIMEFOLD_TERMINATION_LIMIT: ${TIMEFOLD_TERMINATION_LIMIT:-6m}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend_net
+      - frontend_net
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-check-certificate -qO- https://localhost:8200/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+          cpus: "3.0"
+        reservations:
+          memory: 1G
+          cpus: "1.0"
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 5
+        window: 120s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+
+  frontend:
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
+        reservations:
+          memory: 64M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "3"
+
+  nginx:
+    # Use a production nginx conf that includes both backend replicas
+    volumes:
+      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - ./timetable-app/ssl:/etc/nginx/ssl:ro
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+    depends_on:
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+      backend2:
+        condition: service_healthy

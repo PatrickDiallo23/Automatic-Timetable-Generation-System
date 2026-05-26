@@ -3,6 +3,7 @@ package com.patrick.timetableappbackend.controller;
 import ai.timefold.solver.core.api.score.analysis.ScoreAnalysis;
 import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import ai.timefold.solver.core.api.solver.ScoreAnalysisFetchPolicy;
+import ai.timefold.solver.core.api.solver.SolutionUpdatePolicy;
 import com.patrick.timetableappbackend.model.Timetable;
 import com.patrick.timetableappbackend.service.TimetableService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -120,6 +121,29 @@ public class TimetableController {
     public ScoreAnalysis<HardMediumSoftScore> analyze(@RequestBody Timetable problem,
                                                       @RequestParam(name = "fetchPolicy", required = false) ScoreAnalysisFetchPolicy fetchPolicy) {
         return timetableService.analyze(problem, fetchPolicy);
+    }
+
+    @Operation(summary = "Update timetable problem score", description = "Update a timetable problem and retrieve the updated problem with score")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully updated timetable problem score",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Timetable.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Forbidden access", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Timetable problem not found", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+    })
+    @PutMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Parameters(value = {
+            @Parameter(name = "fetchPolicy", description = "Fetch policy for score update",
+                    schema = @Schema(type = "string", allowableValues = {"UPDATE_ALL", "UPDATE_SCORE_ONLY", "UPDATE_SHADOW_VARIABLES_ONLY", "NO_UPDATE"})),
+            @Parameter(name = "problem", description = "Timetable problem to update", required = true, schema = @Schema(implementation = Timetable.class))
+    })
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Timetable> update(@RequestBody Timetable problem,
+                                      @RequestParam(name = "fetchPolicy", required = false) SolutionUpdatePolicy fetchPolicy) {
+        timetableService.update(problem, fetchPolicy);
+        return new ResponseEntity<>(problem, HttpStatus.OK);
     }
 
     @Operation(summary = "Get timetable by job ID", description = "Retrieve a specific timetable by its job ID")

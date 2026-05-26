@@ -20,6 +20,12 @@ export class TimeslotsComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  // Filter values
+  filterValues: any = {
+    dayOfWeek: '',
+    time: ''
+  };
+
   constructor(
     private timeslotService: TimeslotService,
     private dialog: MatDialog,
@@ -86,7 +92,38 @@ export class TimeslotsComponent implements OnInit {
       this.dataSource.data = timeslots;
       console.log(timeslots);
       this.dataSource.paginator = this.paginator;
+
+      this.dataSource.filterPredicate = (data: Timeslot, filter: string) => {
+        const searchTerms = JSON.parse(filter);
+        
+        const dayMatch = !searchTerms.dayOfWeek || (data.dayOfWeek === searchTerms.dayOfWeek);
+        const timeMatch = !searchTerms.time || 
+                          (data.startTime?.includes(searchTerms.time) || data.endTime?.includes(searchTerms.time));
+
+        return Boolean(dayMatch && timeMatch);
+      };
     });
+  }
+
+  applyFilter(field: string, value: any) {
+    this.filterValues[field] = value;
+    this.dataSource.filter = JSON.stringify(this.filterValues);
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  resetFilters() {
+    this.filterValues = {
+      dayOfWeek: '',
+      time: ''
+    };
+    this.dataSource.filter = JSON.stringify(this.filterValues);
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 }
 

@@ -2,13 +2,13 @@
     <h1>Timeslot Form</h1>
 </div>
 
-<form [formGroup]="timeslotForm" (ngSubmit)="onFormSubmit()">
+<form [formGroup]="timeslotForm" (ngSubmit)="onFormSubmit(false)">
     <div mat-dialog-content class="content">
 
         <mat-form-field appearance="outline">
             <mat-label>Timeslot Weekday</mat-label>
             <mat-select formControlName="dayOfWeek">
-                <mat-option *ngFor="let key of bindedWeekdaysMapKeys" [value]="weekdaysMap.get(key)">{{key}}
+                <mat-option *ngFor="let day of weekdays" [value]="day">{{day}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
@@ -29,7 +29,8 @@
 
     </div>
     <div mat-dialog-actions class="action">
-        <button mat-raised-button type="button" [mat-dialog-close]="false">Cancel</button>
+        <button mat-raised-button type="button" (click)="closeDialog()">{{ hasAddedItem ? 'Done' : 'Cancel' }}</button>
+        <button mat-raised-button color="accent" type="button" *ngIf="!data" (click)="onFormSubmit(true)">Save & Add Another</button>
         <button mat-raised-button color="primary" type="submit">{{data ? 'Update': 'Save'}}</button>
     </div>
 </form>

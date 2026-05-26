@@ -30,7 +30,7 @@ public class UserService {
 
     @Transactional
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        log.info("Authenticating the user...");
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),

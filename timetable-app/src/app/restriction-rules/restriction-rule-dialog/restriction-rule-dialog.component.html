@@ -1,0 +1,169 @@
+<h1 mat-dialog-title class="dialog-title">
+    <mat-icon class="title-icon">{{ data ? 'edit' : 'add_circle' }}</mat-icon>
+    {{ data ? 'Edit Rule' : 'Create New Rule' }}
+</h1>
+
+<form [formGroup]="ruleForm" (ngSubmit)="onFormSubmit(false)">
+    <div mat-dialog-content class="dialog-content">
+
+        <!-- Rule Name -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Rule Name</mat-label>
+            <mat-icon matPrefix class="field-icon">label</mat-icon>
+            <input matInput formControlName="name" placeholder="e.g. Lab Rooms Only, Morning Sessions">
+            <mat-hint>A descriptive name to identify this rule</mat-hint>
+        </mat-form-field>
+
+        <!-- Target Type -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>What do you want to restrict?</mat-label>
+            <mat-icon matPrefix class="field-icon">{{ targetIcon }}</mat-icon>
+            <mat-select formControlName="targetType" (selectionChange)="onTargetTypeChange($event.value)">
+                <mat-option [value]="'ROOM'">
+                    <mat-icon class="option-icon">meeting_room</mat-icon>
+                    Room — Restrict which rooms a lesson can use
+                </mat-option>
+                <mat-option [value]="'TIMESLOT'">
+                    <mat-icon class="option-icon">schedule</mat-icon>
+                    Timeslot — Restrict when a lesson can be scheduled
+                </mat-option>
+            </mat-select>
+            <mat-hint>Choose whether this rule filters rooms or timeslots</mat-hint>
+        </mat-form-field>
+
+        <!-- Criteria Field -->
+        <mat-form-field appearance="outline" class="full-width" *ngIf="availableFields.length > 0">
+            <mat-label>Filter by</mat-label>
+            <mat-icon matPrefix class="field-icon">filter_list</mat-icon>
+            <mat-select formControlName="criteriaField" (selectionChange)="onCriteriaFieldChange($event.value)">
+                <mat-option *ngFor="let field of availableFields" [value]="field">
+                    {{ formatLabel(field) }}
+                </mat-option>
+            </mat-select>
+            <mat-hint *ngIf="fieldDescription">{{ fieldDescription }}</mat-hint>
+        </mat-form-field>
+
+        <!-- Operator -->
+        <mat-form-field appearance="outline" class="full-width" *ngIf="availableOperators.length > 0">
+            <mat-label>Condition</mat-label>
+            <mat-icon matPrefix class="field-icon">compare_arrows</mat-icon>
+            <mat-select formControlName="operator" (selectionChange)="onOperatorChange()">
+                <mat-option *ngFor="let op of availableOperators" [value]="op">
+                    {{ formatLabel(op) }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <!-- === SMART VALUE INPUT === -->
+
+        <!-- Single-select for NAME, BUILDING, DAY_OF_WEEK -->
+        <mat-form-field appearance="outline" class="full-width" *ngIf="inputMode === 'select'">
+            <mat-label>Value</mat-label>
+            <mat-icon matPrefix class="field-icon">{{ targetIcon }}</mat-icon>
+            <mat-select formControlName="criteriaValue" (selectionChange)="onValueChange()">
+                <mat-option *ngFor="let opt of cachedSelectOptions" [value]="opt.value">
+                    {{ opt.label }}
+                </mat-option>
+            </mat-select>
+            <mat-hint>{{ placeholderText }}</mat-hint>
+        </mat-form-field>
+
+        <!-- Multi-select for IN operator -->
+        <mat-form-field appearance="outline" class="full-width" *ngIf="inputMode === 'multiselect'">
+            <mat-label>Values</mat-label>
+            <mat-icon matPrefix class="field-icon">{{ targetIcon }}</mat-icon>
+            <mat-select formControlName="criteriaValue" multiple (selectionChange)="onValueChange()">
+                <mat-option *ngFor="let opt of cachedSelectOptions" [value]="opt.value">
+                    {{ opt.label }}
+                </mat-option>
+            </mat-select>
+            <mat-hint>{{ placeholderText }}</mat-hint>
+        </mat-form-field>
+
+        <!-- Number input for CAPACITY -->
+        <mat-form-field appearance="outline" class="full-width" *ngIf="inputMode === 'number'">
+            <mat-label>Value</mat-label>
+            <mat-icon matPrefix class="field-icon">groups</mat-icon>
+            <input matInput formControlName="criteriaValue" type="number" min="1"
+                   [placeholder]="placeholderText" (input)="onValueChange()">
+        </mat-form-field>
+
+        <!-- Time input for START_TIME, END_TIME -->
+        <mat-form-field appearance="outline" class="full-width" *ngIf="inputMode === 'time'">
+            <mat-label>Value</mat-label>
+            <mat-icon matPrefix class="field-icon">access_time</mat-icon>
+            <input matInput formControlName="criteriaValue" type="time"
+                   [placeholder]="placeholderText" (input)="onValueChange()">
+        </mat-form-field>
+
+        <!-- Free-text fallback for CONTAINS, STARTS_WITH operators -->
+        <mat-form-field appearance="outline" class="full-width" *ngIf="inputMode === 'text'">
+            <mat-label>Value</mat-label>
+            <mat-icon matPrefix class="field-icon">text_fields</mat-icon>
+            <input matInput formControlName="criteriaValue"
+                   [placeholder]="placeholderText" (input)="onValueChange()">
+        </mat-form-field>
+
+        <!-- === EXAMPLE TEXT === -->
+        <div class="example-callout" *ngIf="exampleText">
+            <mat-icon class="example-icon">lightbulb</mat-icon>
+            <span>{{ exampleText }}</span>
+        </div>
+
+        <!-- === HELP TEXT === -->
+        <div class="help-text" *ngIf="helpText">
+            <mat-icon class="help-icon">info_outline</mat-icon>
+            <span>{{ helpText }}</span>
+        </div>
+
+        <!-- === LIVE PREVIEW === -->
+        <div class="preview-section" *ngIf="matchingEntities.length > 0 || (inputMode !== 'hidden' && ruleForm.get('criteriaValue')?.value)">
+            <div class="preview-header">
+                <mat-icon class="preview-header-icon">visibility</mat-icon>
+                <span class="preview-title">
+                    {{ matchingEntities.length > 0
+                        ? matchingEntities.length + ' matching ' + (ruleForm.get('targetType')?.value === 'ROOM' ? 'room' : 'timeslot') + (matchingEntities.length !== 1 ? 's' : '')
+                        : 'No matches found' }}
+                </span>
+            </div>
+
+            <div class="preview-empty" *ngIf="matchingEntities.length === 0 && ruleForm.get('criteriaValue')?.value">
+                <mat-icon class="preview-empty-icon">search_off</mat-icon>
+                <span>No {{ ruleForm.get('targetType')?.value === 'ROOM' ? 'rooms' : 'timeslots' }} match this criteria. Try adjusting the value or operator.</span>
+            </div>
+
+            <div class="preview-list" *ngIf="matchingEntities.length > 0">
+                <div class="preview-chip" *ngFor="let entity of matchingEntities; let i = index"
+                     [class.hidden-chip]="i >= 8">
+                    <mat-icon class="chip-icon">{{ entity.icon }}</mat-icon>
+                    <div class="chip-text">
+                        <span class="chip-label">{{ entity.label }}</span>
+                        <span class="chip-detail">{{ entity.detail }}</span>
+                    </div>
+                </div>
+                <div class="preview-overflow" *ngIf="matchingEntities.length > 8">
+                    + {{ matchingEntities.length - 8 }} more
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Toggle -->
+        <div class="active-section">
+            <mat-slide-toggle formControlName="active" color="primary">
+                Rule is active
+            </mat-slide-toggle>
+            <span class="active-hint">Inactive rules are saved but not applied during solving</span>
+        </div>
+    </div>
+
+    <div mat-dialog-actions align="end" class="dialog-actions">
+        <button mat-button type="button" (click)="closeDialog()">{{ hasAddedItem ? 'Done' : 'Cancel' }}</button>
+        <button mat-raised-button color="accent" type="button" *ngIf="!data" [disabled]="!ruleForm.valid" (click)="onFormSubmit(true)">
+            Save & Add Another
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="!ruleForm.valid">
+            <mat-icon>{{ data ? 'save' : 'add' }}</mat-icon>
+            {{ data ? 'Update Rule' : 'Create Rule' }}
+        </button>
+    </div>
+</form>

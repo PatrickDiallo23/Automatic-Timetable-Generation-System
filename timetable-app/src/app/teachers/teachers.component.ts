@@ -21,6 +21,11 @@ export class TeachersComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  // Filter values
+  filterValues: any = {
+    name: ''
+  };
+
   constructor(
     private teacherService: TeacherService,
     private dialog: MatDialog,
@@ -94,6 +99,34 @@ export class TeachersComponent implements OnInit {
       this.dataSource.data = teachers;
       console.log(teachers);
       this.dataSource.paginator = this.paginator;
+
+      this.dataSource.filterPredicate = (data: Teacher, filter: string) => {
+        const searchTerms = JSON.parse(filter);
+        
+        const nameMatch = !searchTerms.name || (data.name?.toLowerCase().includes(searchTerms.name.toLowerCase()));
+
+        return Boolean(nameMatch);
+      };
     });
+  }
+
+  applyFilter(field: string, value: any) {
+    this.filterValues[field] = value;
+    this.dataSource.filter = JSON.stringify(this.filterValues);
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  resetFilters() {
+    this.filterValues = {
+      name: ''
+    };
+    this.dataSource.filter = JSON.stringify(this.filterValues);
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 }

@@ -1,0 +1,25 @@
+# Installed dependencies (rebuilt inside Docker)
+node_modules/
+
+# Build output
+dist/
+.angular/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+**/.DS_Store
+
+# Git
+.git/
+.gitignore
+
+# Test artefacts
+coverage/
+
+# SSL certs (mounted at runtime via secrets or volumes)
+ssl/
+
+# Docs / non-source
+*.md

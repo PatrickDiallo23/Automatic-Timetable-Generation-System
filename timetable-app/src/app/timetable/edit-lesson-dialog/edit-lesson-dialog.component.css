@@ -1,0 +1,209 @@
+/* Dialog Title */
+.dialog-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #673ab7;
+  font-size: 1.4rem;
+  font-weight: 500;
+  margin: 0;
+  padding-bottom: 12px;
+}
+
+.title-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+/* Dialog Content */
+.dialog-content {
+  width: 480px;
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+/* Lesson Info Section */
+.lesson-info {
+  background: linear-gradient(135deg, #f3e5f5 0%, #e8eaf6 100%);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.info-row:not(:last-child) {
+  border-bottom: 1px solid rgba(103, 58, 183, 0.1);
+}
+
+.info-icon {
+  color: #673ab7;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  font-size: 0.75rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Section Divider */
+.section-divider {
+  margin: 20px 0;
+}
+
+/* Edit Form */
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.field-icon {
+  color: #673ab7;
+  margin-right: 8px;
+}
+
+/* Option Content */
+.option-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.option-main {
+  font-weight: 500;
+}
+
+.option-sub {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+/* Change Preview */
+.change-preview {
+  background: #fff3e0;
+  border: 1px solid #ffcc80;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.preview-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #e65100;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin: 0 0 12px 0;
+}
+
+.preview-title mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.preview-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.preview-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.preview-label {
+  font-weight: 500;
+  min-width: 50px;
+  color: #555;
+}
+
+.preview-from {
+  background: #ffcdd2;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #c62828;
+}
+
+.preview-arrow {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #e65100;
+}
+
+.preview-to {
+  background: #c8e6c9;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #2e7d32;
+}
+
+/* Dialog Actions */
+.dialog-actions {
+  padding: 16px 0 0 0;
+  gap: 8px;
+}
+
+.cancel-btn, .save-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.save-btn {
+  background: linear-gradient(135deg, #673ab7, #9c27b0);
+}
+
+.save-btn:disabled {
+  background: #e0e0e0;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .dialog-content {
+    min-width: unset;
+    max-width: unset;
+  }
+  
+  .preview-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .preview-arrow {
+    transform: rotate(90deg);
+    align-self: center;
+  }
+}

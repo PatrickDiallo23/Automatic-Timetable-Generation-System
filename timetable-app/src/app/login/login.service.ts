@@ -27,14 +27,24 @@ export class LoginService {
     return this.http.post(`${this.apiUrl}/authenticate`, body);
   }
 
-  logout() : Observable<any> {
+  logout(): Observable<any> {
     const currentUser = localStorage.getItem('currentUser');
+    if (!currentUser) {
+      return new Observable(subscriber => subscriber.complete());
+    }
+    const token = JSON.parse(currentUser).access_token || '';
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${currentUser ? JSON.parse(currentUser).access_token : ''}`,
+      'Authorization': `Bearer ${token}`,
     });
     return this.http.post(`${this.apiUrl}/logout`, {}, { headers });
+  }
 
+  clearSession(): void {
+    localStorage.removeItem('currentUser');
+    this.isAuthenticatedSubject.next(false);
+    this.userSubject.next({});
+    this.showSidebarSubject.next(false);
   }
 
   setAuthenticated(value: boolean) {
