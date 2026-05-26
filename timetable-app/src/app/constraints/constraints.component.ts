@@ -6,6 +6,7 @@ import { CoreService } from '../core/core.service';
 import { ConstraintService } from './constraint.service';
 import { ConstraintDialogComponent } from './constraint-dialog/constraint-dialog.component';
 import { Constraint } from '../model/timetableEntities';
+import { CONSTRAINT_DICTIONARY } from './constraint.meta';
 
 @Component({
   selector: 'app-constraints',
@@ -89,7 +90,8 @@ export class ConstraintsComponent implements OnInit {
       this.dataSource.filterPredicate = (data: Constraint, filter: string) => {
         const searchTerms = JSON.parse(filter);
         
-        const descriptionMatch = !searchTerms.description || (data.description?.toLowerCase().includes(searchTerms.description.toLowerCase()));
+        const title = this.getConstraintTitle(data.description).toLowerCase();
+        const descriptionMatch = !searchTerms.description || title.includes(searchTerms.description.toLowerCase()) || (data.description?.toLowerCase().includes(searchTerms.description.toLowerCase()));
         
         const weightMatch = !searchTerms.weight || (data.weight?.toLowerCase().includes(searchTerms.weight.toLowerCase()));
 
@@ -117,6 +119,11 @@ export class ConstraintsComponent implements OnInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  getConstraintTitle(id?: string): string {
+    const found = CONSTRAINT_DICTIONARY.find((c: any) => c.id === id);
+    return found ? found.title : (id || 'Unknown');
   }
 }
 

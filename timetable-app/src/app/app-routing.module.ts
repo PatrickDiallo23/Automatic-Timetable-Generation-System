@@ -11,6 +11,7 @@ import { ConstraintsComponent } from './constraints/constraints.component';
 import { TimeslotsComponent } from './timeslots/timeslots.component';
 import { TeachersComponent } from './teachers/teachers.component';
 import { LessonsComponent } from './lessons/lessons.component';
+import { RestrictionRulesComponent } from './restriction-rules/restriction-rules.component';
 
 
 const routes: Routes = [
@@ -40,6 +41,11 @@ const routes: Routes = [
   {
     path: 'constraints',
     component: ConstraintsComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'rules',
+    component: RestrictionRulesComponent,
     canActivate: [AuthGuard],
   },
   {

@@ -4,7 +4,7 @@ import { ConfirmationService } from './confirmation.service';
 import { TimetableService } from '../timetable/timetable.service';
 import { CoreService } from '../core/core.service';
 import { forkJoin } from 'rxjs';
-import { Teacher, Timetable } from '../model/timetableEntities';
+import { Teacher, Timetable, RestrictionRule } from '../model/timetableEntities';
 import { JsonImportService } from '../core/json-import.service';
 import { LoginService } from '../login/login.service';
 import { ExcelImportService } from '../core/excel-import.service';
@@ -22,6 +22,7 @@ export class ConfirmationComponent implements OnInit, OnDestroy {
   teacherCount: number = 0;
   lessonCount: number = 0;
   studentGroupCount: number = 0;
+  restrictionRuleCount: number = 0;
   problemDuration: number | undefined;
   data?: Timetable;
   importType = '';
@@ -81,10 +82,7 @@ export class ConfirmationComponent implements OnInit, OnDestroy {
           this.problemDuration = importedData.duration || 60; // Default duration if not specified
           this.calculateImportedDataCounts();
           this.importDataLoaded = true;
-          console.log(
-            `Loaded imported ${this.importType.toUpperCase()} data:`,
-            this.data
-          );
+
         } else {
           // No imported data found, redirect back to dashboard
           this.coreService.openSnackBar(
@@ -108,6 +106,7 @@ export class ConfirmationComponent implements OnInit, OnDestroy {
     this.roomCount = this.data.rooms?.length || 0;
     this.timeslotCount = this.data.timeslots?.length || 0;
     this.lessonCount = this.data.lessons?.length || 0;
+    this.restrictionRuleCount = this.data.restrictionRules?.length || 0;
 
     // Calculate unique teachers and student groups from lessons
     const uniqueTeachers = new Set();
@@ -154,6 +153,7 @@ export class ConfirmationComponent implements OnInit, OnDestroy {
       this.confirmationService.getTeacherCount(),
       this.confirmationService.getLessonCount(),
       this.confirmationService.getStudentGroupCount(),
+      this.confirmationService.getRestrictionRuleCount(),
     ]).subscribe(
       ([
         constraintCount,
@@ -162,6 +162,7 @@ export class ConfirmationComponent implements OnInit, OnDestroy {
         teacherCount,
         lessonCount,
         studentGroupCount,
+        restrictionRuleCount,
       ]) => {
         this.constraintCount = constraintCount;
         this.roomCount = roomCount;
@@ -169,6 +170,7 @@ export class ConfirmationComponent implements OnInit, OnDestroy {
         this.teacherCount = teacherCount;
         this.lessonCount = lessonCount;
         this.studentGroupCount = studentGroupCount;
+        this.restrictionRuleCount = restrictionRuleCount;
       }
     );
   }
@@ -324,6 +326,9 @@ export class ConfirmationComponent implements OnInit, OnDestroy {
           })
           .filter((c) => c.hard > 0 || c.medium > 0 || c.soft > 0);
         break;
+      case 'restrictionRules':
+        this.currentEntityData = this.data.restrictionRules || [];
+        break;
       default:
         this.currentEntityData = [];
     }
@@ -342,6 +347,7 @@ export class ConfirmationComponent implements OnInit, OnDestroy {
       lessons: '/lessons',
       studentGroups: '/student-groups',
       constraints: '/constraints',
+      restrictionRules: '/rules',
     };
 
     const route = routeMap[entityType];
@@ -418,5 +424,13 @@ export class ConfirmationComponent implements OnInit, OnDestroy {
     };
     return dayMap[day.toUpperCase()] || day;
   }
+  // Helper method to get applied restriction rules for a lesson
+  getAppliedRules(lesson: any): RestrictionRule[] {
+    if (!lesson.appliedRuleIds || lesson.appliedRuleIds.length === 0 || !this.data?.restrictionRules) {
+      return [];
+    }
+    return this.data.restrictionRules.filter(r => lesson.appliedRuleIds.includes(r.id));
+  }
 }
+
 

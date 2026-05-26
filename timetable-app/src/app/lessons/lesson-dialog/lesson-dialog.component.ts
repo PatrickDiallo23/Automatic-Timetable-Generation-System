@@ -8,7 +8,8 @@ import { StudentGroupService } from 'src/app/student-group/student-group.service
 import { TimeslotService } from 'src/app/timeslots/timeslot.service';
 import { RoomService } from 'src/app/rooms/room.service';
 import { Observable, map, startWith } from 'rxjs';
-import { LessonType, Room, StudentGroup, Teacher, Timeslot, Year } from 'src/app/model/timetableEntities';
+import { LessonType, RestrictionRule, Room, StudentGroup, Teacher, Timeslot, Year } from 'src/app/model/timetableEntities';
+import { RestrictionRuleService } from 'src/app/restriction-rules/restriction-rule.service';
 
 @Component({
   selector: 'app-lesson-dialog',
@@ -25,6 +26,7 @@ export class LessonDialogComponent implements OnInit {
   studentGroups: StudentGroup[] = [];
   timeslots: Timeslot[] = [];
   rooms: Room[] = [];
+  rules: RestrictionRule[] = [];
   groupedTimeslots: Map<string, Timeslot[]> = new Map();
   dayOrder = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
   
@@ -34,7 +36,17 @@ export class LessonDialogComponent implements OnInit {
     Year.THIRD,
     Year.FOURTH,
     Year.FIFTH,
-    Year.SIXTH
+    Year.SIXTH,
+    Year.SEVENTH,
+    Year.EIGHTH,
+    Year.NINTH,
+    Year.TENTH,
+    Year.ELEVENTH,
+    Year.TWELVETH,
+    Year.PREPARATORY,
+    Year.SMALL_GROUP,
+    Year.MIDDLE_GROUP,
+    Year.SENIOR_GROUP
   ];
   lessonType: LessonType[] = [
     LessonType.COURSE,
@@ -43,6 +55,8 @@ export class LessonDialogComponent implements OnInit {
     LessonType.SEMINAR
   ];
 
+  hasAddedItem = false;
+
   constructor(
     private fb: FormBuilder,
     private lessonService: LessonService,
@@ -50,6 +64,7 @@ export class LessonDialogComponent implements OnInit {
     private studentGroupService: StudentGroupService,
     private timeslotService: TimeslotService,
     private roomService: RoomService,
+    private ruleService: RestrictionRuleService,
     private coreService: CoreService,
     private dialogRef: MatDialogRef<LessonDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
@@ -64,6 +79,7 @@ export class LessonDialogComponent implements OnInit {
       pinned: false,
       timeslot: null,
       room: null,
+      appliedRuleIds: [[]],
     });
   }
 
@@ -81,6 +97,7 @@ export class LessonDialogComponent implements OnInit {
         // Extract IDs for timeslot and room - they may come as objects or IDs
         timeslot: this.data.timeslot?.id ?? this.data.timeslot ?? null,
         room: this.data.room?.id ?? this.data.room ?? null,
+        appliedRuleIds: this.data.appliedRuleIds || [],
       });
     }
     
@@ -122,6 +139,11 @@ export class LessonDialogComponent implements OnInit {
     this.roomService.getAllRooms().subscribe((retrievedRooms) => {
       this.rooms = retrievedRooms;
     });
+
+    // Load restriction rules
+    this.ruleService.getAllRules().subscribe((retrievedRules) => {
+      this.rules = retrievedRules;
+    });
   }
 
   private groupTimeslotsByDay(): void {
@@ -154,8 +176,8 @@ export class LessonDialogComponent implements OnInit {
     return this.groupedTimeslots.get(day) || [];
   }
 
-  private _filterTeachers(value: string): Teacher[] {
-    const filterValue = value.toLowerCase();
+  private _filterTeachers(value: any): Teacher[] {
+    const filterValue = (typeof value === 'string' ? value : (value?.name || '')).toLowerCase();
     return this.teachers.filter(
       (teacher) =>
         teacher.name &&
@@ -163,8 +185,8 @@ export class LessonDialogComponent implements OnInit {
     );
   }
 
-  private _filterStudentGroups(value: string): StudentGroup[] {
-    const filterValue = value.toLowerCase();
+  private _filterStudentGroups(value: any): StudentGroup[] {
+    const filterValue = (typeof value === 'string' ? value : (value?.studentGroup || '')).toLowerCase();
     return this.studentGroups.filter(
       (group) =>
         group.studentGroup &&
@@ -180,7 +202,7 @@ export class LessonDialogComponent implements OnInit {
     return group && group.studentGroup ? group.studentGroup : '';
   }
 
-  onFormSubmit() {
+  onFormSubmit(keepOpen: boolean = false) {
     if (this.lessonForm.valid) {
       const formValue = this.lessonForm.value;
       
@@ -193,6 +215,7 @@ export class LessonDialogComponent implements OnInit {
         year: formValue.year,
         duration: formValue.duration,
         pinned: formValue.pinned || false,
+        appliedRuleIds: formValue.appliedRuleIds || [],
       };
       
       // Include timeslot and room if pinned
@@ -221,7 +244,12 @@ export class LessonDialogComponent implements OnInit {
         this.lessonService.createLesson(lessonData).subscribe({
           next: (val: any) => {
             this.coreService.openSnackBar('Lesson added successfully');
-            this.dialogRef.close(true);
+            if (keepOpen) {
+              this.hasAddedItem = true;
+              this.dialogRef.disableClose = true;
+            } else {
+              this.dialogRef.close(true);
+            }
           },
           error: (err: any) => {
             console.error(err);
@@ -229,6 +257,10 @@ export class LessonDialogComponent implements OnInit {
         });
       }
     }
+  }
+
+  closeDialog() {
+    this.dialogRef.close(this.hasAddedItem);
   }
 }
 

@@ -3,7 +3,6 @@ package com.patrick.timetableappbackend.service;
 
 import ai.timefold.solver.core.api.score.analysis.ScoreAnalysis;
 import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
-// import ai.timefold.solver.core.config.solver.termination.TerminationConfig;
 import ai.timefold.solver.core.api.solver.ScoreAnalysisFetchPolicy;
 import ai.timefold.solver.core.api.solver.SolutionManager;
 import ai.timefold.solver.core.api.solver.SolutionUpdatePolicy;
@@ -12,11 +11,13 @@ import ai.timefold.solver.core.api.solver.SolverStatus;
 import com.patrick.timetableappbackend.exception.TimetableSolverException;
 import com.patrick.timetableappbackend.model.ConstraintModel;
 import com.patrick.timetableappbackend.model.Lesson;
+import com.patrick.timetableappbackend.model.RestrictionRule;
 import com.patrick.timetableappbackend.model.Room;
 import com.patrick.timetableappbackend.model.Timeslot;
 import com.patrick.timetableappbackend.model.Timetable;
 import com.patrick.timetableappbackend.repository.ConstraintRepo;
 import com.patrick.timetableappbackend.repository.LessonRepo;
+import com.patrick.timetableappbackend.repository.RestrictionRuleRepo;
 import com.patrick.timetableappbackend.repository.RoomRepo;
 import com.patrick.timetableappbackend.repository.TimeslotRepo;
 import com.patrick.timetableappbackend.solver.TimetableConstraintConfiguration;
@@ -26,14 +27,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,12 +52,15 @@ public class TimetableService {
     private final TimeslotRepo timeslotRepo;
     private final LessonRepo lessonRepo;
     private final ConstraintRepo constraintRepo;
+    private final RestrictionRuleRepo restrictionRuleRepo;
     private final SolverManager<Timetable, String> solverManager;
     private final SolutionManager<Timetable, HardMediumSoftScore> solutionManager;
     @Value("${timefold.solver.termination.spent-limit}")
     private String duration;
 
-    // TODO: Without any "time to live", the map may eventually grow out of memory.
+    @Value("${timetableApp.job.ttl-hours:8}")
+    private long jobTtlHours;
+
     private final ConcurrentMap<String, Job> jobIdToJob = new ConcurrentHashMap<>();
 
     public Collection<String> getJobIds() {
@@ -67,8 +77,12 @@ public class TimetableService {
         final List<ConstraintModel> constraintModels = constraintRepo.findAll();
         final TimetableConstraintConfiguration timetableConstraintConfiguration = new TimetableConstraintConfiguration(constraintModels);
         final List<Lesson> lessons = lessonRepo.findAll();
+        final List<RestrictionRule> activeRules = restrictionRuleRepo.findByActiveTrue();
 
-        return new Timetable(timeslots, rooms, lessons, timetableConstraintConfiguration, problemDuration);
+        Timetable timetable = new Timetable(timeslots, rooms, lessons, timetableConstraintConfiguration, problemDuration);
+        timetable.setRestrictionRules(activeRules);
+        wireRulesToLessons(timetable);
+        return timetable;
 
     }
 
@@ -76,7 +90,8 @@ public class TimetableService {
     // How to get the best solution
     public String solve(Timetable problem) {
         problem.getLessons().forEach(lesson -> lesson.setTimetable(problem));
-        final ConcurrentMap<String, Timetable> timetableSolution = new ConcurrentHashMap<>();
+        wireRulesToLessons(problem);
+
         String jobId = UUID.randomUUID().toString();
         jobIdToJob.put(jobId, Job.ofTimetable(problem));
         solverManager.solveBuilder()
@@ -134,14 +149,57 @@ public class TimetableService {
         return job.timetable;
     }
 
-    private record Job(Timetable timetable, Throwable exception) {
+    private record Job(Timetable timetable, Throwable exception, Instant createdAt) {
 
         static Job ofTimetable(Timetable timetable) {
-            return new Job(timetable, null);
+            return new Job(timetable, null, Instant.now());
         }
 
         static Job ofException(Throwable error) {
-            return new Job(null, error);
+            return new Job(null, error, Instant.now());
+        }
+    }
+
+    @Scheduled(fixedRateString = "${timetableApp.job.cleanup-interval-ms:1800000}")
+    public void evictExpiredJobs() {
+        Instant cutoff = Instant.now().minus(jobTtlHours, ChronoUnit.HOURS);
+        int evictedCount = 0;
+
+        for (Map.Entry<String, Job> entry : jobIdToJob.entrySet()) {
+            String jobId = entry.getKey();
+            Job job = entry.getValue();
+
+            if (job.createdAt().isBefore(cutoff)) {
+                SolverStatus status = solverManager.getSolverStatus(jobId);
+                if (status == SolverStatus.NOT_SOLVING) {
+                    jobIdToJob.remove(jobId);
+                    evictedCount++;
+                } else {
+                    LOGGER.debug("Skipping eviction of job ({}) — still active with status: {}", jobId, status);
+                }
+            }
+        }
+
+        if (evictedCount > 0) {
+            LOGGER.info("Evicted {} expired job entries. Remaining: {}", evictedCount, jobIdToJob.size());
+        }
+    }
+
+    private void wireRulesToLessons(Timetable timetable) {
+        List<RestrictionRule> allRules = timetable.getRestrictionRules();
+        if (allRules == null || allRules.isEmpty()) {
+            return;
+        }
+        Map<Long, RestrictionRule> ruleMap = allRules.stream()
+                .collect(Collectors.toMap(RestrictionRule::getId, Function.identity()));
+        for (Lesson lesson : timetable.getLessons()) {
+            if (lesson.getAppliedRuleIds() != null && !lesson.getAppliedRuleIds().isEmpty()) {
+                List<RestrictionRule> resolved = lesson.getAppliedRuleIds().stream()
+                        .map(ruleMap::get)
+                        .filter(java.util.Objects::nonNull)
+                        .toList();
+                lesson.setAppliedRules(resolved);
+            }
         }
     }
 }

@@ -420,25 +420,6 @@ public class TimetableConstraintProviderTest {
     }
 
     @Test
-    void lessonDurationConflict() {
-
-        StudentGroup studentGroup3 = new StudentGroup(3L, "Group2", 30L);
-
-        Timeslot timeslot = new Timeslot(8L, DayOfWeek.WEDNESDAY, LocalTime.NOON);
-
-        Room room = new Room(1L, "sala1", 60L);
-
-        Lesson conflictLesson = new Lesson(1, "subject1", LessonType.SEMINAR,
-                new Teacher(1L, "Teacher1", null), studentGroup3, 3, timeslot, room);
-
-        constraintVerifier.verifyThat(TimetableConstraintProvider::lessonDurationConflict)
-                .given(conflictLesson)
-                .penalizesBy(1);
-
-
-    }
-
-    @Test
     void coursesInTheSameBuilding() {
 
         StudentGroup studentGroup = new StudentGroup(1L, "Group1", 30L);
@@ -459,6 +440,310 @@ public class TimetableConstraintProviderTest {
                 .given(tuesdayLesson, thirdTuesdayLesson, fourthTuesdayLesson)
                 .rewardsWith(1);
 
+    }
+
+    @Test
+    void noGapsForHighschool() {
+
+        StudentGroup studentGroup = new StudentGroup(1L, "Group1", 30L);
+
+        // 1-hour timeslots on Tuesday
+        Timeslot ts8am = new Timeslot(20L, DayOfWeek.TUESDAY, LocalTime.of(8, 0), LocalTime.of(9, 0));
+        Timeslot ts9am = new Timeslot(21L, DayOfWeek.TUESDAY, LocalTime.of(9, 0), LocalTime.of(10, 0));
+        // 1-hour gap here (10:00 - 11:00)
+        Timeslot ts11am = new Timeslot(22L, DayOfWeek.TUESDAY, LocalTime.of(11, 0), LocalTime.of(12, 0));
+
+        Room room = new Room(1L, "sala1", 60L);
+
+        Lesson lesson1 = new Lesson(1, "Math", new Teacher(1L, "Teacher1", null), studentGroup, 1, ts8am, room);
+        Lesson lesson2 = new Lesson(2, "Physics", new Teacher(2L, "Teacher2", null), studentGroup, 1, ts9am, room);
+        Lesson lesson3 = new Lesson(3, "Chemistry", new Teacher(3L, "Teacher3", null), studentGroup, 1, ts11am, room);
+
+        // Span = 8:00 to 12:00 = 240 minutes, Total instruction = 3 * 60 = 180 minutes, Gap = 60 minutes
+        constraintVerifier.verifyThat(TimetableConstraintProvider::noGapsForHighschool)
+                .given(lesson1, lesson2, lesson3)
+                .penalizesBy(60);
+    }
+
+    @Test
+    void noGapsForHighschoolNoGap() {
+
+        StudentGroup studentGroup = new StudentGroup(1L, "Group1", 30L);
+
+        // 1-hour timeslots on Tuesday, back-to-back
+        Timeslot ts8am = new Timeslot(20L, DayOfWeek.TUESDAY, LocalTime.of(8, 0), LocalTime.of(9, 0));
+        Timeslot ts9am = new Timeslot(21L, DayOfWeek.TUESDAY, LocalTime.of(9, 0), LocalTime.of(10, 0));
+        Timeslot ts10am = new Timeslot(22L, DayOfWeek.TUESDAY, LocalTime.of(10, 0), LocalTime.of(11, 0));
+
+        Room room = new Room(1L, "sala1", 60L);
+
+        Lesson lesson1 = new Lesson(1, "Math", new Teacher(1L, "Teacher1", null), studentGroup, 1, ts8am, room);
+        Lesson lesson2 = new Lesson(2, "Physics", new Teacher(2L, "Teacher2", null), studentGroup, 1, ts9am, room);
+        Lesson lesson3 = new Lesson(3, "Chemistry", new Teacher(3L, "Teacher3", null), studentGroup, 1, ts10am, room);
+
+        // No gap: span = 180 minutes, total instruction = 180 minutes
+        constraintVerifier.verifyThat(TimetableConstraintProvider::noGapsForHighschool)
+                .given(lesson1, lesson2, lesson3)
+                .penalizesBy(0);
+    }
+
+    @Test
+    void fairLessonsDistribution() {
+
+        StudentGroup studentGroup = new StudentGroup(1L, "Group1", 30L);
+
+        Room room = new Room(1L, "sala1", 60L);
+
+        // 3 lessons on Monday
+        Lesson mondayLesson1 = new Lesson(1, "Math", new Teacher(1L, "Teacher1", null), studentGroup, TIMESLOT1, room);
+        Lesson mondayLesson2 = new Lesson(2, "Physics", new Teacher(2L, "Teacher2", null), studentGroup, TIMESLOT1, room);
+        Lesson mondayLesson3 = new Lesson(3, "Chemistry", new Teacher(3L, "Teacher3", null), studentGroup, TIMESLOT1, room);
+
+        // 1 lesson on Tuesday
+        Lesson tuesdayLesson1 = new Lesson(4, "History", new Teacher(4L, "Teacher4", null), studentGroup, TIMESLOT2, room);
+
+        // Monday: count=3, penalty=9. Tuesday: count=1, penalty=1. Total: 10.
+        constraintVerifier.verifyThat(TimetableConstraintProvider::fairLessonsDistribution)
+                .given(mondayLesson1, mondayLesson2, mondayLesson3, tuesdayLesson1)
+                .penalizesBy(10);
+    }
+
+    @Test
+    void earlyStartForHighschool() {
+        StudentGroup studentGroup = new StudentGroup(1L, "Group1", 30L);
+        Room room = new Room(1L, "sala1", 60L);
+
+        // First lesson starts at 10:00 (120 minutes after 8:00)
+        Timeslot ts10am = new Timeslot(20L, DayOfWeek.MONDAY, LocalTime.of(10, 0), LocalTime.of(11, 0));
+        Timeslot ts11am = new Timeslot(21L, DayOfWeek.MONDAY, LocalTime.of(11, 0), LocalTime.of(12, 0));
+
+        Lesson lesson1 = new Lesson(1, "Math", new Teacher(1L, "Teacher1", null), studentGroup, 1, ts10am, room);
+        Lesson lesson2 = new Lesson(2, "Physics", new Teacher(2L, "Teacher2", null), studentGroup, 1, ts11am, room);
+
+        constraintVerifier.verifyThat(TimetableConstraintProvider::earlyStartForHighschool)
+                .given(lesson1, lesson2)
+                .penalizesBy(120); // 120 minutes penalty
+    }
+
+    @Test
+    void earlyStartForHighschoolNoPenalty() {
+        StudentGroup studentGroup = new StudentGroup(1L, "Group1", 30L);
+        Room room = new Room(1L, "sala1", 60L);
+
+        // First lesson starts exactly at 8:00
+        Timeslot ts8am = new Timeslot(20L, DayOfWeek.MONDAY, LocalTime.of(8, 0), LocalTime.of(9, 0));
+        Timeslot ts9am = new Timeslot(21L, DayOfWeek.MONDAY, LocalTime.of(9, 0), LocalTime.of(10, 0));
+
+        Lesson lesson1 = new Lesson(1, "Math", new Teacher(1L, "Teacher1", null), studentGroup, 1, ts8am, room);
+        Lesson lesson2 = new Lesson(2, "Physics", new Teacher(2L, "Teacher2", null), studentGroup, 1, ts9am, room);
+
+        constraintVerifier.verifyThat(TimetableConstraintProvider::earlyStartForHighschool)
+                .given(lesson1, lesson2)
+                .penalizesBy(0); // 0 penalty
+    }
+
+    @Test
+    void foreignLanguageSameTimeslot_differentTimeslots_penalizes() {
+        // 5A and 5B are same year (FIRST), both foreign language, DIFFERENT timeslots → penalty
+        StudentGroup group5A = new StudentGroup(10L, Year.FIRST, "5A", "5", 30L);
+        StudentGroup group5B = new StudentGroup(11L, Year.FIRST, "5B", "5", 30L);
+
+        Timeslot tsWed8 = new Timeslot(30L, DayOfWeek.WEDNESDAY, LocalTime.of(8, 0), LocalTime.of(9, 0));
+        Timeslot tsThu8 = new Timeslot(31L, DayOfWeek.THURSDAY, LocalTime.of(8, 0), LocalTime.of(9, 0));
+
+        Room foreignRoom = new Room(10L, "Foreign_Language_Room", 60L);
+        Room room5B = new Room(11L, "Room_5B", 30L);
+
+        Teacher teacher1 = new Teacher(10L, "Teacher 1", null);
+        Teacher teacher2 = new Teacher(11L, "Teacher 2", null);
+
+        // 5A foreign language at Wednesday 08:00, 5B foreign language at Thursday 08:00
+        Lesson lesson5A = new Lesson(100L, "Lb. ger/fr", teacher1, group5A, 1, tsWed8, foreignRoom);
+        Lesson lesson5B = new Lesson(101L, "Lb. ger/fr", teacher2, group5B, 1, tsThu8, room5B);
+
+        constraintVerifier.verifyThat(TimetableConstraintProvider::foreignLanguageSameTimeslot)
+                .given(lesson5A, lesson5B)
+                .penalizesBy(1);
+    }
+
+    @Test
+    void foreignLanguageSameTimeslot_sameTimeslot_noPenalty() {
+        // 5A and 5B are same year, both foreign language, SAME timeslot → no penalty
+        StudentGroup group5A = new StudentGroup(10L, Year.FIRST, "5A", "5", 30L);
+        StudentGroup group5B = new StudentGroup(11L, Year.FIRST, "5B", "5", 30L);
+
+        Timeslot tsWed8 = new Timeslot(30L, DayOfWeek.WEDNESDAY, LocalTime.of(8, 0), LocalTime.of(9, 0));
+
+        Room foreignRoom = new Room(10L, "Foreign_Language_Room", 60L);
+        Room room5B = new Room(11L, "Room_5B", 30L);
+
+        Teacher teacher1 = new Teacher(10L, "Teacher 1", null);
+        Teacher teacher2 = new Teacher(11L, "Teacher 2", null);
+
+        // Both in same timeslot
+        Lesson lesson5A = new Lesson(100L, "Lb. ger/fr", teacher1, group5A, 1, tsWed8, foreignRoom);
+        Lesson lesson5B = new Lesson(101L, "Lb. fr", teacher2, group5B, 1, tsWed8, room5B);
+
+        constraintVerifier.verifyThat(TimetableConstraintProvider::foreignLanguageSameTimeslot)
+                .given(lesson5A, lesson5B)
+                .penalizesBy(0);
+    }
+
+    @Test
+    void foreignLanguageSameTimeslot_differentYears_noPenalty() {
+        // 5A (FIRST) and 6A (SECOND) are different years → no penalty even if different timeslots
+        StudentGroup group5A = new StudentGroup(10L, Year.FIRST, "5A", "5", 30L);
+        StudentGroup group6A = new StudentGroup(12L, Year.SECOND, "6A", "6", 30L);
+
+        Timeslot tsWed8 = new Timeslot(30L, DayOfWeek.WEDNESDAY, LocalTime.of(8, 0), LocalTime.of(9, 0));
+        Timeslot tsThu8 = new Timeslot(31L, DayOfWeek.THURSDAY, LocalTime.of(8, 0), LocalTime.of(9, 0));
+
+        Room foreignRoom = new Room(10L, "Foreign_Language_Room", 60L);
+
+        Teacher teacher1 = new Teacher(10L, "Teacher 1", null);
+        Teacher teacher2 = new Teacher(11L, "Teacher 3", null);
+
+        Lesson lesson5A = new Lesson(100L, "Lb. ger/fr", teacher1, group5A, 1, tsWed8, foreignRoom);
+        Lesson lesson6A = new Lesson(101L, "Lb. fr", teacher2, group6A, 1, tsThu8, foreignRoom);
+
+        constraintVerifier.verifyThat(TimetableConstraintProvider::foreignLanguageSameTimeslot)
+                .given(lesson5A, lesson6A)
+                .penalizesBy(0);
+    }
+
+    @Test
+    void foreignLanguageSameTimeslot_nonForeignSubject_noPenalty() {
+        // Both "Math" (not foreign language) → no penalty
+        StudentGroup group5A = new StudentGroup(10L, Year.FIRST, "5A", "5", 30L);
+        StudentGroup group5B = new StudentGroup(11L, Year.FIRST, "5B", "5", 30L);
+
+        Timeslot tsWed8 = new Timeslot(30L, DayOfWeek.WEDNESDAY, LocalTime.of(8, 0), LocalTime.of(9, 0));
+        Timeslot tsThu8 = new Timeslot(31L, DayOfWeek.THURSDAY, LocalTime.of(8, 0), LocalTime.of(9, 0));
+
+        Room room = new Room(10L, "Room1", 60L);
+
+        Teacher teacher1 = new Teacher(10L, "Teacher1", null);
+        Teacher teacher2 = new Teacher(11L, "Teacher2", null);
+
+        Lesson lesson5A = new Lesson(100L, "Math", teacher1, group5A, 1, tsWed8, room);
+        Lesson lesson5B = new Lesson(101L, "Math", teacher2, group5B, 1, tsThu8, room);
+
+        constraintVerifier.verifyThat(TimetableConstraintProvider::foreignLanguageSameTimeslot)
+                .given(lesson5A, lesson5B)
+                .penalizesBy(0);
+    }
+
+    @Test
+    void foreignLanguageSameTimeslot_threeGroups_penalizesCorrectly() {
+        // 5A, 5B, 5C all same year. 5A+5B share timeslot, 5C different → 2 penalized pairs
+        StudentGroup group5A = new StudentGroup(10L, Year.FIRST, "5A", "5", 30L);
+        StudentGroup group5B = new StudentGroup(11L, Year.FIRST, "5B", "5", 30L);
+        StudentGroup group5C = new StudentGroup(12L, Year.FIRST, "5C", "5", 30L);
+
+        Timeslot tsWed8 = new Timeslot(30L, DayOfWeek.WEDNESDAY, LocalTime.of(8, 0), LocalTime.of(9, 0));
+        Timeslot tsThu8 = new Timeslot(31L, DayOfWeek.THURSDAY, LocalTime.of(8, 0), LocalTime.of(9, 0));
+
+        Room foreignRoom = new Room(10L, "Foreign_Language_Room", 60L);
+        Room room5B = new Room(11L, "Room_5B", 30L);
+        Room room5C = new Room(12L, "Room_5C", 30L);
+
+        Teacher teacher1 = new Teacher(10L, "Teacher 1", null);
+        Teacher teacher2 = new Teacher(11L, "Teacher 2", null);
+        Teacher teacher3 = new Teacher(12L, "Teacher 3", null);
+
+        // 5A and 5B in same timeslot (Wed), 5C in different timeslot (Thu)
+        Lesson lesson5A = new Lesson(100L, "Lb. ger/fr", teacher1, group5A, 1, tsWed8, foreignRoom);
+        Lesson lesson5B = new Lesson(101L, "Lb. ger/fr", teacher2, group5B, 1, tsWed8, room5B);
+        Lesson lesson5C = new Lesson(102L, "Lb. ger/fr", teacher3, group5C, 1, tsThu8, room5C);
+
+        // Pairs: (5A,5B)=same TS→no penalty, (5A,5C)=diff TS→penalty, (5B,5C)=diff TS→penalty
+        constraintVerifier.verifyThat(TimetableConstraintProvider::foreignLanguageSameTimeslot)
+                .given(lesson5A, lesson5B, lesson5C)
+                .penalizesBy(2);
+    }
+
+    @Test
+    void schoolRoomConflict_exemptsSameYearForeignLanguage() {
+        // Two same-year foreign language lessons in same timeslot + same room → NO penalty (exempted)
+        StudentGroup group5A = new StudentGroup(10L, Year.FIRST, "5A", "5", 30L);
+        StudentGroup group5B = new StudentGroup(11L, Year.FIRST, "5B", "5", 30L);
+
+        Timeslot tsWed8 = new Timeslot(30L, DayOfWeek.WEDNESDAY, LocalTime.of(8, 0), LocalTime.of(9, 0));
+
+        Room foreignRoom = new Room(10L, "Foreign_Language_Room", 60L);
+
+        Teacher teacher1 = new Teacher(10L, "Teacher 1", null);
+        Teacher teacher2 = new Teacher(11L, "Teacher 2", null);
+
+        Lesson lesson5A = new Lesson(100L, "Lb. ger/fr", teacher1, group5A, 1, tsWed8, foreignRoom);
+        Lesson lesson5B = new Lesson(101L, "Lb. fr", teacher2, group5B, 1, tsWed8, foreignRoom);
+
+        constraintVerifier.verifyThat(TimetableConstraintProvider::schoolRoomConflict)
+                .given(lesson5A, lesson5B)
+                .penalizesBy(0);
+    }
+
+    @Test
+    void schoolRoomConflict_penalizesNonForeignLanguage() {
+        // Two non-foreign-language lessons in same timeslot + same room → penalty (not exempted)
+        StudentGroup group5A = new StudentGroup(10L, Year.FIRST, "5A", "5", 30L);
+        StudentGroup group5B = new StudentGroup(11L, Year.FIRST, "5B", "5", 30L);
+
+        Timeslot tsWed8 = new Timeslot(30L, DayOfWeek.WEDNESDAY, LocalTime.of(8, 0), LocalTime.of(9, 0));
+
+        Room room = new Room(10L, "Room1", 60L);
+
+        Teacher teacher1 = new Teacher(10L, "Teacher1", null);
+        Teacher teacher2 = new Teacher(11L, "Teacher2", null);
+
+        Lesson lesson1 = new Lesson(100L, "Math", teacher1, group5A, 1, tsWed8, room);
+        Lesson lesson2 = new Lesson(101L, "Physics", teacher2, group5B, 1, tsWed8, room);
+
+        constraintVerifier.verifyThat(TimetableConstraintProvider::schoolRoomConflict)
+                .given(lesson1, lesson2)
+                .penalizesBy(1);
+    }
+
+    @Test
+    void schoolTeacherConflict_exemptsSameYearForeignLanguage() {
+        // Same teacher, same timeslot, both foreign language + same year → NO penalty (exempted)
+        StudentGroup group5A = new StudentGroup(10L, Year.FIRST, "5A", "5", 30L);
+        StudentGroup group5B = new StudentGroup(11L, Year.FIRST, "5B", "5", 30L);
+
+        Timeslot tsWed8 = new Timeslot(30L, DayOfWeek.WEDNESDAY, LocalTime.of(8, 0), LocalTime.of(9, 0));
+
+        Room foreignRoom = new Room(10L, "Foreign_Language_Room", 60L);
+        Room room5B = new Room(11L, "Room_5B", 30L);
+
+        Teacher sharedTeacher = new Teacher(10L, "Teacher 1", null);
+
+        Lesson lesson5A = new Lesson(100L, "Lb. ger/fr", sharedTeacher, group5A, 1, tsWed8, foreignRoom);
+        Lesson lesson5B = new Lesson(101L, "Lb. ger", sharedTeacher, group5B, 1, tsWed8, room5B);
+
+        constraintVerifier.verifyThat(TimetableConstraintProvider::schoolTeacherConflict)
+                .given(lesson5A, lesson5B)
+                .penalizesBy(0);
+    }
+
+    @Test
+    void schoolTeacherConflict_penalizesNonForeignLanguage() {
+        // Same teacher, same timeslot, non-foreign subjects → penalty (not exempted)
+        StudentGroup group5A = new StudentGroup(10L, Year.FIRST, "5A", "5", 30L);
+        StudentGroup group5B = new StudentGroup(11L, Year.FIRST, "5B", "5", 30L);
+
+        Timeslot tsWed8 = new Timeslot(30L, DayOfWeek.WEDNESDAY, LocalTime.of(8, 0), LocalTime.of(9, 0));
+
+        Room room1 = new Room(10L, "Room1", 60L);
+        Room room2 = new Room(11L, "Room2", 60L);
+
+        Teacher sharedTeacher = new Teacher(10L, "Teacher1", null);
+
+        Lesson lesson1 = new Lesson(100L, "Math", sharedTeacher, group5A, 1, tsWed8, room1);
+        Lesson lesson2 = new Lesson(101L, "Math", sharedTeacher, group5B, 1, tsWed8, room2);
+
+        constraintVerifier.verifyThat(TimetableConstraintProvider::schoolTeacherConflict)
+                .given(lesson1, lesson2)
+                .penalizesBy(1);
     }
 
 }

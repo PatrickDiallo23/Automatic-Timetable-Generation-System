@@ -6,6 +6,7 @@ export interface Timetable {
   score?: HardMediumSoftScore | null;
   solverStatus?: SolverStatus | null;
   duration?: number;
+  restrictionRules?: RestrictionRule[];
 }
 
 export interface Data {
@@ -38,6 +39,7 @@ export interface Lesson {
   timeslot?: any // Timeslot or number
   room?: any; //Room or number
   pinned?: boolean;
+  appliedRuleIds?: number[];
 }
 
 export enum LessonType {
@@ -89,6 +91,16 @@ export enum Year {
   FOURTH = 'FOURTH',
   FIFTH = 'FIFTH',
   SIXTH = 'SIXTH',
+  SEVENTH = 'SEVENTH',
+  EIGHTH = 'EIGHTH',
+  NINTH = 'NINTH',
+  TENTH = 'TENTH',
+  ELEVENTH = 'ELEVENTH',
+  TWELVETH = 'TWELVETH',
+  PREPARATORY = 'PREPARATORY',
+  SMALL_GROUP = 'SMALL_GROUP',
+  MIDDLE_GROUP = 'MIDDLE_GROUP',
+  SENIOR_GROUP = 'SENIOR_GROUP'
 }
 
 export enum SemiGroup {
@@ -105,8 +117,8 @@ export interface Constraint {
 }
 
 export interface TimetableConstraintConfiguration {
-//   roomConflict: HardMediumSoftScore;
-//   teacherConflict: HardMediumSoftScore;
+  roomConflict: HardMediumSoftScore;
+  teacherConflict: HardMediumSoftScore;
 //   studentGroupConflict: HardMediumSoftScore;
   studentGroupConflictAdvanced: HardMediumSoftScore;
   capacityRoomConflict: HardMediumSoftScore;
@@ -116,7 +128,6 @@ export interface TimetableConstraintConfiguration {
   roomConflictUniversity: HardMediumSoftScore;
   teacherConflictUniversity: HardMediumSoftScore;
   overlappingTimeslot: HardMediumSoftScore;
-  lessonDurationConflict: HardMediumSoftScore;
   maximumCoursesForStudents: HardMediumSoftScore;
   maximmumCoursesTeached: HardMediumSoftScore;
   maximizePreferredTimeslotAssignments: HardMediumSoftScore;
@@ -124,10 +135,16 @@ export interface TimetableConstraintConfiguration {
   seminarsGroupedInTheSameTimeslot: HardMediumSoftScore;
   teacherRoomStability: HardMediumSoftScore;
   teacherTimeEfficiency: HardMediumSoftScore;
-//   studentGroupVariety: HardMediumSoftScore;
+  studentGroupVariety: HardMediumSoftScore;
   gapsLongerThan4Hours: HardMediumSoftScore;
   labsGroupedInTheSameTimeslot: HardMediumSoftScore;
   coursesInTheSameBuilding: HardMediumSoftScore;
+  noGapsForHighschool: HardMediumSoftScore;
+  fairLessonsDistribution: HardMediumSoftScore;
+  earlyStartForHighschool: HardMediumSoftScore;
+  foreignLanguageSameTimeslot: HardMediumSoftScore;
+  schoolRoomConflict: HardMediumSoftScore;
+  schoolTeacherConflict: HardMediumSoftScore;
 }
 
 export interface BenchmarkRequest {
@@ -157,3 +174,53 @@ export interface BenchmarkDirectory {
   name: string;
   selected: boolean;
 }
+
+export enum RuleTargetType {
+  ROOM = 'ROOM',
+  TIMESLOT = 'TIMESLOT',
+}
+
+export enum RuleCriteriaField {
+  NAME = 'NAME',
+  BUILDING = 'BUILDING',
+  CAPACITY = 'CAPACITY',
+  DAY_OF_WEEK = 'DAY_OF_WEEK',
+  START_TIME = 'START_TIME',
+  END_TIME = 'END_TIME',
+}
+
+export enum RuleOperator {
+  EQUALS = 'EQUALS',
+  NOT_EQUALS = 'NOT_EQUALS',
+  STARTS_WITH = 'STARTS_WITH',
+  CONTAINS = 'CONTAINS',
+  LESS_THAN = 'LESS_THAN',
+  GREATER_THAN = 'GREATER_THAN',
+  LESS_THAN_OR_EQUAL = 'LESS_THAN_OR_EQUAL',
+  GREATER_THAN_OR_EQUAL = 'GREATER_THAN_OR_EQUAL',
+  IN = 'IN',
+}
+
+export interface RestrictionRule {
+  id?: number;
+  name: string;
+  targetType: RuleTargetType;
+  criteriaField: RuleCriteriaField;
+  operator: RuleOperator;
+  criteriaValue: string;
+  active: boolean;
+}
+
+export const CRITERIA_FIELDS_BY_TARGET: Record<RuleTargetType, RuleCriteriaField[]> = {
+  [RuleTargetType.ROOM]: [RuleCriteriaField.NAME, RuleCriteriaField.BUILDING, RuleCriteriaField.CAPACITY],
+  [RuleTargetType.TIMESLOT]: [RuleCriteriaField.DAY_OF_WEEK, RuleCriteriaField.START_TIME, RuleCriteriaField.END_TIME],
+};
+
+export const OPERATORS_BY_FIELD: Record<RuleCriteriaField, RuleOperator[]> = {
+  [RuleCriteriaField.NAME]: [RuleOperator.EQUALS, RuleOperator.NOT_EQUALS, RuleOperator.STARTS_WITH, RuleOperator.CONTAINS, RuleOperator.IN],
+  [RuleCriteriaField.BUILDING]: [RuleOperator.EQUALS, RuleOperator.NOT_EQUALS, RuleOperator.STARTS_WITH, RuleOperator.CONTAINS, RuleOperator.IN],
+  [RuleCriteriaField.CAPACITY]: [RuleOperator.EQUALS, RuleOperator.NOT_EQUALS, RuleOperator.LESS_THAN, RuleOperator.GREATER_THAN, RuleOperator.LESS_THAN_OR_EQUAL, RuleOperator.GREATER_THAN_OR_EQUAL],
+  [RuleCriteriaField.DAY_OF_WEEK]: [RuleOperator.EQUALS, RuleOperator.NOT_EQUALS, RuleOperator.IN],
+  [RuleCriteriaField.START_TIME]: [RuleOperator.EQUALS, RuleOperator.NOT_EQUALS, RuleOperator.LESS_THAN, RuleOperator.GREATER_THAN, RuleOperator.LESS_THAN_OR_EQUAL, RuleOperator.GREATER_THAN_OR_EQUAL],
+  [RuleCriteriaField.END_TIME]: [RuleOperator.EQUALS, RuleOperator.NOT_EQUALS, RuleOperator.LESS_THAN, RuleOperator.GREATER_THAN, RuleOperator.LESS_THAN_OR_EQUAL, RuleOperator.GREATER_THAN_OR_EQUAL],
+};

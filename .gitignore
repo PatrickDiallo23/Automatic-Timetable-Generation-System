@@ -3,11 +3,12 @@
 # General
 *.log
 *.DS_Store
-*.env
 
 # Ignore IDE files
 .idea/
 .vscode/
+.agent/
+.venv/
 
 # Backend specific
 timetable-app-backend/target/
@@ -17,3 +18,15 @@ timetable-app-backend/local/
 timetable-app/node_modules/
 timetable-app/dist/
 timetable-app/.angular/
+
+# ── Docker / Secrets ──────────────────────────────────────────────────────────
+# .env.dev is committed (safe development defaults)
+# .env.prod.example is committed (template, no real secrets)
+# .env.prod must NEVER be committed
+.env.prod
+
+# Docker runtime secrets directory (files written here should not be tracked)
+docker/secrets/
+
+# Docker build cache artefacts
+.dockerignore.local

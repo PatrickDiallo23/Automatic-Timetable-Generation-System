@@ -678,3 +678,145 @@
     font-style: italic;
 }
 
+.solver-decides .pinned-detail-value {
+    color: #e65100;
+    font-style: italic;
+}
+
+
+/* Restriction Rules Styles */
+.rule-item {
+    border-left: 4px solid #667eea;
+}
+
+.rule-active-badge {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: auto;
+    border: 1px solid #a5d6a7;
+}
+
+.rule-active-badge.inactive {
+    background: #ffebee;
+    color: #c62828;
+    border-color: #ef9a9a;
+}
+
+.rule-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 12px;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #f0f0f0;
+}
+
+.rule-detail {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.detail-icon {
+    font-size: 20px !important;
+    height: 20px !important;
+    width: 20px !important;
+    color: #7f8c8d;
+    opacity: 0.7;
+}
+
+.detail-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.rule-detail .detail-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #95a5a6;
+    margin-bottom: 2px;
+}
+
+.rule-detail .detail-value {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+@media (max-width: 600px) {
+    .rule-details-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Restriction Rules Highlighting in Lessons List */
+.entity-item.has-rules-lesson {
+  background-color: rgba(92, 107, 192, 0.05); /* Indigo tint */
+  border-left: 3px solid #5c6bc0;
+}
+
+.entity-item.has-rules-lesson:hover {
+  background-color: rgba(92, 107, 192, 0.08);
+}
+
+.rules-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: rgba(92, 107, 192, 0.1);
+  color: #5c6bc0;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-left: 8px;
+  border: 1px solid rgba(92, 107, 192, 0.2);
+}
+
+.rules-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+}
+
+.applied-rules-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.08);
+}
+
+.rule-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #fff;
+  border: 1px solid rgba(92, 107, 192, 0.3);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  color: #3f51b5;
+}
+
+.mini-rule-icon {
+  font-size: 12px;
+  width: 12px;
+  height: 12px;
+  color: #5c6bc0;
+}
+
+.rule-name {
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

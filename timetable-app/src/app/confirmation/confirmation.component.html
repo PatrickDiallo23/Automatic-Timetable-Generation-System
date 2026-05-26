@@ -110,6 +110,17 @@
           </mat-icon>
         </div>
       </div>
+
+      <div class="entity-card clickable-card" (click)="handleEntityCardClick('restrictionRules')">
+        <mat-icon class="entity-icon">gavel</mat-icon>
+        <h3 class="entity-card-title">Restriction Rules</h3>
+        <p class="entity-card-count">{{ restrictionRuleCount }}</p>
+        <div class="card-action-indicator">
+          <mat-icon class="action-icon">
+            {{ isImportMode ? 'visibility' : 'open_in_new' }}
+          </mat-icon>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -207,7 +218,8 @@
         <div *ngIf="currentEntityType === 'lessons'" class="entity-list">
           <div *ngFor="let lesson of currentEntityData; let i = index" 
                class="entity-item" 
-               [class.pinned-lesson]="lesson.pinned">
+               [class.pinned-lesson]="lesson.pinned"
+               [class.has-rules-lesson]="lesson.appliedRuleIds?.length > 0">
             <div class="entity-item-header">
               <mat-icon class="item-icon">book</mat-icon>
               <span class="item-name">{{ lesson.subject || 'Lesson ' + (i + 1) }}</span>
@@ -215,6 +227,11 @@
               <span *ngIf="lesson.pinned" class="pinned-badge">
                 <mat-icon class="pinned-icon">push_pin</mat-icon>
                 Pinned
+              </span>
+              <!-- Rules Badge -->
+              <span *ngIf="lesson.appliedRuleIds?.length > 0" class="rules-badge">
+                <mat-icon class="rules-icon">gavel</mat-icon>
+                {{ lesson.appliedRuleIds.length }} Rules
               </span>
             </div>
             <div class="entity-item-details">
@@ -232,6 +249,14 @@
             <div class="entity-item-details">
               <span class="detail-label">Duration:</span>
               <span class="detail-value">{{ lesson.duration }} hours</span>
+            </div>
+            
+            <!-- Applied Rules List -->
+            <div class="applied-rules-container" *ngIf="lesson.appliedRuleIds?.length > 0">
+              <div class="rule-chip" *ngFor="let rule of getAppliedRules(lesson)">
+                <mat-icon class="mini-rule-icon">gavel</mat-icon>
+                <span class="rule-name">{{ rule.name }}</span>
+              </div>
             </div>
             <!-- Pinned Timeslot & Room Info -->
             <div *ngIf="lesson.pinned" class="pinned-details">
@@ -293,6 +318,53 @@
             <div class="entity-item-details">
               <span class="detail-label">Soft:</span>
               <span class="detail-value">{{ constraint.soft }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Restriction Rules Display -->
+        <div *ngIf="currentEntityType === 'restrictionRules'" class="entity-list">
+          <div *ngFor="let rule of currentEntityData" class="entity-item rule-item">
+            <div class="entity-item-header">
+              <mat-icon class="item-icon rule-icon">gavel</mat-icon>
+              <span class="item-name">{{ rule.name }}</span>
+              <span class="rule-active-badge" [class.inactive]="!rule.active">
+                {{ rule.active ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+            
+            <div class="rule-details-grid">
+              <div class="rule-detail">
+                <mat-icon class="detail-icon">category</mat-icon>
+                <div class="detail-content">
+                  <span class="detail-label">Target</span>
+                  <span class="detail-value">{{ rule.targetType }}</span>
+                </div>
+              </div>
+              
+              <div class="rule-detail">
+                <mat-icon class="detail-icon">filter_list</mat-icon>
+                <div class="detail-content">
+                  <span class="detail-label">Criteria</span>
+                  <span class="detail-value">{{ rule.criteriaField }}</span>
+                </div>
+              </div>
+              
+              <div class="rule-detail">
+                <mat-icon class="detail-icon">compare_arrows</mat-icon>
+                <div class="detail-content">
+                  <span class="detail-label">Operator</span>
+                  <span class="detail-value">{{ rule.operator }}</span>
+                </div>
+              </div>
+              
+              <div class="rule-detail">
+                <mat-icon class="detail-icon">input</mat-icon>
+                <div class="detail-content">
+                  <span class="detail-label">Value</span>
+                  <span class="detail-value">{{ rule.criteriaValue }}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

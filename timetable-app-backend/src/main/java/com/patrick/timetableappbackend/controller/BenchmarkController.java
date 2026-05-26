@@ -104,7 +104,7 @@ public class BenchmarkController {
                     .body(resource);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error formatting JSON", e);
             return ResponseEntity.internalServerError().build();
         }
     }

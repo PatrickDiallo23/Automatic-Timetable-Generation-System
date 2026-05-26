@@ -26,7 +26,11 @@ export interface ImpactAnalysisDialogData {
   analysisData: any;
   rooms: Room[];
   timeslots: Timeslot[];
+  isModified: boolean;
 }
+
+/** Constraints to exclude from lesson-level analysis (aggregate distribution metrics). */
+const EXCLUDED_CONSTRAINTS = new Set(['fairLessonsDistribution']);
 
 @Component({
   selector: 'app-impact-analysis-dialog',
@@ -40,6 +44,8 @@ export class ImpactAnalysisDialogComponent implements OnInit {
     medium: 0,
     soft: 0,
   };
+  /** Per-lesson score contribution across all matching constraints. */
+  lessonScoreBreakdown = { hard: 0, medium: 0, soft: 0 };
 
   // Lookup maps for resolving ID references
   private roomMap: Map<number, Room> = new Map();
@@ -93,41 +99,118 @@ export class ImpactAnalysisDialogComponent implements OnInit {
     return resolvedLesson;
   }
 
+  /**
+   * Determines whether a constraint match is relevant to the analyzed lesson.
+   * Handles all justification shapes:
+   *  - Pair-based: lesson1/lesson2 (roomConflict, teacherConflict, etc.)
+   *  - Single-lesson: lesson (maximizePreferredTimeslotAssignments, capacityRoomConflict)
+   *  - Conflicting-lessons list: studentGroup (string) + conflictingLessons (studentGroupConflictAdvanced)
+   *  - StudentGroup aggregate: studentGroup (object) + dayOfWeek (earlyStartForHighschool, noGapsForHighschool)
+   *  - TeacherDay aggregate: teacherDay (maximmumCoursesTeached)
+   *  - StudentDay aggregate: studentDay (maximumCoursesForStudents)
+   *  - Group-timeslot grouping: groupName (coursesGroupedInTheSameTimeslot, etc.)
+   *  - Room-capacity grouping: series + timeslotId (labsStudentsGroupedInTheSameRoom, etc.)
+   */
+  private isMatchRelevant(justification: any, lesson: Lesson): boolean {
+    if (!justification) return false;
+
+    const lessonId = lesson.id;
+    const studentGroupId = lesson.studentGroup?.id;
+    const teacherId = lesson.teacher?.id;
+    const studentGroupName = lesson.studentGroup?.name;
+    const studentGroup = lesson.studentGroup?.studentGroup;
+
+    // 1. Pair-based: lesson1/lesson2
+    if (justification.lesson1 || justification.lesson2) {
+      return justification.lesson1?.id === lessonId || justification.lesson2?.id === lessonId;
+    }
+
+    // 2. Single-lesson: lesson
+    if (justification.lesson) {
+      return justification.lesson.id === lessonId;
+    }
+
+    // 3. Conflicting-lessons list (studentGroupConflictAdvanced)
+    //    studentGroup is a string name, conflictingLessons is an array of lessons
+    if (justification.conflictingLessons && Array.isArray(justification.conflictingLessons)) {
+      return justification.conflictingLessons.some((l: any) => l.id === lessonId);
+    }
+
+    // 4. StudentGroup-day aggregate (earlyStartForHighschool, noGapsForHighschool)
+    //    studentGroup is an object with .id
+    if (justification.studentGroup && justification.dayOfWeek) {
+      return justification.studentGroup.id === studentGroupId;
+    }
+
+    // 5. Teacher-day aggregate (maximmumCoursesTeached)
+    if (justification.teacherDay) {
+      return justification.teacherDay.teacher?.id === teacherId;
+    }
+
+    // 6. StudentDay aggregate (maximumCoursesForStudents)
+    if (justification.studentDay) {
+      return justification.studentDay.studentGroup?.id === studentGroupId;
+    }
+
+    // 7. Group-timeslot grouping (coursesGroupedInTheSameTimeslot, seminars, labs)
+    if (justification.groupName && justification.subject !== undefined) {
+      return justification.groupName === studentGroupName || justification.groupName === studentGroup;
+    }
+
+    // 8. Room-capacity grouping (labsStudentsGroupedInTheSameRoom, course, seminar)
+    if (justification.series && justification.timeslotId !== undefined) {
+      const matchesSeries = justification.series === studentGroupName || justification.series === studentGroup;
+      const matchesTimeslot = justification.timeslotId === lesson.timeslot;
+      return matchesSeries && matchesTimeslot;
+    }
+
+    return false;
+  }
+
   private processViolations(): void {
     if (!this.data.analysisData?.constraints) {
       this.displayedViolations = [];
       return;
     }
 
-    const lessonId = this.data.change.lesson.id;
+    const lesson = this.data.change.lesson;
+    const lessonId = lesson.id;
     const relevantViolations: ConstraintViolation[] = [];
+    const scoreAccum = { hard: 0, medium: 0, soft: 0 };
 
     for (const constraint of this.data.analysisData.constraints) {
       if (!constraint.matches || constraint.matches.length === 0) continue;
+      if (EXCLUDED_CONSTRAINTS.has(constraint.name)) continue;
 
-      const relevantMatches = constraint.matches.filter((match: any) => {
-        const justification = match.justification;
-        if (!justification) return false;
-
-        // Check if lesson1 or lesson2 in the justification matches our edited lesson
-        const lesson1Id = justification.lesson1?.id;
-        const lesson2Id = justification.lesson2?.id;
-        
-        return lesson1Id === lessonId || lesson2Id === lessonId;
-      });
+      const relevantMatches = constraint.matches.filter((match: any) =>
+        this.isMatchRelevant(match.justification, lesson)
+      );
 
       if (relevantMatches.length > 0) {
         const constraintType = this.getConstraintType(constraint);
         
         for (const match of relevantMatches) {
+          // Accumulate per-lesson score contribution
+          this.accumulateScore(match.score, scoreAccum);
+
           const affectedLessons: Lesson[] = [];
           const justification = match.justification;
           
+          // Extract affected lessons from pair-based justifications
           if (justification.lesson1 && justification.lesson1.id !== lessonId) {
             affectedLessons.push(this.resolveLesson(justification.lesson1));
           }
           if (justification.lesson2 && justification.lesson2.id !== lessonId) {
             affectedLessons.push(this.resolveLesson(justification.lesson2));
+          }
+
+          // Extract affected lessons from conflictingLessons array (studentGroupConflictAdvanced)
+          if (Array.isArray(justification.conflictingLessons)) {
+            for (const cl of justification.conflictingLessons) {
+              if (cl.id !== lessonId) {
+                affectedLessons.push(this.resolveLesson(cl));
+              }
+            }
           }
 
           const rawDescription = justification.description || '';
@@ -144,6 +227,8 @@ export class ImpactAnalysisDialogComponent implements OnInit {
       }
     }
 
+    this.lessonScoreBreakdown = scoreAccum;
+
     // Update summary counts
     this.violationSummary = { hard: 0, medium: 0, soft: 0 };
     relevantViolations.forEach(v => {
@@ -157,10 +242,29 @@ export class ImpactAnalysisDialogComponent implements OnInit {
     });
   }
 
+  /**
+   * Parse a score string like "0hard/-1medium/-5soft" and accumulate into the breakdown.
+   */
+  private accumulateScore(scoreStr: string, accum: { hard: number; medium: number; soft: number }): void {
+    if (!scoreStr) return;
+    const hardMatch = scoreStr.match(/(-?\d+)hard/);
+    const mediumMatch = scoreStr.match(/(-?\d+)medium/);
+    const softMatch = scoreStr.match(/(-?\d+)soft/);
+    if (hardMatch) accum.hard += parseInt(hardMatch[1], 10);
+    if (mediumMatch) accum.medium += parseInt(mediumMatch[1], 10);
+    if (softMatch) accum.soft += parseInt(softMatch[1], 10);
+  }
+
+  /**
+   * Determines constraint severity from the constraint's score field.
+   * Uses the aggregate score (e.g., "-5hard/0medium/0soft") to identify the level.
+   */
   private getConstraintType(constraint: any): 'hard' | 'medium' | 'soft' {
-    const weight = constraint.weight || '';
-    if (weight.includes('hard') && !weight.startsWith('0hard')) return 'hard';
-    if (weight.includes('medium') && !weight.includes('/0medium')) return 'medium';
+    const score = constraint.score || constraint.weight || '';
+    const hardMatch = score.match(/(-?\d+)hard/);
+    const mediumMatch = score.match(/(-?\d+)medium/);
+    if (hardMatch && parseInt(hardMatch[1], 10) !== 0) return 'hard';
+    if (mediumMatch && parseInt(mediumMatch[1], 10) !== 0) return 'medium';
     return 'soft';
   }
 
@@ -329,6 +433,12 @@ export class ImpactAnalysisDialogComponent implements OnInit {
     if (diff > 0) return 'score-improved';
     if (diff < 0) return 'score-worsened';
     return 'score-unchanged';
+  }
+
+  getBreakdownClass(value: number): string {
+    if (value < 0) return 'score-worsened';
+    if (value === 0) return 'score-unchanged';
+    return 'score-improved';
   }
 
   hasViolations(): boolean {

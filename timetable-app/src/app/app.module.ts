@@ -19,6 +19,7 @@ import { TimetableComponent } from './timetable/timetable.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
@@ -55,6 +56,9 @@ import { ImpactAnalysisDialogComponent } from './timetable/impact-analysis-dialo
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { RestrictionRulesComponent } from './restriction-rules/restriction-rules.component';
+import { RestrictionRuleDialogComponent } from './restriction-rules/restriction-rule-dialog/restriction-rule-dialog.component';
+import { ImproveTimetableDialogComponent } from './timetable/improve-timetable-dialog/improve-timetable-dialog.component';
 
 
 @NgModule({
@@ -83,6 +87,9 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     BenchmarkDialogComponent,
     EditLessonDialogComponent,
     ImpactAnalysisDialogComponent,
+    RestrictionRulesComponent,
+    RestrictionRuleDialogComponent,
+    ImproveTimetableDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -99,6 +106,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     FormsModule,
     MatInputModule,
     MatButtonModule,
+    MatMenuModule,
     ReactiveFormsModule,
     MatToolbarModule,
     MatIconModule,

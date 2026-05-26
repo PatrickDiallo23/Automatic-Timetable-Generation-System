@@ -5,7 +5,6 @@ import ai.timefold.solver.core.api.domain.solution.PlanningEntityCollectionPrope
 import ai.timefold.solver.core.api.domain.solution.PlanningScore;
 import ai.timefold.solver.core.api.domain.solution.PlanningSolution;
 import ai.timefold.solver.core.api.domain.solution.ProblemFactCollectionProperty;
-import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import ai.timefold.solver.core.api.solver.SolverStatus;
 import com.patrick.timetableappbackend.solver.TimetableConstraintConfiguration;
@@ -13,6 +12,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import jakarta.persistence.Transient;
+import java.util.ArrayList;
 import java.util.List;
 
 @PlanningSolution
@@ -27,7 +28,6 @@ public class Timetable {
     // @ValueRangeProvider
     private List<Timeslot> timeslots;
     @ProblemFactCollectionProperty
-    @ValueRangeProvider
     private List<Room> rooms;
     @PlanningEntityCollectionProperty
     private List<Lesson> lessons;
@@ -42,6 +42,9 @@ public class Timetable {
     private SolverStatus solverStatus;
 
     private Long duration;
+
+    @Transient
+    private List<RestrictionRule> restrictionRules = new ArrayList<>();
 
     public Timetable(HardMediumSoftScore score) {
         this.score = score;

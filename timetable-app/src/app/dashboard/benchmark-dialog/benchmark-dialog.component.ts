@@ -337,6 +337,6 @@ export class BenchmarkDialogComponent {
   private showUrlFallback(url: string) {
     // Show a dialog or snackbar with clickable link
     this.coreService.openSnackBar(`Report ready! Click to open: ${url}`);
-    console.log('Direct URL:', url);
+
   }
 }

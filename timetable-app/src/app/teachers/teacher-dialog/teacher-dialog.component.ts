@@ -15,6 +15,7 @@ export class TeacherDialogComponent implements OnInit {
 
   teacherForm: FormGroup;
   daysOfWeek = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
+  hasAddedItem = false;
 
   constructor(
     private fb: FormBuilder,
@@ -44,7 +45,6 @@ export class TeacherDialogComponent implements OnInit {
     console.log(this.teacherForm.value);
     }
 //     this.teacherForm.patchValue(this.data);
-//     console.log(this.teacherForm.value);
   }
 
   get preferredTimeslots(): FormArray {
@@ -65,7 +65,7 @@ export class TeacherDialogComponent implements OnInit {
     this.preferredTimeslots.removeAt(index);
   }
 
-  onFormSubmit() : void {
+  onFormSubmit(keepOpen: boolean = false) : void {
     if (this.teacherForm.valid) {
       if (this.data) {
         this.teacherService
@@ -83,7 +83,12 @@ export class TeacherDialogComponent implements OnInit {
         this.teacherService.createTeacher(this.teacherForm.value).subscribe({
           next: (val: any) => {
             this.coreService.openSnackBar('Teacher added successfully');
-            this.dialogRef.close(true);
+            if (keepOpen) {
+              this.hasAddedItem = true;
+              this.dialogRef.disableClose = true;
+            } else {
+              this.dialogRef.close(true);
+            }
           },
           error: (err: any) => {
             console.error(err);
@@ -91,5 +96,9 @@ export class TeacherDialogComponent implements OnInit {
         });
       }
     }
+  }
+
+  closeDialog() {
+    this.dialogRef.close(this.hasAddedItem);
   }
 }
