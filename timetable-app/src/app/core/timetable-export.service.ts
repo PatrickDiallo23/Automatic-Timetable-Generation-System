@@ -65,6 +65,11 @@ export class TimetableExportService {
    * Columns match process_timetable.py:
    *   Subject, Lesson Type, Teacher, Student Group, Day, Start Time, End Time, Room
    */
+  /**
+   * Student Groups grouped by Year.
+   * Columns match process_timetable.py:
+   *   Subject, Lesson Type, Teacher, Student Group, Day, Start Time, End Time, Room
+   */
   exportByStudentGroup(timetableData: Timetable): void {
     this.validateData(timetableData);
 
@@ -85,7 +90,7 @@ export class TimetableExportService {
 
     // Summary sheet
     this.addSummarySheet(wb, 'Student Groups by Year', byYear, (yearLessons) => {
-      const groups = new Set(yearLessons.map(l => l.studentGroup?.studentGroup || 'N/A'));
+      const groups = new Set(yearLessons.map(l => this.formatStudentGroupDisplay(l.studentGroup)));
       return groups.size;
     });
 
@@ -94,8 +99,8 @@ export class TimetableExportService {
     for (const year of sortedYears) {
       const yearLessons = byYear.get(year)!;
 
-      // Sub-group by studentGroup name within this year
-      const byGroup = this.groupBy(yearLessons, l => l.studentGroup?.studentGroup || 'N/A');
+      // Sub-group by studentGroup combined name within this year
+      const byGroup = this.groupBy(yearLessons, l => this.formatStudentGroupDisplay(l.studentGroup));
       const sortedGroups = [...byGroup.keys()].sort();
 
       const columns = ['Subject', 'Lesson Type', 'Teacher', 'Student Group', 'Day', 'Start Time', 'End Time', 'Room'];
@@ -118,7 +123,7 @@ export class TimetableExportService {
             'Subject': lesson.subject || '',
             'Lesson Type': lesson.lessonType || '',
             'Teacher': lesson.teacher?.name || 'N/A',
-            'Student Group': lesson.studentGroup?.studentGroup || 'N/A',
+            'Student Group': this.formatStudentGroupDisplay(lesson.studentGroup),
             'Day': this.formatDay(ts?.dayOfWeek),
             'Start Time': ts?.startTime || 'N/A',
             'End Time': ts?.endTime || 'N/A',
@@ -132,7 +137,7 @@ export class TimetableExportService {
 
       const ws = XLSX.utils.json_to_sheet(sheetRows);
       this.applySheetFormatting(ws, columns.length, sheetRows.length, [
-        20, 15, 20, 15, 12, 12, 12, 15,
+        20, 15, 20, 25, 12, 12, 12, 15,
       ]);
 
       const sheetName = this.sanitizeSheetName(this.formatYearLabel(year));
@@ -198,7 +203,9 @@ export class TimetableExportService {
           const room = roomMap.get(lesson.room);
           sheetRows.push({
             'Teacher': lesson.teacher?.name || 'N/A',
-            'Student Group': lesson.studentGroup?.studentGroup || 'N/A',
+            'Student Group': lesson.studentGroup?.studentGroup 
+              ? `${lesson.studentGroup.studentGroup}${lesson.studentGroup.name ? ` (${lesson.studentGroup.name})` : ''}` 
+              : 'N/A',
             'Subgroup': lesson.studentGroup?.semiGroup?.replace('SEMI_GROUP', 'Subgroup ') || 'N/A',
             'Subject': lesson.subject || '',
             'Lesson Type': lesson.lessonType || '',
@@ -215,7 +222,7 @@ export class TimetableExportService {
 
       const ws = XLSX.utils.json_to_sheet(sheetRows);
       this.applySheetFormatting(ws, columns.length, sheetRows.length, [
-        20, 15, 12, 20, 15, 12, 12, 12, 15, 15,
+        20, 20, 12, 20, 15, 12, 12, 12, 15, 15,
       ]);
 
       XLSX.utils.book_append_sheet(wb, ws, this.sanitizeSheetName(`Teachers ${letter}`));
@@ -289,7 +296,9 @@ export class TimetableExportService {
             'Day': this.formatDay(ts?.dayOfWeek),
             'Start Time': ts?.startTime || 'N/A',
             'End Time': ts?.endTime || 'N/A',
-            'Student Group': lesson.studentGroup?.studentGroup || 'N/A',
+            'Student Group': lesson.studentGroup?.studentGroup 
+              ? `${lesson.studentGroup.studentGroup}${lesson.studentGroup.name ? ` (${lesson.studentGroup.name})` : ''}` 
+              : 'N/A',
             'Subgroup': lesson.studentGroup?.semiGroup?.replace('SEMI_GROUP', 'Subgroup ') || 'N/A',
             'Subject': lesson.subject || '',
             'Lesson Type': lesson.lessonType || '',
@@ -302,7 +311,7 @@ export class TimetableExportService {
 
       const ws = XLSX.utils.json_to_sheet(sheetRows);
       this.applySheetFormatting(ws, columns.length, sheetRows.length, [
-        15, 15, 12, 12, 12, 15, 12, 20, 15, 20,
+        15, 15, 12, 12, 12, 20, 12, 20, 15, 20,
       ]);
 
       XLSX.utils.book_append_sheet(wb, ws, this.sanitizeSheetName(building));
@@ -334,7 +343,9 @@ export class TimetableExportService {
         subject: lesson.subject,
         lessonType: lesson.lessonType,
         teacher: lesson.teacher?.name || 'N/A',
-        studentGroup: lesson.studentGroup?.studentGroup || 'N/A',
+        studentGroup: lesson.studentGroup?.studentGroup 
+          ? `${lesson.studentGroup.studentGroup}${lesson.studentGroup.name ? ` (${lesson.studentGroup.name})` : ''}` 
+          : 'N/A',
         subgroup: lesson.studentGroup?.semiGroup || 'N/A',
         day: this.formatDay(ts?.dayOfWeek),
         startTime: ts?.startTime || 'N/A',
@@ -345,7 +356,7 @@ export class TimetableExportService {
 
       // By student group
       const year = String(lesson.year || lesson.studentGroup?.year || 'UNKNOWN');
-      const groupName = lesson.studentGroup?.studentGroup || 'N/A';
+      const groupName = this.formatStudentGroupDisplay(lesson.studentGroup);
       if (!studentGroups[year]) studentGroups[year] = {};
       if (!studentGroups[year][groupName]) studentGroups[year][groupName] = [];
       studentGroups[year][groupName].push(resolved);
@@ -383,6 +394,17 @@ export class TimetableExportService {
   // ──────────────────────────────────────────────
   // Private helpers
   // ──────────────────────────────────────────────
+
+  private formatStudentGroupDisplay(sg: any): string {
+    if (!sg) return 'N/A';
+    const parts: string[] = [];
+    if (sg.studentGroup) parts.push(sg.studentGroup);
+    if (sg.name) parts.push(`(${sg.name})`);
+    if (sg.semiGroup) {
+      parts.push(`- Subgroup ${sg.semiGroup.replace('SEMI_GROUP', '')}`);
+    }
+    return parts.length ? parts.join(' ') : 'N/A';
+  }
 
   private validateData(timetableData: Timetable): void {
     if (!timetableData?.lessons?.length) {
@@ -542,7 +564,9 @@ export class TimetableExportService {
         'Subject': lesson.subject || '',
         'Lesson Type': lesson.lessonType || '',
         'Teacher': lesson.teacher?.name || 'N/A',
-        'Student Group': lesson.studentGroup?.studentGroup || 'N/A',
+        'Student Group': lesson.studentGroup?.studentGroup 
+          ? `${lesson.studentGroup.studentGroup}${lesson.studentGroup.name ? ` (${lesson.studentGroup.name})` : ''}` 
+          : 'N/A',
         'Subgroup': lesson.studentGroup?.semiGroup?.replace('SEMI_GROUP', 'Subgroup ') || 'N/A',
         'Day': this.formatDay(ts?.dayOfWeek),
         'Start Time': ts?.startTime || 'N/A',

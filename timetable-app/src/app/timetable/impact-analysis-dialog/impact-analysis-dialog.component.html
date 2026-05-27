@@ -14,7 +14,7 @@
       <div class="lesson-name">
         <mat-icon>book</mat-icon>
         <strong>{{ data.change.lesson.subject }}</strong>
-        <span class="lesson-meta">({{ data.change.lesson.teacher.name }} • {{ data.change.lesson.studentGroup.studentGroup }})</span>
+        <span class="lesson-meta">({{ data.change.lesson.teacher.name }} • {{ data.change.lesson.studentGroup.studentGroup }}{{ data.change.lesson.studentGroup.name ? ' (' + data.change.lesson.studentGroup.name + ')' : '' }}{{ data.change.lesson.studentGroup.semiGroup ? ' - ' + data.change.lesson.studentGroup.semiGroup.replace('SEMI_GROUP', 'Subgroup ') : '' }})</span>
       </div>
 
       <!-- Show from → to only when modified -->
@@ -178,7 +178,7 @@
             </div>
             <div class="detail-row">
               <mat-icon>groups</mat-icon>
-              <span>{{ affected.studentGroup.studentGroup }} ({{ formatYear(affected.studentGroup.year) }} {{ affected.studentGroup.name }})</span>
+              <span>{{ affected.studentGroup.studentGroup }} ({{ formatYear(affected.studentGroup.year) }} {{ affected.studentGroup.name }})<span *ngIf="affected.studentGroup.semiGroup"> - {{ affected.studentGroup.semiGroup.replace('SEMI_GROUP', 'Subgroup ') }}</span></span>
             </div>
             <div class="detail-row" *ngIf="affected.room && affected.room.name">
               <mat-icon>meeting_room</mat-icon>

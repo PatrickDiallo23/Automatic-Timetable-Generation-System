@@ -24,7 +24,11 @@
       <mat-icon class="info-icon">groups</mat-icon>
       <div class="info-content">
         <span class="info-label">Student Group</span>
-        <span class="info-value">{{ data.lesson.studentGroup.studentGroup }} ({{ data.lesson.studentGroup.semiGroup?.replace('SEMI_GROUP', 'Subgroup ') }})</span>
+        <span class="info-value">
+          {{ data.lesson.studentGroup.studentGroup }}
+          <span *ngIf="data.lesson.studentGroup.name"> ({{ data.lesson.studentGroup.name }})</span>
+          <span *ngIf="data.lesson.studentGroup.semiGroup"> - {{ data.lesson.studentGroup.semiGroup.replace('SEMI_GROUP', 'Subgroup ') }}</span>
+        </span>
       </div>
     </div>
   </div>

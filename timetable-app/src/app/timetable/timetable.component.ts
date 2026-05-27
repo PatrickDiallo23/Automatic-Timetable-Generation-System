@@ -261,15 +261,28 @@ export class TimetableComponent implements OnInit, OnDestroy {
   filterTimetable(studentGroup: string, studentSemiGroup: string) {
     if (studentGroup && studentSemiGroup) {
       this.isLoading = true;
-      const selectedStudentGroup = studentGroup;
-      const selectedSemiGroup = studentSemiGroup;
+      this.selectedStudentGroup = studentGroup;
+      this.selectedSemiGroup = studentSemiGroup;
 
+      let groupCode = studentGroup;
+      let groupName: string | null = null;
 
+      const parenIndex = studentGroup.indexOf('(');
+      if (parenIndex !== -1) {
+        groupCode = studentGroup.substring(0, parenIndex).trim();
+        const endParenIndex = studentGroup.indexOf(')', parenIndex);
+        if (endParenIndex !== -1) {
+          groupName = studentGroup.substring(parenIndex + 1, endParenIndex).trim();
+        }
+      }
 
       const filteredTimetable = this.timetableData?.lessons?.filter(
-        (lesson) =>
-          lesson.studentGroup?.studentGroup === selectedStudentGroup &&
-          lesson.studentGroup?.semiGroup === selectedSemiGroup
+        (lesson) => {
+          const matchesGroupCode = lesson.studentGroup?.studentGroup === groupCode;
+          const matchesGroupName = !groupName || lesson.studentGroup?.name === groupName;
+          const matchesSemiGroup = lesson.studentGroup?.semiGroup === studentSemiGroup;
+          return matchesGroupCode && matchesGroupName && matchesSemiGroup;
+        }
       );
 
       console.log(filteredTimetable);
@@ -462,13 +475,14 @@ export class TimetableComponent implements OnInit, OnDestroy {
     const groupSet = new Set<string>();
 
     lessons.forEach((lesson) => {
-      const groupName = lesson.studentGroup?.studentGroup;
-      if (groupName) {
-        groupSet.add(groupName);
+      const group = lesson.studentGroup;
+      if (group?.studentGroup) {
+        const groupLabel = `${group.studentGroup}${group.name ? ` (${group.name})` : ''}`;
+        groupSet.add(groupLabel);
       }
     });
 
-    this.studentGroups = Array.from(groupSet).sort();
+    this.studentGroups = Array.from(groupSet).sort((a, b) => a.localeCompare(b));
     console.log(this.studentGroups);
   }
 
@@ -598,7 +612,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
           <div style="display: flex; align-items: center;">
             <i class="material-icons" style="font-size: 18px; margin-right: 8px; color: #673ab7;">group</i>
             <div>
-              <div style="font-weight: 600; color: #673ab7;">${lesson.studentGroup?.studentGroup || 'N/A'}</div>
+              <div style="font-weight: 600; color: #673ab7;">${lesson.studentGroup?.studentGroup || 'N/A'}${lesson.studentGroup?.name ? ` (${lesson.studentGroup.name})` : ''}</div>
               <div style="font-size: 0.85rem; color: #666;">Subgroup ${lesson.studentGroup?.semiGroup?.replace('SEMI_GROUP', '') || 'N/A'}</div>
             </div>
           </div>
@@ -789,7 +803,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
         <div style="display: flex; align-items: center;">
           <i class="material-icons" style="font-size: 18px; margin-right: 8px; color: #673ab7;">group</i>
           <div>
-            <div style="font-weight: 600; color: #673ab7;">${lesson.studentGroup?.studentGroup || 'N/A'}</div>
+            <div style="font-weight: 600; color: #673ab7;">${lesson.studentGroup?.studentGroup || 'N/A'}${lesson.studentGroup?.name ? ` (${lesson.studentGroup.name})` : ''}</div>
             <div style="font-size: 0.85rem; color: #666;">Subgroup ${lesson.studentGroup?.semiGroup?.replace('SEMI_GROUP', '') || 'N/A'}</div>
           </div>
         </div>
@@ -1707,16 +1721,12 @@ export class TimetableComponent implements OnInit, OnDestroy {
     // Get current filter values and re-apply
     if (this.toggle === 'student') {
       const studentGroup = this.studentGroupFormGroup.get('studentGroupControl')?.value;
-      if (studentGroup) {
+      if (studentGroup && this.selectedSemiGroup) {
         // Re-filter with current selection
         const timetableContainer = document.getElementById('timetable');
         if (timetableContainer) timetableContainer.innerHTML = '';
         
-        const filteredTimetable = this.timetableData?.lessons?.filter(
-          (lesson) => lesson.studentGroup.studentGroup === studentGroup
-        );
-        this.displayedTimetable = filteredTimetable || [];
-        this.displayTimetable(filteredTimetable);
+        this.filterTimetable(studentGroup, this.selectedSemiGroup);
       }
     } else if (this.toggle == 'room') {
       const room = this.roomFormGroup.get('roomControl')?.value;
