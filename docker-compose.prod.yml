@@ -67,6 +67,8 @@ services:
       target: production
     container_name: timetable_backend2
     restart: unless-stopped
+    volumes:
+      - ./secrets:/app/secrets:ro
     environment:
       SPRING_DATASOURCE_URL:      ${DATABASE_URL}
       SPRING_DATASOURCE_USERNAME: ${DATABASE_USERNAME}
@@ -75,6 +77,9 @@ services:
       SPRING_PROFILES_ACTIVE:     prod
       JAVA_OPTS:                  ""
       TIMEFOLD_TERMINATION_LIMIT: ${TIMEFOLD_TERMINATION_LIMIT:-6m}
+      # Timefold license configuration
+      TIMEFOLD_LICENSE:           ${TIMEFOLD_LICENSE:-}
+      TIMEFOLD_LICENSE_PATH:      ${TIMEFOLD_LICENSE_PATH:-}
     depends_on:
       postgres:
         condition: service_healthy

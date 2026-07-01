@@ -17,8 +17,8 @@
 <!--  STRONGEST FIT DECREASING generic config -->
     <constructionHeuristic>
         <constructionHeuristicType>ALLOCATE_ENTITY_FROM_QUEUE</constructionHeuristicType>
-        <entitySorterManner>DECREASING_DIFFICULTY_IF_AVAILABLE</entitySorterManner>
-        <valueSorterManner>DECREASING_STRENGTH_IF_AVAILABLE</valueSorterManner>
+        <entitySorterManner>DESCENDING_IF_AVAILABLE</entitySorterManner>
+        <valueSorterManner>DESCENDING_IF_AVAILABLE</valueSorterManner>
         <!--        <forager>-->
         <!--            <pickEarlyType>FIRST_FEASIBLE_SCORE_OR_NON_DETERIORATING_HARD</pickEarlyType>-->
         <!--        </forager>-->
@@ -31,11 +31,11 @@
         </termination>
         <acceptor>
             <!-- Set the lateAcceptanceSize to 15% - 25% of the number of planning entities.-->
-            <lateAcceptanceSize>1200</lateAcceptanceSize>
+            <lateAcceptanceSize>1000</lateAcceptanceSize>
         </acceptor>
         <forager>
             <!--    <pickEarlyType>FIRST_BEST_SCORE_IMPROVING</pickEarlyType> <!- or FIRST_LAST_STEP_SCORE_IMPROVING -->
-            <acceptedCountLimit>3</acceptedCountLimit>  <!-- should use low acceptedCountLimit -->
+            <acceptedCountLimit>1</acceptedCountLimit>  <!-- should use low acceptedCountLimit -->
             <finalistPodiumType>HIGHEST_SCORE</finalistPodiumType>
         </forager>
     </localSearch>
@@ -43,10 +43,9 @@
     <!--    Tabu_Search configuration-->
     <localSearch>
         <acceptor>
-            <entityTabuRatio>0.03</entityTabuRatio>
+            <entityTabuRatio>0.02</entityTabuRatio>
             <valueTabuSize>50</valueTabuSize>
             <moveTabuSize>10</moveTabuSize>
-            <undoMoveTabuSize>10</undoMoveTabuSize>
         </acceptor>
         <forager>
             <!--    <pickEarlyType>FIRST_BEST_SCORE_IMPROVING</pickEarlyType>  <!- or FIRST_LAST_STEP_SCORE_IMPROVING -->

@@ -230,19 +230,23 @@ export class JsonImportService {
 
   private isValidTimeslot(timeslot: any): boolean {
     return (
-      typeof timeslot === 'object' &&
-      typeof timeslot.dayOfWeek === 'string' &&
-      typeof timeslot.startTime === 'string' &&
-      typeof timeslot.endTime === 'string'
+      typeof timeslot === 'number' || (
+        typeof timeslot === 'object' &&
+        typeof timeslot.dayOfWeek === 'string' &&
+        typeof timeslot.startTime === 'string' &&
+        typeof timeslot.endTime === 'string'
+      )
     );
   }
 
   private isValidRoom(room: any): boolean {
     return (
-      typeof room === 'object' &&
-      typeof room.name === 'string' &&
-      typeof room.capacity === 'number' &&
-      room.capacity > 0
+      typeof room === 'number' || (
+        typeof room === 'object' &&
+        typeof room.name === 'string' &&
+        typeof room.capacity === 'number' &&
+        room.capacity > 0
+      )
     );
   }
 

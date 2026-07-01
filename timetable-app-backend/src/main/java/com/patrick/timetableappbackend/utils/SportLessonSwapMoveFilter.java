@@ -1,20 +1,19 @@
 package com.patrick.timetableappbackend.utils;
 
-import ai.timefold.solver.core.api.score.director.ScoreDirector;
 import ai.timefold.solver.core.impl.heuristic.selector.common.decorator.SelectionFilter;
-import ai.timefold.solver.core.impl.heuristic.selector.move.generic.SwapMove;
+import ai.timefold.solver.core.impl.score.director.ScoreDirector;
+import ai.timefold.solver.core.preview.api.move.builtin.SwapMove;
+
 import com.patrick.timetableappbackend.model.Lesson;
-import com.patrick.timetableappbackend.model.Timeslot;
 import com.patrick.timetableappbackend.model.Timetable;
 
-import java.time.Duration;
-
-public class SportLessonSwapMoveFilter implements SelectionFilter<Timetable, SwapMove> {
+// TODO: remove this file in future cause it's not used
+public class SportLessonSwapMoveFilter implements SelectionFilter<Timetable, SwapMove<Timetable, Lesson>> {
 
     @Override
-    public boolean accept(ScoreDirector<Timetable> scoreDirector, SwapMove swapMove) {
-        Lesson leftLesson = (Lesson) swapMove.getLeftEntity();
-        Lesson rightLesson = (Lesson) swapMove.getRightEntity();
+    public boolean accept(ScoreDirector<Timetable> scoreDirector, SwapMove<Timetable, Lesson> swapMove) {
+        Lesson leftLesson = swapMove.getLeftEntity();
+        Lesson rightLesson = swapMove.getRightEntity();
 
         return isSportMatching(leftLesson, rightLesson);
     }

@@ -167,10 +167,47 @@ export class ImpactAnalysisDialogComponent implements OnInit {
     return false;
   }
 
+  private getScoreComponents(score: any) {
+    const components = { hard: 0, medium: 0, soft: 0 };
+    if (typeof score === 'string') {
+      Array.from(score.matchAll(/(-?[0-9]+)(hard|medium|soft)/g)).forEach(
+        (m: any) => {
+          components[m[2] as 'hard' | 'medium' | 'soft'] = parseInt(m[1], 10);
+        }
+      );
+    } else if (score && typeof score === 'object') {
+      components.hard = score.hardScore ?? 0;
+      components.medium = score.mediumScore ?? 0;
+      components.soft = score.softScore ?? 0;
+    }
+    return components;
+  }
+
   private processViolations(): void {
     if (!this.data.analysisData?.constraints) {
       this.displayedViolations = [];
       return;
+    }
+
+    let constraintsArray: any[] = [];
+    const rawConstraints = this.data.analysisData.constraints;
+    if (Array.isArray(rawConstraints)) {
+      constraintsArray = [...rawConstraints];
+    } else if (rawConstraints && typeof rawConstraints === 'object') {
+      for (const [key, value] of Object.entries(rawConstraints)) {
+        const val = value as any;
+        let id = val.constraintRef?.id || key.replace(/^ConstraintRef\[id=/, '').replace(/\]$/, '');
+        if (id.includes('/')) {
+            id = id.split('/').pop();
+        }
+        constraintsArray.push({
+          name: id,
+          weight: val.weight,
+          score: val.score,
+          matches: val.matches || [],
+          matchCount: val.matchCount || 0
+        });
+      }
     }
 
     const lesson = this.data.change.lesson;
@@ -178,7 +215,15 @@ export class ImpactAnalysisDialogComponent implements OnInit {
     const relevantViolations: ConstraintViolation[] = [];
     const scoreAccum = { hard: 0, medium: 0, soft: 0 };
 
-    for (const constraint of this.data.analysisData.constraints) {
+    for (const constraint of constraintsArray) {
+      // Normalize array-based constraints
+      if (!constraint.name) {
+          constraint.name = constraint.id || constraint.constraintName || constraint.constraintId || 'N/A';
+          if (typeof constraint.name === 'string' && constraint.name.includes('/')) {
+              constraint.name = constraint.name.split('/').pop();
+          }
+      }
+
       if (!constraint.matches || constraint.matches.length === 0) continue;
       if (EXCLUDED_CONSTRAINTS.has(constraint.name)) continue;
 
@@ -221,7 +266,8 @@ export class ImpactAnalysisDialogComponent implements OnInit {
             constraintType: constraintType,
             description: cleanedDescription || this.generateDescription(constraint.name, match),
             affectedLessons: affectedLessons,
-            score: match.score,
+            score: typeof match.score === 'string' ? match.score : 
+                   `${match.score?.hardScore || 0}hard/${match.score?.mediumScore || 0}medium/${match.score?.softScore || 0}soft`,
           });
         }
       }
@@ -245,14 +291,12 @@ export class ImpactAnalysisDialogComponent implements OnInit {
   /**
    * Parse a score string like "0hard/-1medium/-5soft" and accumulate into the breakdown.
    */
-  private accumulateScore(scoreStr: string, accum: { hard: number; medium: number; soft: number }): void {
-    if (!scoreStr) return;
-    const hardMatch = scoreStr.match(/(-?\d+)hard/);
-    const mediumMatch = scoreStr.match(/(-?\d+)medium/);
-    const softMatch = scoreStr.match(/(-?\d+)soft/);
-    if (hardMatch) accum.hard += parseInt(hardMatch[1], 10);
-    if (mediumMatch) accum.medium += parseInt(mediumMatch[1], 10);
-    if (softMatch) accum.soft += parseInt(softMatch[1], 10);
+  private accumulateScore(score: any, accum: { hard: number; medium: number; soft: number }): void {
+    if (!score) return;
+    const comps = this.getScoreComponents(score);
+    accum.hard += comps.hard;
+    accum.medium += comps.medium;
+    accum.soft += comps.soft;
   }
 
   /**
@@ -260,11 +304,9 @@ export class ImpactAnalysisDialogComponent implements OnInit {
    * Uses the aggregate score (e.g., "-5hard/0medium/0soft") to identify the level.
    */
   private getConstraintType(constraint: any): 'hard' | 'medium' | 'soft' {
-    const score = constraint.score || constraint.weight || '';
-    const hardMatch = score.match(/(-?\d+)hard/);
-    const mediumMatch = score.match(/(-?\d+)medium/);
-    if (hardMatch && parseInt(hardMatch[1], 10) !== 0) return 'hard';
-    if (mediumMatch && parseInt(mediumMatch[1], 10) !== 0) return 'medium';
+    const score = this.getScoreComponents(constraint.score || constraint.weight);
+    if (score.hard !== 0) return 'hard';
+    if (score.medium !== 0) return 'medium';
     return 'soft';
   }
 

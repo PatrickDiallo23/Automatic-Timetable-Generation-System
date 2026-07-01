@@ -1,8 +1,8 @@
 package com.patrick.timetableappbackend.model;
 
+import ai.timefold.solver.core.api.domain.common.PlanningId;
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
 import ai.timefold.solver.core.api.domain.entity.PlanningPin;
-import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@PlanningEntity(difficultyComparatorClass = LessonStrengthComparator.class)
+@PlanningEntity(comparatorClass = LessonStrengthComparator.class)
 @Getter
 @Setter
 @ToString(exclude = {"timetable"})
@@ -78,13 +78,13 @@ public class Lesson {
     @JsonIdentityReference
     @ManyToOne() // cascade = CascadeType.MERGE
     @JoinColumn(name = "timeslot_id")
-    @PlanningVariable(strengthComparatorClass = TimeslotStrengthComparator.class)
+    @PlanningVariable(comparatorClass = TimeslotStrengthComparator.class)
     private Timeslot timeslot;
 
     @JsonIdentityReference
     @ManyToOne() //cascade = CascadeType.MERGE
     @JoinColumn(name = "room_id")
-    @PlanningVariable(strengthComparatorClass = RoomStrengthComparator.class)
+    @PlanningVariable(comparatorClass = RoomStrengthComparator.class)
     private Room room;
 
     @ElementCollection(fetch = FetchType.EAGER)

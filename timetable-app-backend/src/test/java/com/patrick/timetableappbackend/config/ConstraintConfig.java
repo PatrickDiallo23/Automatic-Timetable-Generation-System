@@ -1,6 +1,6 @@
 package com.patrick.timetableappbackend.config;
 
-import ai.timefold.solver.test.api.score.stream.ConstraintVerifier;
+import ai.timefold.solver.core.api.score.stream.test.ConstraintVerifier;
 import com.patrick.timetableappbackend.model.Lesson;
 import com.patrick.timetableappbackend.model.Timetable;
 import com.patrick.timetableappbackend.solver.TimetableConstraintProvider;

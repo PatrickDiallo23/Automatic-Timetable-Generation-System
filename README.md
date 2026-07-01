@@ -87,6 +87,36 @@ timetableApp.secretKey=<YOUR_GENERATED_SECRET_KEY>
 **Note**: Make sure that you created some users with "ADMIN" or "USER" role before using the application.
 **Note2**: You can use `pom.xml.bak` to switch to the Enterprise Edition of the application. `pom.xml` will run the build for the Community Edition.
 
+### 2.1 Set Up Timefold Solver License (Enterprise Edition only)
+
+When running the **Enterprise Edition**, you must supply a Timefold license key (`.pem` file) to prevent startup or runtime constraints. The project supports seamless key loading for both host (non-container) and container development. **All `.pem` keys are strictly ignored by Git.**
+
+Choose the setup that matches your environment:
+
+#### 💡 Option A: Easiest Local/IDE Run (Host/Bare-Metal)
+* **Instructions:** Name your license file `timefold-license.pem` and place it in the root of the backend classpath:
+  ```bash
+  # Place the file directly here:
+  timetable-app-backend/src/main/resources/timefold-license.pem
+  ```
+* **Why it works:** Timefold Solver natively checks the application classpath root. When you run `./mvnw spring-boot:run` or launch the application from your IDE, the key is automatically bundled and loaded without requiring any environment variables or aliases. It is safely ignored by Git under `*.pem` rules.
+
+#### 🐳 Option B: Containerized Run (Docker Compose)
+* **Instructions:** Place your license file in the root `secrets/` directory of the workspace:
+  ```bash
+  # Place the file directly here:
+  secrets/timefold-license.pem
+  ```
+* **Why it works:** The `docker-compose.yml` base file is pre-configured to mount the host's `./secrets` directory as a **read-only volume** inside the backend container (`/app/secrets`). The `TIMEFOLD_LICENSE_PATH=./secrets/timefold-license.pem` variable is automatically injected, mapping perfectly for both host and container runs.
+
+#### ☁️ Option C: Cloud/CI/CD (Environment Variable)
+* **Instructions:** Store the license's raw PEM string in the `TIMEFOLD_LICENSE` environment variable in your environment configuration or local `.env` overrides:
+  ```properties
+  TIMEFOLD_LICENSE="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
+  ```
+
+---
+
 3. Build the backend:
 ```bash
 mvn clean install

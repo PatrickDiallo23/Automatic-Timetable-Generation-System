@@ -1,11 +1,11 @@
 package com.patrick.timetableappbackend.model;
 
-import ai.timefold.solver.core.api.domain.constraintweight.ConstraintConfigurationProvider;
+import ai.timefold.solver.core.api.domain.solution.ConstraintWeightOverrides;
 import ai.timefold.solver.core.api.domain.solution.PlanningEntityCollectionProperty;
 import ai.timefold.solver.core.api.domain.solution.PlanningScore;
 import ai.timefold.solver.core.api.domain.solution.PlanningSolution;
 import ai.timefold.solver.core.api.domain.solution.ProblemFactCollectionProperty;
-import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
+import ai.timefold.solver.core.api.score.HardMediumSoftScore;
 import ai.timefold.solver.core.api.solver.SolverStatus;
 import com.patrick.timetableappbackend.solver.TimetableConstraintConfiguration;
 import lombok.AllArgsConstructor;
@@ -32,8 +32,17 @@ public class Timetable {
     @PlanningEntityCollectionProperty
     private List<Lesson> lessons;
 
-    @ConstraintConfigurationProvider
     private TimetableConstraintConfiguration timetableConstraintConfiguration;
+
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private ConstraintWeightOverrides<HardMediumSoftScore> constraintWeightOverrides;
+
+    public void setTimetableConstraintConfiguration(TimetableConstraintConfiguration timetableConstraintConfiguration) {
+        this.timetableConstraintConfiguration = timetableConstraintConfiguration;
+        if (timetableConstraintConfiguration != null) {
+            this.constraintWeightOverrides = timetableConstraintConfiguration.toOverrides();
+        }
+    }
 
     @PlanningScore
     private HardMediumSoftScore score;
@@ -67,6 +76,9 @@ public class Timetable {
         this.rooms = rooms;
         this.lessons = lessons;
         this.timetableConstraintConfiguration = timetableConstraintConfiguration;
+        if (timetableConstraintConfiguration != null) {
+            this.constraintWeightOverrides = timetableConstraintConfiguration.toOverrides();
+        }
     }
 
     public Timetable(List<Timeslot> timeslots, List<Room> rooms, List<Lesson> lessons, TimetableConstraintConfiguration timetableConstraintConfiguration, Long duration) {
@@ -74,6 +86,9 @@ public class Timetable {
         this.rooms = rooms;
         this.lessons = lessons;
         this.timetableConstraintConfiguration = timetableConstraintConfiguration;
+        if (timetableConstraintConfiguration != null) {
+            this.constraintWeightOverrides = timetableConstraintConfiguration.toOverrides();
+        }
         this.duration = duration;
     }
 }

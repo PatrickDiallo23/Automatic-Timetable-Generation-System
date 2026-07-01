@@ -1,25 +1,19 @@
 package com.patrick.timetableappbackend.service;
 
+import ai.timefold.solver.benchmark.aggregator.BenchmarkAggregator;
+import ai.timefold.solver.benchmark.aggregator.swingui.BenchmarkAggregatorFrame;
 import ai.timefold.solver.benchmark.api.PlannerBenchmark;
 import ai.timefold.solver.benchmark.api.PlannerBenchmarkFactory;
 import ai.timefold.solver.benchmark.config.PlannerBenchmarkConfig;
-import ai.timefold.solver.benchmark.impl.aggregator.BenchmarkAggregator;
-import ai.timefold.solver.benchmark.impl.aggregator.swingui.BenchmarkAggregatorFrame;
-import ai.timefold.solver.benchmark.impl.result.BenchmarkResultIO;
-import ai.timefold.solver.benchmark.impl.result.PlannerBenchmarkResult;
-import ai.timefold.solver.benchmark.impl.result.SingleBenchmarkResult;
-import ai.timefold.solver.benchmark.impl.result.SolverBenchmarkResult;
+
 import com.patrick.timetableappbackend.model.Timetable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +21,6 @@ import java.util.Map;
 public class BenchmarkService {
 
     private final TimetableService timetableService;
-    private final BenchmarkResultIO benchmarkResultIO = new BenchmarkResultIO();
 
     /**
      * Runs a benchmark on the timetable data fetched from the database.
@@ -86,54 +79,13 @@ public class BenchmarkService {
      * Aggregates all benchmark results from the benchmark directory into a single comprehensive report.
      *
      * @return File pointing to the generated HTML overview report
-     * @throws IllegalArgumentException if benchmark directory doesn't exist or no benchmarks found
      */
     public File aggregateAllBenchmarks() {
         PlannerBenchmarkConfig benchmarkConfig = PlannerBenchmarkConfig.createFromXmlResource("benchmarkConfig.xml");
-        File benchmarkDirectory = benchmarkConfig.getBenchmarkDirectory();
-
-        if (!benchmarkDirectory.exists() || !benchmarkDirectory.isDirectory()) {
-            throw new IllegalArgumentException("Benchmark directory does not exist: " + benchmarkDirectory.getAbsolutePath());
-        }
-
-        log.info("Starting benchmark aggregation from directory: {}", benchmarkDirectory.getAbsolutePath());
-
-        // Read all existing benchmark results
-        List<PlannerBenchmarkResult> plannerBenchmarkResults = benchmarkResultIO.readPlannerBenchmarkResultList(benchmarkDirectory);
-
-        if (plannerBenchmarkResults.isEmpty()) {
-            throw new IllegalArgumentException("No benchmark results found in directory: " + benchmarkDirectory.getAbsolutePath());
-        }
-
-        log.info("Found {} planner benchmark results", plannerBenchmarkResults.size());
-
-        // Collect all single benchmark results from all planner benchmark results
-        List<SingleBenchmarkResult> allSingleBenchmarkResults = new ArrayList<>();
-        Map<SolverBenchmarkResult, String> solverBenchmarkResultNameMap = new HashMap<>();
-
-        for (PlannerBenchmarkResult plannerResult : plannerBenchmarkResults) {
-            for (SolverBenchmarkResult solverResult : plannerResult.getSolverBenchmarkResultList()) {
-                // Add all single benchmark results from this solver
-                allSingleBenchmarkResults.addAll(solverResult.getSingleBenchmarkResultList());
-
-                // Preserve original solver names for the aggregation
-                solverBenchmarkResultNameMap.put(solverResult, solverResult.getName());
-            }
-        }
-
-        log.info("Collected {} single benchmark results for aggregation", allSingleBenchmarkResults.size());
-
-        // Create and configure the benchmark aggregator
+        log.info("Starting benchmark aggregation for all results...");
         BenchmarkAggregator aggregator = new BenchmarkAggregator();
-        aggregator.setBenchmarkDirectory(benchmarkDirectory);
-        aggregator.setBenchmarkReportConfig(benchmarkConfig.getBenchmarkReportConfig());
-
-        // Perform the aggregation
-        File htmlOverviewFile = aggregator.aggregate(allSingleBenchmarkResults, solverBenchmarkResultNameMap);
-
-        log.info("Benchmark aggregation completed successfully. Report available at: {}",
-                htmlOverviewFile.getAbsolutePath());
-
+        File htmlOverviewFile = aggregator.aggregateBenchmarks(benchmarkConfig);
+        log.info("Benchmark aggregation completed. Report available at: {}", htmlOverviewFile.getAbsolutePath());
         return htmlOverviewFile;
     }
 
@@ -145,49 +97,10 @@ public class BenchmarkService {
      */
     public File aggregateSelectedBenchmarks(List<String> benchmarkDirectoryNames) {
         PlannerBenchmarkConfig benchmarkConfig = PlannerBenchmarkConfig.createFromXmlResource("benchmarkConfig.xml");
-        File benchmarkDirectory = benchmarkConfig.getBenchmarkDirectory();
-
-        if (!benchmarkDirectory.exists() || !benchmarkDirectory.isDirectory()) {
-            throw new IllegalArgumentException("Benchmark directory does not exist: " + benchmarkDirectory.getAbsolutePath());
-        }
-
         log.info("Starting selective benchmark aggregation for directories: {}", benchmarkDirectoryNames);
-
-        // Read all benchmark results first, then filter
-        List<PlannerBenchmarkResult> allPlannerResults = benchmarkResultIO.readPlannerBenchmarkResultList(benchmarkDirectory);
-
-        List<SingleBenchmarkResult> selectedSingleBenchmarkResults = new ArrayList<>();
-        Map<SolverBenchmarkResult, String> solverBenchmarkResultNameMap = new HashMap<>();
-
-        // Filter results based on selected directory names
-        for (PlannerBenchmarkResult plannerResult : allPlannerResults) {
-            String benchmarkDirectoryName = plannerResult.getBenchmarkReportDirectory().getName();
-
-            if (benchmarkDirectoryNames.contains(benchmarkDirectoryName)) {
-                log.info("Including benchmark results from directory: {}", benchmarkDirectoryName);
-
-                for (SolverBenchmarkResult solverResult : plannerResult.getSolverBenchmarkResultList()) {
-                    selectedSingleBenchmarkResults.addAll(solverResult.getSingleBenchmarkResultList());
-                    solverBenchmarkResultNameMap.put(solverResult, solverResult.getName());
-                }
-            }
-        }
-
-        if (selectedSingleBenchmarkResults.isEmpty()) {
-            throw new IllegalArgumentException("No valid benchmark results found for selected directories: " + benchmarkDirectoryNames);
-        }
-
-        log.info("Collected {} single benchmark results from selected directories", selectedSingleBenchmarkResults.size());
-
         BenchmarkAggregator aggregator = new BenchmarkAggregator();
-        aggregator.setBenchmarkDirectory(benchmarkDirectory);
-        aggregator.setBenchmarkReportConfig(benchmarkConfig.getBenchmarkReportConfig());
-
-        File htmlOverviewFile = aggregator.aggregate(selectedSingleBenchmarkResults, solverBenchmarkResultNameMap);
-
-        log.info("Selective benchmark aggregation completed. Report available at: {}",
-                htmlOverviewFile.getAbsolutePath());
-
+        File htmlOverviewFile = aggregator.aggregateSelectedBenchmarks(benchmarkConfig, benchmarkDirectoryNames);
+        log.info("Selective benchmark aggregation completed. Report available at: {}", htmlOverviewFile.getAbsolutePath());
         return htmlOverviewFile;
     }
 
@@ -198,26 +111,8 @@ public class BenchmarkService {
      */
     public List<String> getAvailableBenchmarkDirectories() {
         PlannerBenchmarkConfig benchmarkConfig = PlannerBenchmarkConfig.createFromXmlResource("benchmarkConfig.xml");
-        File benchmarkDirectory = benchmarkConfig.getBenchmarkDirectory();
-
-        List<String> directories = new ArrayList<>();
-
-        if (!benchmarkDirectory.exists() || !benchmarkDirectory.isDirectory()) {
-            return directories;
-        }
-
-        File[] subdirs = benchmarkDirectory.listFiles(File::isDirectory);
-        if (subdirs != null) {
-            for (File subdir : subdirs) {
-                // Only include directories that have a benchmark result file
-                File resultFile = new File(subdir, "plannerBenchmarkResult.xml");
-                if (resultFile.exists()) {
-                    directories.add(subdir.getName());
-                }
-            }
-        }
-
-        return directories;
+        BenchmarkAggregator aggregator = new BenchmarkAggregator();
+        return aggregator.getAvailableBenchmarkDirectories(benchmarkConfig);
     }
 
     private File findMostRecentBenchmarkDirectory(File parentDir) {

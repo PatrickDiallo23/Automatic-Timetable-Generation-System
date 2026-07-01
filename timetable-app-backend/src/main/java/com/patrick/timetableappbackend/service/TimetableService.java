@@ -1,13 +1,15 @@
 package com.patrick.timetableappbackend.service;
 
 
+import ai.timefold.solver.core.api.score.HardMediumSoftScore;
 import ai.timefold.solver.core.api.score.analysis.ScoreAnalysis;
-import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import ai.timefold.solver.core.api.solver.ScoreAnalysisFetchPolicy;
 import ai.timefold.solver.core.api.solver.SolutionManager;
 import ai.timefold.solver.core.api.solver.SolutionUpdatePolicy;
 import ai.timefold.solver.core.api.solver.SolverManager;
 import ai.timefold.solver.core.api.solver.SolverStatus;
+import ai.timefold.solver.core.api.solver.SolverConfigOverride;
+import ai.timefold.solver.core.config.solver.termination.TerminationConfig;
 import com.patrick.timetableappbackend.exception.TimetableSolverException;
 import com.patrick.timetableappbackend.model.ConstraintModel;
 import com.patrick.timetableappbackend.model.Lesson;
@@ -53,7 +55,7 @@ public class TimetableService {
     private final LessonRepo lessonRepo;
     private final ConstraintRepo constraintRepo;
     private final RestrictionRuleRepo restrictionRuleRepo;
-    private final SolverManager<Timetable, String> solverManager;
+    private final SolverManager<Timetable> solverManager;
     private final SolutionManager<Timetable, HardMediumSoftScore> solutionManager;
     @Value("${timefold.solver.termination.spent-limit}")
     private String duration;
@@ -89,19 +91,18 @@ public class TimetableService {
     // How to integrate with Spring JPA to persist the Timetable solution
     // How to get the best solution
     public String solve(Timetable problem) {
-        problem.getLessons().forEach(lesson -> lesson.setTimetable(problem));
-        wireRulesToLessons(problem);
+        prepareProblem(problem);
+
+        Long problemDuration = problem.getDuration() != null ? problem.getDuration() : Long.parseLong(this.duration.substring(0, this.duration.length() - 1));
 
         String jobId = UUID.randomUUID().toString();
         jobIdToJob.put(jobId, Job.ofTimetable(problem));
         solverManager.solveBuilder()
                 .withProblemId(jobId)
-                //todo: to see how to implement this termination Config properly on a new version of Timefold
-                //no need to add duration because we take it from application.properties
-//                .withConfigOverride(new SolverConfigOverride<Timetable>()
-//                        .withTerminationConfig(new TerminationConfig().withMinutesSpentLimit(problem.getDuration())))
+                .withConfigOverride(new SolverConfigOverride()
+                        .withTerminationConfig(new TerminationConfig().withMinutesSpentLimit(problemDuration)))
                 .withProblemFinder(jobId_ -> jobIdToJob.get(jobId).timetable)
-                .withBestSolutionConsumer(solution -> jobIdToJob.put(jobId, Job.ofTimetable(solution)))
+                .withBestSolutionEventConsumer(event -> jobIdToJob.put(jobId, Job.ofTimetable(event.solution())))
                 //.withFinalBestSolutionConsumer(solution -> jobIdToJob/timetableSolution.put(jobId, solution))
                 .withExceptionHandler((jobId_, exception) -> {
                     jobIdToJob.put(jobId, Job.ofException(exception));
@@ -112,11 +113,20 @@ public class TimetableService {
     }
 
     public ScoreAnalysis<HardMediumSoftScore> analyze(Timetable problem, ScoreAnalysisFetchPolicy fetchPolicy) {
+        prepareProblem(problem);
         return fetchPolicy == null ? solutionManager.analyze(problem) : solutionManager.analyze(problem, fetchPolicy);
     }
 
     public HardMediumSoftScore update(Timetable problem, SolutionUpdatePolicy fetchPolicy) {
+        prepareProblem(problem);
         return fetchPolicy == null ? solutionManager.update(problem) : solutionManager.update(problem, fetchPolicy);
+    }
+
+    private void prepareProblem(Timetable problem) {
+        if (problem.getLessons() != null) {
+            problem.getLessons().forEach(lesson -> lesson.setTimetable(problem));
+            wireRulesToLessons(problem);
+        }
     }
 
     public Timetable getTimetable(String jobId) {

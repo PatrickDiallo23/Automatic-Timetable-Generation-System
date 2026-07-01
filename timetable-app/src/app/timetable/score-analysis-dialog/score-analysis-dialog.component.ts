@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { CONSTRAINT_DICTIONARY } from '../../constraints/constraint.meta';
 
 @Component({
   selector: 'app-score-analysis-dialog',
@@ -13,19 +14,46 @@ export class ScoreAnalysisDialogComponent implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
 
   ngOnInit(): void {
-    const getScoreComponents = (score: string) => {
+    const getScoreComponents = (score: any) => {
       const components = { hard: 0, medium: 0, soft: 0 };
-      Array.from(score.matchAll(/(-?[0-9]+)(hard|medium|soft)/g)).forEach(
-        (m: any) => {
-          components[m[2] as 'hard' | 'medium' | 'soft'] = parseInt(m[1], 10);
-        }
-      );
+      if (typeof score === 'string') {
+        Array.from(score.matchAll(/(-?[0-9]+)(hard|medium|soft)/g)).forEach(
+          (m: any) => {
+            components[m[2] as 'hard' | 'medium' | 'soft'] = parseInt(m[1], 10);
+          }
+        );
+      } else if (score && typeof score === 'object') {
+        components.hard = score.hardScore ?? 0;
+        components.medium = score.mediumScore ?? 0;
+        components.soft = score.softScore ?? 0;
+      }
 
       return components;
     };
 
-    const constraints = [...this.data.constraints];
-    constraints.sort((a, b) => {
+    let constraintsArray: any[] = [];
+    const rawConstraints = this.data?.constraints;
+    if (Array.isArray(rawConstraints)) {
+      constraintsArray = [...rawConstraints];
+    } else if (rawConstraints && typeof rawConstraints === 'object') {
+      for (const [key, value] of Object.entries(rawConstraints)) {
+        const val = value as any;
+        let id = val.constraintRef?.id || key.replace(/^ConstraintRef\[id=/, '').replace(/\]$/, '');
+        // Strip package/class name (e.g., com.patrick...TimetableConstraintProvider/roomConflict -> roomConflict)
+        if (id.includes('/')) {
+            id = id.split('/').pop();
+        }
+        constraintsArray.push({
+          name: id,
+          weight: val.weight,
+          score: val.score,
+          matches: val.matches || [],
+          matchCount: val.matchCount || 0
+        });
+      }
+    }
+
+    constraintsArray.sort((a, b) => {
       const aC = getScoreComponents(a.score);
       const bC = getScoreComponents(b.score);
       if (aC.hard < 0 && bC.hard > 0) return -1;
@@ -37,7 +65,16 @@ export class ScoreAnalysisDialogComponent implements OnInit {
       return Math.abs(bC.soft) - Math.abs(aC.soft);
     });
 
-    for (const e of constraints) {
+    for (const e of constraintsArray) {
+      // If it's an array from the backend, the identifier might be in e.id or e.constraintName
+      if (!e.name) {
+        e.name = e.id || e.constraintName || e.constraintId || 'N/A';
+        // Strip package/class name if present
+        if (typeof e.name === 'string' && e.name.includes('/')) {
+            e.name = e.name.split('/').pop();
+        }
+      }
+
       const w = getScoreComponents(e.weight);
       e.type = w.hard !== 0 ? 'hard' : w.medium !== 0 ? 'medium' : 'soft';
       e.weight = w[e.type as 'hard' | 'medium' | 'soft'];
@@ -45,10 +82,13 @@ export class ScoreAnalysisDialogComponent implements OnInit {
       const s = getScoreComponents(e.score);
       e.implicitScore =
         s.hard !== 0 ? s.hard : s.medium !== 0 ? s.medium : s.soft;
+
+      const meta = CONSTRAINT_DICTIONARY.find((c) => c.id === e.name);
+      e.displayName = meta ? meta.title : e.name;
       console.log(e);
     }
 
-    this.constraints = constraints;
+    this.constraints = constraintsArray;
   }
 
   async downloadReportFile(
@@ -127,10 +167,10 @@ export class ScoreAnalysisDialogComponent implements OnInit {
 
     // Calculate column widths for better formatting
     const maxNameLength = Math.max(
-      ...constraints.map((c) => c.name?.length || 0),
+      ...constraints.map((c) => (c.displayName || c.name || '').length),
       'Constraint'.length
     );
-    const nameWidth = Math.min(Math.max(maxNameLength, 15), 40); // Between 15-40 chars
+    const nameWidth = Math.min(Math.max(maxNameLength, 15), 50); // Between 15-50 chars
 
     const headerRow = `${'Icon'.padEnd(4)} | ${'Constraint'.padEnd(
       nameWidth
@@ -143,7 +183,7 @@ export class ScoreAnalysisDialogComponent implements OnInit {
     // Table rows
     constraints.forEach((constraint) => {
       const icon = this.getConstraintIcon(constraint);
-      const name = (constraint.name || 'N/A')
+      const name = (constraint.displayName || constraint.name || 'N/A')
         .substring(0, nameWidth)
         .padEnd(nameWidth);
       const type = (constraint.type || 'N/A').padEnd(6);

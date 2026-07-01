@@ -30,3 +30,10 @@ docker/secrets/
 
 # Docker build cache artefacts
 .dockerignore.local
+
+# ── Secrets & Licenses ────────────────────────────────────────────────────────
+*.pem
+/secrets/
+.env*.local
+.env.local
+

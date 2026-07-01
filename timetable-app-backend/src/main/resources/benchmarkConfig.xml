@@ -25,8 +25,8 @@
 
             <constructionHeuristic>
                 <constructionHeuristicType>ALLOCATE_ENTITY_FROM_QUEUE</constructionHeuristicType>
-                <entitySorterManner>DECREASING_DIFFICULTY_IF_AVAILABLE</entitySorterManner>
-                <valueSorterManner>DECREASING_STRENGTH_IF_AVAILABLE</valueSorterManner>
+                <entitySorterManner>DESCENDING_IF_AVAILABLE</entitySorterManner>
+                <valueSorterManner>DESCENDING_IF_AVAILABLE</valueSorterManner>
                 <!--        <forager>-->
                 <!--            <pickEarlyType>FIRST_FEASIBLE_SCORE_OR_NON_DETERIORATING_HARD</pickEarlyType>-->
                 <!--        </forager>-->

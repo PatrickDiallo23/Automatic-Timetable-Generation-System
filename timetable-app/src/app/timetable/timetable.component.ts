@@ -25,7 +25,102 @@ export class TimetableComponent implements OnInit, OnDestroy {
   user: User = {};
   connectedUser: User = {};
   jobId?: string | null;
-  timetableData: Timetable = {};
+  private _timetableData: Timetable = {};
+  get timetableData(): Timetable {
+    return this._timetableData;
+  }
+  set timetableData(val: Timetable) {
+    this._timetableData = this.normalizeTimetable(val);
+  }
+
+  private normalizeTimetable(timetable: Timetable): Timetable {
+     // TODO: Use logger to find out the exact type of object we are receiving from backend
+    // to refactor this function
+    
+    if (!timetable) return timetable;
+
+    const roomMap = new Map<number, Room>();
+    const timeslotMap = new Map<number, Timeslot>();
+
+    // 1. Gather all full Room/Timeslot objects from main arrays
+    timetable.rooms?.forEach((room: any) => {
+      if (room && typeof room === 'object' && room.id !== undefined) {
+        roomMap.set(room.id, room);
+      }
+    });
+    timetable.timeslots?.forEach((timeslot: any) => {
+      if (timeslot && typeof timeslot === 'object' && timeslot.id !== undefined) {
+        timeslotMap.set(timeslot.id, timeslot);
+      }
+    });
+
+    // 2. Gather any full Room/Timeslot objects from lessons
+    timetable.lessons?.forEach((lesson: any) => {
+      if (lesson.room && typeof lesson.room === 'object' && lesson.room.id !== undefined) {
+        roomMap.set(lesson.room.id, lesson.room);
+      }
+      if (lesson.timeslot && typeof lesson.timeslot === 'object' && lesson.timeslot.id !== undefined) {
+        timeslotMap.set(lesson.timeslot.id, lesson.timeslot);
+      }
+    });
+
+    // 3. Reconstitute main rooms array with full objects only
+    if (timetable.rooms) {
+      timetable.rooms = timetable.rooms.map((room: any) => {
+        if (typeof room === 'number') {
+          return roomMap.get(room) || { id: room, name: `Room ${room}` };
+        }
+        return room;
+      });
+    }
+
+    // 4. Reconstitute main timeslots array with full objects only
+    if (timetable.timeslots) {
+      timetable.timeslots = timetable.timeslots.map((timeslot: any) => {
+        if (typeof timeslot === 'number') {
+          return timeslotMap.get(timeslot) || { id: timeslot, dayOfWeek: 'Unknown' };
+        }
+        return timeslot;
+      });
+    }
+
+    // 5. Ensure room and timeslot inside lessons are purely numeric IDs and compute unassigned count
+    let uninitializedCount = 0;
+    timetable.lessons?.forEach((lesson: any) => {
+      if (lesson.room && typeof lesson.room === 'object') {
+        lesson.room = lesson.room.id;
+      }
+      if (lesson.timeslot && typeof lesson.timeslot === 'object') {
+        lesson.timeslot = lesson.timeslot.id;
+      }
+      
+      if (!lesson.room || !lesson.timeslot) {
+        uninitializedCount++;
+      }
+    });
+
+    // 6. Ensure score includes the dynamically computed initScore
+    const calculatedInitScore = uninitializedCount > 0 ? -uninitializedCount : 0;
+    if (timetable.score) {
+      if (typeof timetable.score === 'string') {
+        const scoreStr = timetable.score as string;
+        const hardMatch = scoreStr.match(/(-?\d+)hard/);
+        const mediumMatch = scoreStr.match(/(-?\d+)medium/);
+        const softMatch = scoreStr.match(/(-?\d+)soft/);
+        timetable.score = {
+          initScore: calculatedInitScore,
+          hardScore: hardMatch ? parseInt(hardMatch[1], 10) : 0,
+          mediumScore: mediumMatch ? parseInt(mediumMatch[1], 10) : 0,
+          softScore: softMatch ? parseInt(softMatch[1], 10) : 0,
+        };
+      } else if (typeof timetable.score === 'object') {
+        (timetable.score as any).initScore = calculatedInitScore;
+      }
+    }
+
+    return timetable;
+  }
+
   lessonsData: Data = {
     timeslots: [],
     rooms: [],

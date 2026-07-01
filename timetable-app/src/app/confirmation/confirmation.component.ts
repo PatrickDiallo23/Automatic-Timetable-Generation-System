@@ -4,7 +4,7 @@ import { ConfirmationService } from './confirmation.service';
 import { TimetableService } from '../timetable/timetable.service';
 import { CoreService } from '../core/core.service';
 import { forkJoin } from 'rxjs';
-import { Teacher, Timetable, RestrictionRule } from '../model/timetableEntities';
+import { Teacher, Timetable, RestrictionRule, Room, Timeslot } from '../model/timetableEntities';
 import { JsonImportService } from '../core/json-import.service';
 import { LoginService } from '../login/login.service';
 import { ExcelImportService } from '../core/excel-import.service';
@@ -24,7 +24,78 @@ export class ConfirmationComponent implements OnInit, OnDestroy {
   studentGroupCount: number = 0;
   restrictionRuleCount: number = 0;
   problemDuration: number | undefined;
-  data?: Timetable;
+  private _data?: Timetable;
+  get data(): Timetable | undefined {
+    return this._data;
+  }
+  set data(val: Timetable | undefined) {
+    this._data = this.normalizeTimetable(val);
+  }
+
+  private normalizeTimetable(timetable: Timetable | undefined): Timetable | undefined {
+    // TODO: Use logger to find out the exact type of object we are receiving from backend
+    // to refactor this function
+    
+    if (!timetable) return timetable;
+
+    const roomMap = new Map<number, Room>();
+    const timeslotMap = new Map<number, Timeslot>();
+
+    // 1. Gather all full Room/Timeslot objects from main arrays
+    timetable.rooms?.forEach((room: any) => {
+      if (room && typeof room === 'object' && room.id !== undefined) {
+        roomMap.set(room.id, room);
+      }
+    });
+    timetable.timeslots?.forEach((timeslot: any) => {
+      if (timeslot && typeof timeslot === 'object' && timeslot.id !== undefined) {
+        timeslotMap.set(timeslot.id, timeslot);
+      }
+    });
+
+    // 2. Gather any full Room/Timeslot objects from lessons
+    timetable.lessons?.forEach((lesson: any) => {
+      if (lesson.room && typeof lesson.room === 'object' && lesson.room.id !== undefined) {
+        roomMap.set(lesson.room.id, lesson.room);
+      }
+      if (lesson.timeslot && typeof lesson.timeslot === 'object' && lesson.timeslot.id !== undefined) {
+        timeslotMap.set(lesson.timeslot.id, lesson.timeslot);
+      }
+    });
+
+    // 3. Reconstitute main rooms array with full objects only
+    if (timetable.rooms) {
+      timetable.rooms = timetable.rooms.map((room: any) => {
+        if (typeof room === 'number') {
+          return roomMap.get(room) || { id: room, name: `Room ${room}` };
+        }
+        return room;
+      });
+    }
+
+    // 4. Reconstitute main timeslots array with full objects only
+    if (timetable.timeslots) {
+      timetable.timeslots = timetable.timeslots.map((timeslot: any) => {
+        if (typeof timeslot === 'number') {
+          return timeslotMap.get(timeslot) || { id: timeslot, dayOfWeek: 'Unknown' };
+        }
+        return timeslot;
+      });
+    }
+
+    // 5. Ensure room and timeslot inside lessons are purely numeric IDs
+    timetable.lessons?.forEach((lesson: any) => {
+      if (lesson.room && typeof lesson.room === 'object') {
+        lesson.room = lesson.room.id;
+      }
+      if (lesson.timeslot && typeof lesson.timeslot === 'object') {
+        lesson.timeslot = lesson.timeslot.id;
+      }
+    });
+
+    return timetable;
+  }
+
   importType = '';
   isImportMode = false;
   importDataLoaded = false;

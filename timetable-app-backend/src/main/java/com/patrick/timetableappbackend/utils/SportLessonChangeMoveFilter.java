@@ -1,20 +1,20 @@
 package com.patrick.timetableappbackend.utils;
 
-import ai.timefold.solver.core.api.score.director.ScoreDirector;
 import ai.timefold.solver.core.impl.heuristic.selector.common.decorator.SelectionFilter;
-import ai.timefold.solver.core.impl.heuristic.selector.move.generic.ChangeMove;
+import ai.timefold.solver.core.impl.score.director.ScoreDirector;
+import ai.timefold.solver.core.preview.api.move.builtin.ChangeMove;
+
 import com.patrick.timetableappbackend.model.Lesson;
 import com.patrick.timetableappbackend.model.Room;
 import com.patrick.timetableappbackend.model.Timetable;
 
-import java.time.Duration;
-
-public class SportLessonChangeMoveFilter implements SelectionFilter<Timetable, ChangeMove<Lesson>> {
+// TODO: remove this file in future cause it's not used
+public class SportLessonChangeMoveFilter implements SelectionFilter<Timetable, ChangeMove<Timetable, Lesson, Room>> {
 
     @Override
-    public boolean accept(ScoreDirector<Timetable> scoreDirector, ChangeMove<Lesson> changeMove) {
-        Lesson lesson = (Lesson) changeMove.getEntity();
-        Object planningValue = changeMove.getToPlanningValue();
+    public boolean accept(ScoreDirector<Timetable> scoreDirector, ChangeMove<Timetable, Lesson, Room> changeMove) {
+        Lesson lesson = (Lesson) changeMove.getPlanningEntities().getFirst();
+        Object planningValue = changeMove.getPlanningValues().getFirst();
 
         // Ensure the value is of type Timeslot
         if (!(planningValue instanceof Room)) {

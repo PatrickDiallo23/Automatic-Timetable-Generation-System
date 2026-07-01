@@ -1,116 +1,56 @@
 package com.patrick.timetableappbackend.solver;
 
-import ai.timefold.solver.core.api.domain.constraintweight.ConstraintConfiguration;
-import ai.timefold.solver.core.api.domain.constraintweight.ConstraintWeight;
-import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
+import ai.timefold.solver.core.api.domain.solution.ConstraintWeightOverrides;
+import ai.timefold.solver.core.api.score.HardMediumSoftScore;
 import com.patrick.timetableappbackend.model.ConstraintModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-@ConstraintConfiguration(constraintPackage = "com.patrick.timetableappbackend.solver")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class TimetableConstraintConfiguration {
 
     //hard
-    @ConstraintWeight("roomConflict")
     private HardMediumSoftScore roomConflict = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("teacherConflict")
     private HardMediumSoftScore teacherConflict = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("studentGroupConflict")
     private HardMediumSoftScore studentGroupConflict = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("studentGroupConflictAdvanced")
     private HardMediumSoftScore studentGroupConflictWithGroupBy = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("capacityRoomConflict")
     private HardMediumSoftScore capacityRoomConflict = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("courseStudentsGroupedInTheSameRoom")
     private HardMediumSoftScore courseStudentsGroupedInTheSameRoom = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("seminarStudentsGroupedInTheSameRoom")
     private HardMediumSoftScore seminarStudentsGroupedInTheSameRoom = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("labsStudentsGroupedInTheSameRoom")
     private HardMediumSoftScore labsStudentsGroupedInTheSameRoom = HardMediumSoftScore.ZERO;
-
-//    @ConstraintWeight("seminarAndLabStudentsGroupedInTheSameRoom")
-//    private HardMediumSoftScore seminarAndLabStudentsGroupedInTheSameRoom = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("roomConflictUniversity")
     private HardMediumSoftScore roomConflictUniversity = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("teacherConflictUniversity")
     private HardMediumSoftScore teacherConflictUniversity = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("overlappingTimeslot")
     private HardMediumSoftScore overlappingTimeslot = HardMediumSoftScore.ZERO;
 
     //medium
-
-    @ConstraintWeight("maximumCoursesForStudents")
     private HardMediumSoftScore maximumCoursesForStudents = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("coursesGroupedInTheSameTimeslot")
     private HardMediumSoftScore coursesGroupedInTheSameTimeslot = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("seminarsGroupedInTheSameTimeslot")
     private HardMediumSoftScore seminarsGroupedInTheSameTimeslot = HardMediumSoftScore.ZERO;
-
-//    @ConstraintWeight("labsAndSeminarsGroupedInTheSameTimeslot")
-//    private HardMediumSoftScore labsAndSeminarsGroupedInTheSameTimeslot = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("maximmumCoursesTeached")
     private HardMediumSoftScore maximmumCoursesTeached = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("maximizePreferredTimeslotAssignments")
     private HardMediumSoftScore maximizePreferredTimeslotAssignments = HardMediumSoftScore.ZERO;
 
     //soft
-    @ConstraintWeight("teacherRoomStability")
     private HardMediumSoftScore teacherRoomStability = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("teacherTimeEfficiency")
     private HardMediumSoftScore teacherTimeEfficiency = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("studentGroupVariety")
     private HardMediumSoftScore studentGroupVariety = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("gapsLongerThan4Hours")
     private HardMediumSoftScore gapsLongerThan4Hours = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("labsGroupedInTheSameTimeslot")
     private HardMediumSoftScore labsGroupedInTheSameTimeslot = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("coursesInTheSameBuilding")
     private HardMediumSoftScore coursesInTheSameBuilding = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("noGapsForHighschool")
     private HardMediumSoftScore noGapsForHighschool = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("fairLessonsDistribution")
     private HardMediumSoftScore fairLessonsDistribution = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("earlyStartForHighschool")
     private HardMediumSoftScore earlyStartForHighschool = HardMediumSoftScore.ZERO;
 
     // Foreign language grouping constraints
-    @ConstraintWeight("foreignLanguageSameTimeslot")
     private HardMediumSoftScore foreignLanguageSameTimeslot = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("schoolRoomConflict")
     private HardMediumSoftScore schoolRoomConflict = HardMediumSoftScore.ZERO;
-
-    @ConstraintWeight("schoolTeacherConflict")
     private HardMediumSoftScore schoolTeacherConflict = HardMediumSoftScore.ZERO;
-
 
     public TimetableConstraintConfiguration(List<ConstraintModel> constraintList) {
         constraintList.forEach((constraint) -> {
@@ -124,7 +64,6 @@ public class TimetableConstraintConfiguration {
                 case "courseStudentsGroupedInTheSameRoom" -> courseStudentsGroupedInTheSameRoom = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "seminarStudentsGroupedInTheSameRoom" -> seminarStudentsGroupedInTheSameRoom = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "labsStudentsGroupedInTheSameRoom" -> labsStudentsGroupedInTheSameRoom = mapStringToHardMediumSoftScore(constraint.getWeight());
-//                case "seminarAndLabStudentsGroupedInTheSameRoom" -> seminarAndLabStudentsGroupedInTheSameRoom = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "roomConflictUniversity" -> roomConflictUniversity = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "teacherConflictUniversity" -> teacherConflictUniversity = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "overlappingTimeslot" -> overlappingTimeslot = mapStringToHardMediumSoftScore(constraint.getWeight());
@@ -135,7 +74,6 @@ public class TimetableConstraintConfiguration {
                 case "maximizePreferredTimeslotAssignments" -> maximizePreferredTimeslotAssignments = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "coursesGroupedInTheSameTimeslot" -> coursesGroupedInTheSameTimeslot = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "seminarsGroupedInTheSameTimeslot" -> seminarsGroupedInTheSameTimeslot = mapStringToHardMediumSoftScore(constraint.getWeight());
-//                case "labsAndSeminarsGroupedInTheSameTimeslot" -> labsAndSeminarsGroupedInTheSameTimeslot = mapStringToHardMediumSoftScore(constraint.getWeight());
 
                 //soft
                 case "teacherRoomStability" -> teacherRoomStability = mapStringToHardMediumSoftScore(constraint.getWeight());
@@ -150,9 +88,41 @@ public class TimetableConstraintConfiguration {
                 case "foreignLanguageSameTimeslot" -> foreignLanguageSameTimeslot = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "schoolRoomConflict" -> schoolRoomConflict = mapStringToHardMediumSoftScore(constraint.getWeight());
                 case "schoolTeacherConflict" -> schoolTeacherConflict = mapStringToHardMediumSoftScore(constraint.getWeight());
-                // Add more cases for other constraints if needed
             }
         });
+    }
+
+    public ConstraintWeightOverrides<HardMediumSoftScore> toOverrides() {
+        Map<String, HardMediumSoftScore> map = new HashMap<>();
+        map.put("roomConflict", roomConflict);
+        map.put("teacherConflict", teacherConflict);
+        map.put("studentGroupConflict", studentGroupConflict);
+        map.put("studentGroupConflictAdvanced", studentGroupConflictWithGroupBy);
+        map.put("capacityRoomConflict", capacityRoomConflict);
+        map.put("courseStudentsGroupedInTheSameRoom", courseStudentsGroupedInTheSameRoom);
+        map.put("seminarStudentsGroupedInTheSameRoom", seminarStudentsGroupedInTheSameRoom);
+        map.put("labsStudentsGroupedInTheSameRoom", labsStudentsGroupedInTheSameRoom);
+        map.put("roomConflictUniversity", roomConflictUniversity);
+        map.put("teacherConflictUniversity", teacherConflictUniversity);
+        map.put("overlappingTimeslot", overlappingTimeslot);
+        map.put("maximumCoursesForStudents", maximumCoursesForStudents);
+        map.put("coursesGroupedInTheSameTimeslot", coursesGroupedInTheSameTimeslot);
+        map.put("seminarsGroupedInTheSameTimeslot", seminarsGroupedInTheSameTimeslot);
+        map.put("maximmumCoursesTeached", maximmumCoursesTeached);
+        map.put("maximizePreferredTimeslotAssignments", maximizePreferredTimeslotAssignments);
+        map.put("teacherRoomStability", teacherRoomStability);
+        map.put("teacherTimeEfficiency", teacherTimeEfficiency);
+        map.put("studentGroupVariety", studentGroupVariety);
+        map.put("gapsLongerThan4Hours", gapsLongerThan4Hours);
+        map.put("labsGroupedInTheSameTimeslot", labsGroupedInTheSameTimeslot);
+        map.put("coursesInTheSameBuilding", coursesInTheSameBuilding);
+        map.put("noGapsForHighschool", noGapsForHighschool);
+        map.put("fairLessonsDistribution", fairLessonsDistribution);
+        map.put("earlyStartForHighschool", earlyStartForHighschool);
+        map.put("foreignLanguageSameTimeslot", foreignLanguageSameTimeslot);
+        map.put("schoolRoomConflict", schoolRoomConflict);
+        map.put("schoolTeacherConflict", schoolTeacherConflict);
+        return ConstraintWeightOverrides.of(map);
     }
 
     private HardMediumSoftScore mapStringToHardMediumSoftScore(String weight) {

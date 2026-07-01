@@ -1,7 +1,7 @@
 package com.patrick.timetableappbackend.controller;
 
+import ai.timefold.solver.core.api.score.HardMediumSoftScore;
 import ai.timefold.solver.core.api.score.analysis.ScoreAnalysis;
-import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import ai.timefold.solver.core.api.solver.ScoreAnalysisFetchPolicy;
 import ai.timefold.solver.core.api.solver.SolutionUpdatePolicy;
 import com.patrick.timetableappbackend.model.Timetable;
