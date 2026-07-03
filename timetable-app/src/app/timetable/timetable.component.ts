@@ -107,14 +107,13 @@ export class TimetableComponent implements OnInit, OnDestroy {
         const hardMatch = scoreStr.match(/(-?\d+)hard/);
         const mediumMatch = scoreStr.match(/(-?\d+)medium/);
         const softMatch = scoreStr.match(/(-?\d+)soft/);
-        timetable.score = {
-          initScore: calculatedInitScore,
-          hardScore: hardMatch ? parseInt(hardMatch[1], 10) : 0,
-          mediumScore: mediumMatch ? parseInt(mediumMatch[1], 10) : 0,
-          softScore: softMatch ? parseInt(softMatch[1], 10) : 0,
-        };
-      } else if (typeof timetable.score === 'object') {
-        (timetable.score as any).initScore = calculatedInitScore;
+        
+        const hard = hardMatch ? hardMatch[1] : 0;
+        const medium = mediumMatch ? mediumMatch[1] : 0;
+        const soft = softMatch ? softMatch[1] : 0;
+        
+        const initStr = calculatedInitScore ? `${calculatedInitScore}init/` : '';
+        timetable.score = `${initStr}${hard}hard/${medium}medium/${soft}soft` as any;
       }
     }
 
@@ -157,6 +156,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
   availableSubjects: string[] = [];
   availableLessonTypes: string[] = Object.values(LessonType);
   availableYears: string[] = Object.values(Year);
+  availableWeekParities: string[] = ['WEEKLY', 'EVEN', 'ODD'];
   filteredAdvancedRooms?: Observable<string[]>;
   filteredAdvancedTeachers?: Observable<string[]>;
   filteredAdvancedStudentGroupNames?: Observable<string[]>;
@@ -190,6 +190,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
     subject: new FormControl(''),
     lessonType: new FormControl(''),
     year: new FormControl(''),
+    weekParity: new FormControl(''),
     pinnedOnly: new FormControl(false),
     rulesOnly: new FormControl(false),
   });
@@ -490,6 +491,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
         <td>
           <div style="font-weight: 500; margin-bottom: 2px;">${this.formatDay(timeslot?.dayOfWeek)}</div>
           <div style="font-size: 0.9rem; color: #666;">${timeslot?.startTime} - ${timeslot?.endTime}</div>
+          ${lesson.weekParity && lesson.weekParity !== 'WEEKLY' ? `<div style="font-size: 0.8rem; color: #f57c00; font-weight: bold; margin-top: 4px;"><i class="material-icons" style="font-size: 14px; vertical-align: middle;">event_repeat</i> ${lesson.weekParity}</div>` : ''}
         </td>
         <td>
           <div style="font-weight: 500; margin-bottom: 2px;">${room?.name}</div>
@@ -722,6 +724,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
         <td>
           <div style="font-weight: 500; margin-bottom: 2px;">${this.formatDay(timeslot?.dayOfWeek)}</div>
           <div style="font-size: 0.9rem; color: #666;">${timeslot?.startTime} - ${timeslot?.endTime}</div>
+          ${lesson.weekParity && lesson.weekParity !== 'WEEKLY' ? `<div style="font-size: 0.8rem; color: #f57c00; font-weight: bold; margin-top: 4px;"><i class="material-icons" style="font-size: 14px; vertical-align: middle;">event_repeat</i> ${lesson.weekParity}</div>` : ''}
         </td>
         <td>
           <div style="font-weight: 500; margin-bottom: 2px;">${room?.name}</div>
@@ -893,6 +896,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
       <td>
         <div style="font-weight: 500; margin-bottom: 2px;">${this.formatDay(timeslot?.dayOfWeek)}</div>
         <div style="font-size: 0.9rem; color: #666;">${timeslot?.startTime} - ${timeslot?.endTime}</div>
+         ${lesson.weekParity && lesson.weekParity !== 'WEEKLY' ? `<div style="font-size: 0.8rem; color: #f57c00; font-weight: bold; margin-top: 4px;"><i class="material-icons" style="font-size: 14px; vertical-align: middle;">event_repeat</i> ${lesson.weekParity}</div>` : ''}
       </td>
       <td>
         <div style="display: flex; align-items: center;">
@@ -1059,6 +1063,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
       if (f.subject && !lesson.subject?.toLowerCase().includes(f.subject.toLowerCase())) return false;
       if (f.lessonType && lesson.lessonType !== f.lessonType) return false;
       if (f.year && lesson.year !== f.year) return false;
+      if (f.weekParity && lesson.weekParity !== f.weekParity) return false;
       if (f.pinnedOnly && !lesson.pinned) return false;
       if (f.rulesOnly && (!lesson.appliedRuleIds || lesson.appliedRuleIds.length === 0)) return false;
 
@@ -1098,7 +1103,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
 
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
-    const headers = ['Subject', 'Type', 'Teacher', 'Student Group', 'Year', 'Day', 'Time', 'Room', 'Status'];
+    const headers = ['Subject', 'Type', 'Parity', 'Teacher', 'Student Group', 'Year', 'Day', 'Time', 'Room', 'Status'];
     if (this.isAdmin(this.user)) headers.push('Actions');
 
     headers.forEach(h => {
@@ -1140,6 +1145,7 @@ export class TimetableComponent implements OnInit, OnDestroy {
       const cells = [
         `<td style="padding: 10px 14px; font-weight: 500;">${lesson.subject || '-'}</td>`,
         `<td style="padding: 10px 14px;"><span style="background: ${this.getLessonTypeColor(lesson.lessonType)}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">${lesson.lessonType || '-'}</span></td>`,
+        `<td style="padding: 10px 14px;"><span style="background: ${lesson.weekParity === 'WEEKLY' || !lesson.weekParity ? '#4caf50' : '#f57c00'}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">${lesson.weekParity || 'WEEKLY'}</span></td>`,
         `<td style="padding: 10px 14px;">${teacher?.name || '-'}</td>`,
         `<td style="padding: 10px 14px;">
           <div style="font-weight: 500;">${studentGroup?.name || '-'}</div>

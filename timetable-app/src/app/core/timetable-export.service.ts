@@ -51,7 +51,7 @@ export class TimetableExportService {
     const rows = this.buildFlatRows(timetableData);
     const ws = XLSX.utils.json_to_sheet(rows);
     ws['!cols'] = [
-      { wch: 20 }, { wch: 15 }, { wch: 20 }, { wch: 15 },
+      { wch: 20 }, { wch: 15 }, { wch: 10 }, { wch: 20 }, { wch: 15 },
       { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 12 },
       { wch: 15 }, { wch: 15 }, { wch: 8 }, { wch: 10 },
     ];
@@ -103,7 +103,7 @@ export class TimetableExportService {
       const byGroup = this.groupBy(yearLessons, l => this.formatStudentGroupDisplay(l.studentGroup));
       const sortedGroups = [...byGroup.keys()].sort();
 
-      const columns = ['Subject', 'Lesson Type', 'Teacher', 'Student Group', 'Day', 'Start Time', 'End Time', 'Room'];
+      const columns = ['Subject', 'Lesson Type', 'Parity', 'Teacher', 'Student Group', 'Day', 'Start Time', 'End Time', 'Room'];
       const sheetRows: LessonRow[] = [];
       for (const groupName of sortedGroups) {
         const groupLessons = byGroup.get(groupName)!;
@@ -122,6 +122,7 @@ export class TimetableExportService {
           sheetRows.push({
             'Subject': lesson.subject || '',
             'Lesson Type': lesson.lessonType || '',
+            'Parity': lesson.weekParity || 'WEEKLY',
             'Teacher': lesson.teacher?.name || 'N/A',
             'Student Group': this.formatStudentGroupDisplay(lesson.studentGroup),
             'Day': this.formatDay(ts?.dayOfWeek),
@@ -137,7 +138,7 @@ export class TimetableExportService {
 
       const ws = XLSX.utils.json_to_sheet(sheetRows);
       this.applySheetFormatting(ws, columns.length, sheetRows.length, [
-        20, 15, 20, 25, 12, 12, 12, 15,
+        20, 15, 10, 20, 25, 12, 12, 12, 15,
       ]);
 
       const sheetName = this.sanitizeSheetName(this.formatYearLabel(year));
@@ -186,7 +187,7 @@ export class TimetableExportService {
       const byTeacher = this.groupBy(letterLessons, l => l.teacher?.name || 'Unknown');
       const sortedTeachers = [...byTeacher.keys()].sort();
 
-      const columns = ['Teacher', 'Student Group', 'Subgroup', 'Subject', 'Lesson Type', 'Day', 'Start Time', 'End Time', 'Room', 'Building'];
+      const columns = ['Teacher', 'Student Group', 'Subgroup', 'Subject', 'Lesson Type', 'Parity', 'Day', 'Start Time', 'End Time', 'Room', 'Building'];
       const sheetRows: LessonRow[] = [];
       for (const teacherName of sortedTeachers) {
         const teacherLessons = byTeacher.get(teacherName)!;
@@ -209,6 +210,7 @@ export class TimetableExportService {
             'Subgroup': lesson.studentGroup?.semiGroup?.replace('SEMI_GROUP', 'Subgroup ') || 'N/A',
             'Subject': lesson.subject || '',
             'Lesson Type': lesson.lessonType || '',
+            'Parity': lesson.weekParity || 'WEEKLY',
             'Day': this.formatDay(ts?.dayOfWeek),
             'Start Time': ts?.startTime || 'N/A',
             'End Time': ts?.endTime || 'N/A',
@@ -222,7 +224,7 @@ export class TimetableExportService {
 
       const ws = XLSX.utils.json_to_sheet(sheetRows);
       this.applySheetFormatting(ws, columns.length, sheetRows.length, [
-        20, 20, 12, 20, 15, 12, 12, 12, 15, 15,
+        20, 20, 12, 20, 15, 10, 12, 12, 12, 15, 15,
       ]);
 
       XLSX.utils.book_append_sheet(wb, ws, this.sanitizeSheetName(`Teachers ${letter}`));
@@ -275,7 +277,7 @@ export class TimetableExportService {
       });
       const sortedRooms = [...byRoom.keys()].sort();
 
-      const columns = ['Room', 'Building', 'Day', 'Start Time', 'End Time', 'Student Group', 'Subgroup', 'Subject', 'Lesson Type', 'Teacher'];
+      const columns = ['Room', 'Building', 'Day', 'Start Time', 'End Time', 'Student Group', 'Subgroup', 'Subject', 'Lesson Type', 'Parity', 'Teacher'];
       const sheetRows: LessonRow[] = [];
       for (const roomName of sortedRooms) {
         const roomLessons = byRoom.get(roomName)!;
@@ -302,6 +304,7 @@ export class TimetableExportService {
             'Subgroup': lesson.studentGroup?.semiGroup?.replace('SEMI_GROUP', 'Subgroup ') || 'N/A',
             'Subject': lesson.subject || '',
             'Lesson Type': lesson.lessonType || '',
+            'Parity': lesson.weekParity || 'WEEKLY',
             'Teacher': lesson.teacher?.name || 'N/A',
           });
         }
@@ -311,7 +314,7 @@ export class TimetableExportService {
 
       const ws = XLSX.utils.json_to_sheet(sheetRows);
       this.applySheetFormatting(ws, columns.length, sheetRows.length, [
-        15, 15, 12, 12, 12, 20, 12, 20, 15, 20,
+        15, 15, 12, 12, 12, 20, 12, 20, 15, 10, 20,
       ]);
 
       XLSX.utils.book_append_sheet(wb, ws, this.sanitizeSheetName(building));
@@ -563,6 +566,7 @@ export class TimetableExportService {
       return {
         'Subject': lesson.subject || '',
         'Lesson Type': lesson.lessonType || '',
+        'Parity': lesson.weekParity || 'WEEKLY',
         'Teacher': lesson.teacher?.name || 'N/A',
         'Student Group': lesson.studentGroup?.studentGroup 
           ? `${lesson.studentGroup.studentGroup}${lesson.studentGroup.name ? ` (${lesson.studentGroup.name})` : ''}` 

@@ -140,6 +140,11 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                 )
                 //university filtering of lessons
                 .filter(((lesson1, lesson2) -> {
+                     // Week parity filter — ODD vs EVEN lessons don't physically co-occur
+                     if (!lesson1.getWeekParity().overlapsWith(lesson2.getWeekParity())) {
+                        return false; // No conflict - different week parities don't overlap in time
+                     }
+
                     // Early return for most common case - different series
                     if (!lesson1.getStudentGroup().getName().equals(lesson2.getStudentGroup().getName())) {
                         return true; // Conflict - different series can't share room/timeslot
@@ -186,6 +191,10 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                         //with the same teacher
                         Joiners.equal(lesson -> lesson.getTeacher().getId()))
                 .filter(((lesson1, lesson2) -> {
+                    // Week parity filter — ODD vs EVEN lessons don't physically co-occur
+                    if (!lesson1.getWeekParity().overlapsWith(lesson2.getWeekParity())) {
+                        return false; // No conflict - different week parities don't overlap in time
+                    }
 
                     // Early return - different series always conflict
                     if (!lesson1.getStudentGroup().getName().equals(lesson2.getStudentGroup().getName())) {
@@ -215,7 +224,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
 
     Constraint studentGroupConflict(ConstraintFactory constraintFactory) {
 
-        // A student group can attend at most one lesson at the same time.
+        // A student group can attend at most one lesson at the same time (more suitable for universities/colleges, but also works for schools).
         return constraintFactory
                 //select each pair of 2 different lessons
                 .forEachUniquePair(Lesson.class,
@@ -223,7 +232,8 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                         Joiners.equal(lesson -> lesson.getStudentGroup().getId()),
                         //in the same timeslot
                         Joiners.equal(lesson -> lesson.getTimeslot().getId()))
-
+                // Week parity filter — ODD vs EVEN lessons don't physically co-occur
+                .filter((lesson1, lesson2) -> lesson1.getWeekParity().overlapsWith(lesson2.getWeekParity()))
                 .penalize(HardMediumSoftScore.ONE_HARD)
                 .justifyWith((lesson1, lesson2, score) -> new StudentGroupConflictJustification(lesson1.getStudentGroup(), lesson1, lesson2))
                 .asConstraint("studentGroupConflict");
@@ -231,7 +241,7 @@ public class TimetableConstraintProvider implements ConstraintProvider {
 
     Constraint studentGroupConflictWithGroupBy(ConstraintFactory constraintFactory) {
 
-        // A student group can attend at most one lesson at the same time.
+        // A student group can attend at most one lesson at the same time (more precise for schools).
         return constraintFactory
                 .forEach(Lesson.class)
                 .groupBy(
@@ -264,6 +274,8 @@ public class TimetableConstraintProvider implements ConstraintProvider {
                                 lesson -> lesson.getTimeslot().getEndTime()
                         )
                 )
+                // Week parity filter — ODD vs EVEN lessons don't physically co-occur
+                .filter((lesson1, lesson2) -> lesson1.getWeekParity().overlapsWith(lesson2.getWeekParity()))
                 .penalize(HardMediumSoftScore.ONE_HARD)
                 .justifyWith((lesson1, lesson2, score) -> new OverlappingTimeslotJustification(lesson1, lesson2))
                 .asConstraint("overlappingTimeslot");

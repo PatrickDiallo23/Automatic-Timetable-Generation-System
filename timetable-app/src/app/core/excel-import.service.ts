@@ -17,6 +17,7 @@ import {
   RuleTargetType,
   RuleCriteriaField,
   RuleOperator,
+  WeekParity,
 } from '../model/timetableEntities';
 
 export interface ExcelValidationResult {
@@ -256,13 +257,21 @@ export class ExcelImportService {
           return;
         }
 
+        let criteriaValue = String(row.criteriaValue);
+        if (
+          (criteriaField === 'START_TIME' || criteriaField === 'END_TIME') &&
+          typeof row.criteriaValue === 'number'
+        ) {
+          criteriaValue = this.formatTime(row.criteriaValue);
+        }
+
         rules.push({
           id: Number(row.id),
           name: String(row.name),
           targetType,
           criteriaField,
           operator,
-          criteriaValue: String(row.criteriaValue),
+          criteriaValue,
           active: this.hasValue(row.active) ? (String(row.active).toLowerCase() === 'true' || row.active === true) : true
         });
       } catch (error) {
@@ -635,6 +644,19 @@ export class ExcelImportService {
             .filter((id: number) => !isNaN(id));
         }
 
+        // Parse optional weekParity column (defaults to WEEKLY)
+        let weekParity = WeekParity.WEEKLY;
+        if (this.hasValue(row.weekParity)) {
+          const rawParity = String(row.weekParity).toUpperCase() as WeekParity;
+          if (Object.values(WeekParity).includes(rawParity)) {
+            weekParity = rawParity;
+          } else {
+            warnings.push(
+              `Lessons sheet row ${index + 2}: Invalid weekParity value: ${row.weekParity}. Defaulting to WEEKLY.`
+            );
+          }
+        }
+
         lessons.push({
           id: Number(row.id),
           subject: String(row.subject),
@@ -642,9 +664,10 @@ export class ExcelImportService {
           studentGroup,
           lessonType,
           year,
+          weekParity,
           duration: Number(row.duration),
-          timeslot: timeslotRef,
-          room: roomRef,
+          timeslot: timeslotRef ? timeslotRef : undefined,
+          room: roomRef ? roomRef : undefined,
           pinned: isPinned,
           appliedRuleIds: appliedRuleIds.length > 0 ? appliedRuleIds : [],
         });
@@ -667,6 +690,7 @@ export class ExcelImportService {
   private readonly CONSTRAINT_KEYS = new Set<string>([
     'roomConflict',
     'teacherConflict',
+    'studentGroupConflict',
     'studentGroupConflictAdvanced',
     'capacityRoomConflict',
     'courseStudentsGroupedInTheSameRoom',

@@ -8,6 +8,7 @@ import {
   RuleTargetType,
   RuleCriteriaField,
   RuleOperator,
+  WeekParity,
 } from '../model/timetableEntities';
 
 export interface ValidationResult {
@@ -268,7 +269,10 @@ export class JsonImportService {
       // Validate optional appliedRuleIds if present
       (lesson.appliedRuleIds === undefined ||
         (Array.isArray(lesson.appliedRuleIds) &&
-          lesson.appliedRuleIds.every((id: any) => typeof id === 'number')))
+          lesson.appliedRuleIds.every((id: any) => typeof id === 'number'))) &&
+      // Validate optional weekParity if present (defaults to WEEKLY on backend)
+      (lesson.weekParity === undefined ||
+        Object.values(WeekParity).includes(lesson.weekParity))
     );
   }
 

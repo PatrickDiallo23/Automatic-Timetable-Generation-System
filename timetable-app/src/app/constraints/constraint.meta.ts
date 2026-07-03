@@ -10,14 +10,14 @@ export const CONSTRAINT_DICTIONARY: ConstraintMeta[] = [
     {
         id: "roomConflictUniversity",
         title: "Room Conflict (University)",
-        description: "A room can accommodate at most one lesson at the same time. Correctly maps shared series/streams to avoid false conflicts.",
+        description: "A room can accommodate at most one lesson at the same time (overlapping Week Parities will conflict). Correctly maps shared series/streams to avoid false conflicts.",
         recommendedWeight: "HARD",
         recommendationReason: "Prevents physical double-booking of rooms."
     },
     {
         id: "teacherConflictUniversity",
         title: "Teacher Conflict (University)",
-        description: "A teacher can teach at most one lesson at the same time. Exempts instances where multiple groups from the same series dynamically share a teacher.",
+        description: "A teacher can teach at most one lesson at the same time (overlapping Week Parities will conflict). Exempts instances where multiple groups from the same series dynamically share a teacher.",
         recommendedWeight: "HARD",
         recommendationReason: "Prevents assigning one teacher to multiple disparate classes concurrently."
     },
@@ -36,9 +36,16 @@ export const CONSTRAINT_DICTIONARY: ConstraintMeta[] = [
         recommendationReason: "Prevents assigning one teacher to multiple disparate classes concurrently."
     },
     {
-        id: "studentGroupConflictAdvanced",
+        id: "studentGroupConflict",
         title: "Student Group Conflict",
-        description: "A specific student cohort can attend at most one lesson at the same time.",
+        description: "A specific student cohort can attend at most one lesson at the same time. More suitable for university timetable (overlapping Week Parities will conflict)",
+        recommendedWeight: "HARD",
+        recommendationReason: "Prevents scheduling students to be in two separate places at once."
+    },
+    {
+        id: "studentGroupConflictAdvanced",
+        title: "Student Group Conflict (Advanced)",
+        description: "A specific student cohort can attend at most one lesson at the same time. More suitable for school timetable",
         recommendedWeight: "HARD",
         recommendationReason: "Prevents scheduling students to be in two separate places at once."
     },
@@ -73,7 +80,7 @@ export const CONSTRAINT_DICTIONARY: ConstraintMeta[] = [
     {
         id: "overlappingTimeslot",
         title: "Overlapping Timeslots",
-        description: "Heavily penalizes overlapping lessons for the same student group.",
+        description: "Heavily penalizes overlapping lessons for the same student group (overlapping Week Parities will conflict).",
         recommendedWeight: "HARD",
         recommendationReason: "Mandatory for resolving time-flow overlaps instead of just equal timeslots."
     },

@@ -316,6 +316,15 @@
               <mat-option *ngFor="let y of availableYears" [value]="y">{{ y }}</mat-option>
             </mat-select>
           </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Week Parity</mat-label>
+            <mat-icon matPrefix>event_repeat</mat-icon>
+            <mat-select formControlName="weekParity">
+              <mat-option value="">Any</mat-option>
+              <mat-option *ngFor="let p of availableWeekParities" [value]="p">{{ p }}</mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
 
         <!-- Toggle switches -->

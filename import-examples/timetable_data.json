@@ -1,2679 +1,2803 @@
 {
-    "timeslots": [
-        {
-            "id": 1,
-            "dayOfWeek": "MONDAY",
-            "startTime": "08:30:00",
-            "endTime": "09:30:00"
-        },
-        {
-            "id": 2,
-            "dayOfWeek": "MONDAY",
-            "startTime": "09:30:00",
-            "endTime": "10:30:00"
-        },
-        {
-            "id": 4,
-            "dayOfWeek": "MONDAY",
-            "startTime": "10:30:00",
-            "endTime": "11:30:00"
-        },
-        {
-            "id": 5,
-            "dayOfWeek": "MONDAY",
-            "startTime": "13:30:00",
-            "endTime": "14:30:00"
-        },
-        {
-            "id": 6,
-            "dayOfWeek": "MONDAY",
-            "startTime": "14:30:00",
-            "endTime": "15:30:00"
-        },
-        {
-            "id": 7,
-            "dayOfWeek": "TUESDAY",
-            "startTime": "08:30:00",
-            "endTime": "09:30:00"
-        },
-        {
-            "id": 8,
-            "dayOfWeek": "TUESDAY",
-            "startTime": "09:30:00",
-            "endTime": "10:30:00"
-        },
-        {
-            "id": 9,
-            "dayOfWeek": "TUESDAY",
-            "startTime": "10:30:00",
-            "endTime": "11:30:00"
-        },
-        {
-            "id": 10,
-            "dayOfWeek": "TUESDAY",
-            "startTime": "13:30:00",
-            "endTime": "14:30:00"
-        },
-        {
-            "id": 11,
-            "dayOfWeek": "TUESDAY",
-            "startTime": "14:30:00",
-            "endTime": "15:30:00"
-        },
-        {
-            "id": 12,
-            "dayOfWeek": "WEDNESDAY",
-            "startTime": "08:30:00",
-            "endTime": "09:30:00"
-        },
-        {
-            "id": 13,
-            "dayOfWeek": "WEDNESDAY",
-            "startTime": "09:30:00",
-            "endTime": "10:30:00"
-        },
-        {
-            "id": 14,
-            "dayOfWeek": "WEDNESDAY",
-            "startTime": "10:30:00",
-            "endTime": "11:30:00"
-        },
-        {
-            "id": 15,
-            "dayOfWeek": "WEDNESDAY",
-            "startTime": "13:30:00",
-            "endTime": "14:30:00"
-        },
-        {
-            "id": 16,
-            "dayOfWeek": "WEDNESDAY",
-            "startTime": "14:30:00",
-            "endTime": "15:30:00"
-        },
-        {
-            "id": 17,
-            "dayOfWeek": "THURSDAY",
-            "startTime": "08:30:00",
-            "endTime": "09:30:00"
-        },
-        {
-            "id": 18,
-            "dayOfWeek": "THURSDAY",
-            "startTime": "09:30:00",
-            "endTime": "10:30:00"
-        },
-        {
-            "id": 19,
-            "dayOfWeek": "THURSDAY",
-            "startTime": "10:30:00",
-            "endTime": "11:30:00"
-        },
-        {
-            "id": 20,
-            "dayOfWeek": "THURSDAY",
-            "startTime": "13:30:00",
-            "endTime": "14:30:00"
-        },
-        {
-            "id": 21,
-            "dayOfWeek": "THURSDAY",
-            "startTime": "14:30:00",
-            "endTime": "15:30:00"
-        },
-        {
-            "id": 22,
-            "dayOfWeek": "FRIDAY",
-            "startTime": "08:30:00",
-            "endTime": "09:30:00"
-        },
-        {
-            "id": 23,
-            "dayOfWeek": "FRIDAY",
-            "startTime": "09:30:00",
-            "endTime": "10:30:00"
-        },
-        {
-            "id": 24,
-            "dayOfWeek": "FRIDAY",
-            "startTime": "10:30:00",
-            "endTime": "11:30:00"
-        },
-        {
-            "id": 25,
-            "dayOfWeek": "FRIDAY",
-            "startTime": "13:30:00",
-            "endTime": "14:30:00"
-        },
-        {
-            "id": 26,
-            "dayOfWeek": "FRIDAY",
-            "startTime": "14:30:00",
-            "endTime": "15:30:00"
-        }
-    ],
-    "rooms": [
-        {
-            "id": 2,
-            "name": "Room A",
-            "capacity": 31,
-            "building": "Precis"
-        },
-        {
-            "id": 3,
-            "name": "Room B",
-            "capacity": 31,
-            "building": "Precis"
-        },
-        {
-            "id": 4,
-            "name": "Room C",
-            "capacity": 31,
-            "building": "Precis"
-        },
-        {
-            "id": 5,
-            "name": "Room D",
-            "capacity": 31,
-            "building": "Precis"
-        },
-        {
-            "id": 6,
-            "name": "Room E",
-            "capacity": 31,
-            "building": "Precis"
-        },
-        {
-            "id": 7,
-            "name": "Room F",
-            "capacity": 31,
-            "building": "Precis"
-        }
-    ],
-    "lessons": [
-        {
-            "id": 1,
-            "subject": "Math",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": [
-                    {
-                        "dayOfWeek": "FRIDAY",
-                        "startTime": "08:30:00",
-                        "endTime": "09:30:00"
-                    },
-                    {
-                        "dayOfWeek": "FRIDAY",
-                        "startTime": "13:30:00",
-                        "endTime": "14:30:00"
-                    },
-                    {
-                        "dayOfWeek": "TUESDAY",
-                        "startTime": "10:30:00",
-                        "endTime": "11:30:00"
-                    }
-                ]
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": 4,
-            "room": 2,
-            "pinned": true,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 2,
-            "subject": "Math",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 3,
-            "subject": "Physics",
-            "teacher": {
-                "id": 2,
-                "name": "M. Curie",
-                "preferredTimeslots": [
-                    {
-                        "dayOfWeek": "TUESDAY",
-                        "startTime": "05:00:00",
-                        "endTime": "20:00:00"
-                    },
-                    {
-                        "dayOfWeek": "MONDAY",
-                        "startTime": "10:30:00",
-                        "endTime": "11:30:00"
-                    }
-                ]
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 6,
-            "subject": "History",
-            "teacher": {
-                "id": 4,
-                "name": "I. Jones",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 7,
-            "subject": "English",
-            "teacher": {
-                "id": 4,
-                "name": "I. Jones",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 8,
-            "subject": "English",
-            "teacher": {
-                "id": 4,
-                "name": "I. Jones",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 9,
-            "subject": "Spanish",
-            "teacher": {
-                "id": 5,
-                "name": "P. Cruz",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 10,
-            "subject": "Spanish",
-            "teacher": {
-                "id": 5,
-                "name": "P. Cruz",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 11,
-            "subject": "Math",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 12,
-            "subject": "Math",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 13,
-            "subject": "Math",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 14,
-            "subject": "ICT",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 15,
-            "subject": "Physics",
-            "teacher": {
-                "id": 2,
-                "name": "M. Curie",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 16,
-            "subject": "Chemistry",
-            "teacher": {
-                "id": 2,
-                "name": "M. Curie",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 17,
-            "subject": "Biology",
-            "teacher": {
-                "id": 3,
-                "name": "C.Darwin",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 18,
-            "subject": "Geography",
-            "teacher": {
-                "id": 3,
-                "name": "C.Darwin",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 19,
-            "subject": "Geology",
-            "teacher": {
-                "id": 3,
-                "name": "C.Darwin",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 20,
-            "subject": "History",
-            "teacher": {
-                "id": 4,
-                "name": "I. Jones",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 21,
-            "subject": "English",
-            "teacher": {
-                "id": 4,
-                "name": "I. Jones",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 22,
-            "subject": "Drama",
-            "teacher": {
-                "id": 4,
-                "name": "I. Jones",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 23,
-            "subject": "Art",
-            "teacher": {
-                "id": 6,
-                "name": "S. Dali",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 24,
-            "subject": "Art",
-            "teacher": {
-                "id": 6,
-                "name": "S. Dali",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 25,
-            "subject": "Physical Education",
-            "teacher": {
-                "id": 8,
-                "name": "C. Lewis",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": [1]
-        },
-        {
-            "id": 26,
-            "subject": "Physical Education",
-            "teacher": {
-                "id": 8,
-                "name": "C. Lewis",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": [1]
-        },
-        {
-            "id": 27,
-            "subject": "Physical Education",
-            "teacher": {
-                "id": 8,
-                "name": "C. Lewis",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 5,
-                "year": "FIRST",
-                "name": "SSA",
-                "studentGroup": "SSA-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": [1]
-        },
-        {
-            "id": 28,
-            "subject": "Math",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 29,
-            "subject": "Math",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 30,
-            "subject": "Math",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 31,
-            "subject": "Physics",
-            "teacher": {
-                "id": 2,
-                "name": "M. Curie",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 32,
-            "subject": "Chemistry",
-            "teacher": {
-                "id": 2,
-                "name": "M. Curie",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 33,
-            "subject": "French",
-            "teacher": {
-                "id": 2,
-                "name": "M. Curie",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 34,
-            "subject": "Geography",
-            "teacher": {
-                "id": 3,
-                "name": "C.Darwin",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 35,
-            "subject": "History",
-            "teacher": {
-                "id": 4,
-                "name": "I. Jones",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 36,
-            "subject": "Spanish",
-            "teacher": {
-                "id": 5,
-                "name": "P. Cruz",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 37,
-            "subject": "English",
-            "teacher": {
-                "id": 5,
-                "name": "P. Cruz",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 38,
-            "subject": "Math",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 39,
-            "subject": "Math",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 40,
-            "subject": "ICT",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 41,
-            "subject": "Physics",
-            "teacher": {
-                "id": 2,
-                "name": "M. Curie",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 42,
-            "subject": "Biology",
-            "teacher": {
-                "id": 3,
-                "name": "C.Darwin",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 43,
-            "subject": "Geology",
-            "teacher": {
-                "id": 3,
-                "name": "C.Darwin",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 44,
-            "subject": "History",
-            "teacher": {
-                "id": 4,
-                "name": "I. Jones",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 45,
-            "subject": "English",
-            "teacher": {
-                "id": 5,
-                "name": "P. Cruz",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 46,
-            "subject": "English",
-            "teacher": {
-                "id": 5,
-                "name": "P. Cruz",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 47,
-            "subject": "Drama",
-            "teacher": {
-                "id": 4,
-                "name": "I. Jones",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 48,
-            "subject": "Art",
-            "teacher": {
-                "id": 6,
-                "name": "S. Dali",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 49,
-            "subject": "Art",
-            "teacher": {
-                "id": 6,
-                "name": "S. Dali",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 50,
-            "subject": "Physical Education",
-            "teacher": {
-                "id": 8,
-                "name": "C. Lewis",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": [1]
-        },
-        {
-            "id": 51,
-            "subject": "Physical Education",
-            "teacher": {
-                "id": 8,
-                "name": "C. Lewis",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": [1]
-        },
-        {
-            "id": 52,
-            "subject": "Physical Education",
-            "teacher": {
-                "id": 8,
-                "name": "C. Lewis",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 6,
-                "year": "FIRST",
-                "name": "SRIC",
-                "studentGroup": "SRIC-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": [1]
-        },
-        {
-            "id": 53,
-            "subject": "Math",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 54,
-            "subject": "Math",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 55,
-            "subject": "Math",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 56,
-            "subject": "Math",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 57,
-            "subject": "Math",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 58,
-            "subject": "ICT",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 59,
-            "subject": "Physics",
-            "teacher": {
-                "id": 2,
-                "name": "M. Curie",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 60,
-            "subject": "Chemistry",
-            "teacher": {
-                "id": 2,
-                "name": "M. Curie",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 61,
-            "subject": "French",
-            "teacher": {
-                "id": 2,
-                "name": "M. Curie",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 62,
-            "subject": "Physics",
-            "teacher": {
-                "id": 2,
-                "name": "M. Curie",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 63,
-            "subject": "Geography",
-            "teacher": {
-                "id": 3,
-                "name": "C.Darwin",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 64,
-            "subject": "Biology",
-            "teacher": {
-                "id": 3,
-                "name": "C.Darwin",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 65,
-            "subject": "Geology",
-            "teacher": {
-                "id": 3,
-                "name": "C.Darwin",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 66,
-            "subject": "History",
-            "teacher": {
-                "id": 4,
-                "name": "I. Jones",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 67,
-            "subject": "History",
-            "teacher": {
-                "id": 4,
-                "name": "I. Jones",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 68,
-            "subject": "English",
-            "teacher": {
-                "id": 5,
-                "name": "P. Cruz",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 69,
-            "subject": "English",
-            "teacher": {
-                "id": 5,
-                "name": "P. Cruz",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 70,
-            "subject": "English",
-            "teacher": {
-                "id": 5,
-                "name": "P. Cruz",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 71,
-            "subject": "Spanish",
-            "teacher": {
-                "id": 5,
-                "name": "P. Cruz",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 72,
-            "subject": "Drama",
-            "teacher": {
-                "id": 5,
-                "name": "P. Cruz",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 73,
-            "subject": "Art",
-            "teacher": {
-                "id": 6,
-                "name": "S. Dali",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 74,
-            "subject": "Art",
-            "teacher": {
-                "id": 6,
-                "name": "S. Dali",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 75,
-            "subject": "Physical Education",
-            "teacher": {
-                "id": 8,
-                "name": "C. Lewis",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": [1]
-        },
-        {
-            "id": 76,
-            "subject": "Physical Education",
-            "teacher": {
-                "id": 8,
-                "name": "C. Lewis",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": [1]
-        },
-        {
-            "id": 77,
-            "subject": "Physical Education",
-            "teacher": {
-                "id": 8,
-                "name": "C. Lewis",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 7,
-                "year": "FIRST",
-                "name": "MTI",
-                "studentGroup": "MTI-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": [1]
-        },
-        {
-            "id": 78,
-            "subject": "Math",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 79,
-            "subject": "Math",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 80,
-            "subject": "Math",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 81,
-            "subject": "Math",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 82,
-            "subject": "Math",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 83,
-            "subject": "ICT",
-            "teacher": {
-                "id": 1,
-                "name": "A. Turing",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 84,
-            "subject": "Physics",
-            "teacher": {
-                "id": 2,
-                "name": "M. Curie",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 85,
-            "subject": "Chemistry",
-            "teacher": {
-                "id": 2,
-                "name": "M. Curie",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 86,
-            "subject": "French",
-            "teacher": {
-                "id": 2,
-                "name": "M. Curie",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 87,
-            "subject": "Physics",
-            "teacher": {
-                "id": 2,
-                "name": "M. Curie",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 88,
-            "subject": "Geography",
-            "teacher": {
-                "id": 3,
-                "name": "C.Darwin",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 89,
-            "subject": "Biology",
-            "teacher": {
-                "id": 3,
-                "name": "C.Darwin",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 90,
-            "subject": "Geology",
-            "teacher": {
-                "id": 3,
-                "name": "C.Darwin",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 91,
-            "subject": "History",
-            "teacher": {
-                "id": 4,
-                "name": "I. Jones",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 92,
-            "subject": "History",
-            "teacher": {
-                "id": 4,
-                "name": "I. Jones",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 93,
-            "subject": "English",
-            "teacher": {
-                "id": 5,
-                "name": "P. Cruz",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 94,
-            "subject": "English",
-            "teacher": {
-                "id": 5,
-                "name": "P. Cruz",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 96,
-            "subject": "Spanish",
-            "teacher": {
-                "id": 5,
-                "name": "P. Cruz",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 97,
-            "subject": "Drama",
-            "teacher": {
-                "id": 5,
-                "name": "P. Cruz",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 100,
-            "subject": "Physical Education",
-            "teacher": {
-                "id": 8,
-                "name": "C. Lewis",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": [1]
-        },
-        {
-            "id": 102,
-            "subject": "Physical Education",
-            "teacher": {
-                "id": 8,
-                "name": "C. Lewis",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": [1]
-        },
-        {
-            "id": 95,
-            "subject": "English",
-            "teacher": {
-                "id": 5,
-                "name": "P. Cruz",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 98,
-            "subject": "Art",
-            "teacher": {
-                "id": 6,
-                "name": "S. Dali",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 99,
-            "subject": "Art",
-            "teacher": {
-                "id": 6,
-                "name": "S. Dali",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": []
-        },
-        {
-            "id": 101,
-            "subject": "Physical Education",
-            "teacher": {
-                "id": 8,
-                "name": "C. Lewis",
-                "preferredTimeslots": []
-            },
-            "studentGroup": {
-                "id": 8,
-                "year": "FIRST",
-                "name": "ABD",
-                "studentGroup": "ABD-A",
-                "semiGroup": "SEMI_GROUP0",
-                "numberOfStudents": 15
-            },
-            "lessonType": "COURSE",
-            "year": "FIRST",
-            "duration": 1,
-            "timeslot": null,
-            "room": null,
-            "pinned": false,
-            "appliedRuleIds": [1]
-        }
-    ],
-    "timetableConstraintConfiguration": {
-        "roomConflict": "1hard/0medium/0soft",
-        "teacherConflict": "1hard/0medium/0soft",
-        "studentGroupConflictWithGroupBy": "1hard/0medium/0soft",
-        "capacityRoomConflict": "0hard/0medium/0soft",
-        "courseStudentsGroupedInTheSameRoom": "0hard/0medium/0soft",
-        "seminarStudentsGroupedInTheSameRoom": "0hard/0medium/0soft",
-        "labsStudentsGroupedInTheSameRoom": "0hard/0medium/0soft",
-        "roomConflictUniversity": "0hard/0medium/0soft",
-        "teacherConflictUniversity": "0hard/0medium/0soft",
-        "overlappingTimeslot": "0hard/0medium/0soft",
-        "sportLessonInSportRoom": "0hard/0medium/0soft",
-        "lessonDurationConflict": "1hard/0medium/0soft",
-        "maximumCoursesForStudents": "0hard/0medium/0soft",
-        "coursesGroupedInTheSameTimeslot": "0hard/0medium/0soft",
-        "seminarsGroupedInTheSameTimeslot": "0hard/0medium/0soft",
-        "maximmumCoursesTeached": "0hard/0medium/0soft",
-        "maximizePreferredTimeslotAssignments": "0hard/0medium/0soft",
-        "teacherRoomStability": "0hard/0medium/1soft",
-        "teacherTimeEfficiency": "0hard/0medium/1soft",
-        "studentGroupVariety": "0hard/0medium/1soft",
-        "gapsLongerThan4Hours": "0hard/0medium/0soft",
-        "labsGroupedInTheSameTimeslot": "0hard/0medium/0soft",
-        "coursesInTheSameBuilding": "0hard/0medium/0soft",
-        "labAfterSeminar": "0hard/0medium/0soft"
+  "timeslots": [
+    {
+      "id": 1,
+      "dayOfWeek": "MONDAY",
+      "startTime": "08:30:00",
+      "endTime": "09:30:00"
     },
-    "score": null,
-    "solverStatus": null,
-    "duration": 2,
-    "restrictionRules": [
-        {
-            "id": 1,
-            "name": "Sport Room Only",
-            "targetType": "ROOM",
-            "criteriaField": "NAME",
-            "operator": "IN",
-            "criteriaValue": "Room F, Room E",
-            "active": true
-        },
-        {
-            "id": 2,
-            "name": "Morning Lesson",
-            "targetType": "TIMESLOT",
-            "criteriaField": "START_TIME",
-            "operator": "LESS_THAN_OR_EQUAL",
-            "criteriaValue": "12:00",
-            "active": false
-        },
-        {
-            "id": 3,
-            "name": "random rule",
-            "targetType": "ROOM",
-            "criteriaField": "CAPACITY",
-            "operator": "LESS_THAN",
-            "criteriaValue": "40",
-            "active": false
-        }
-    ]
+    {
+      "id": 2,
+      "dayOfWeek": "MONDAY",
+      "startTime": "09:30:00",
+      "endTime": "10:30:00"
+    },
+    {
+      "id": 4,
+      "dayOfWeek": "MONDAY",
+      "startTime": "10:30:00",
+      "endTime": "11:30:00"
+    },
+    {
+      "id": 5,
+      "dayOfWeek": "MONDAY",
+      "startTime": "13:30:00",
+      "endTime": "14:30:00"
+    },
+    {
+      "id": 6,
+      "dayOfWeek": "MONDAY",
+      "startTime": "14:30:00",
+      "endTime": "15:30:00"
+    },
+    {
+      "id": 7,
+      "dayOfWeek": "TUESDAY",
+      "startTime": "08:30:00",
+      "endTime": "09:30:00"
+    },
+    {
+      "id": 8,
+      "dayOfWeek": "TUESDAY",
+      "startTime": "09:30:00",
+      "endTime": "10:30:00"
+    },
+    {
+      "id": 9,
+      "dayOfWeek": "TUESDAY",
+      "startTime": "10:30:00",
+      "endTime": "11:30:00"
+    },
+    {
+      "id": 10,
+      "dayOfWeek": "TUESDAY",
+      "startTime": "13:30:00",
+      "endTime": "14:30:00"
+    },
+    {
+      "id": 11,
+      "dayOfWeek": "TUESDAY",
+      "startTime": "14:30:00",
+      "endTime": "15:30:00"
+    },
+    {
+      "id": 12,
+      "dayOfWeek": "WEDNESDAY",
+      "startTime": "08:30:00",
+      "endTime": "09:30:00"
+    },
+    {
+      "id": 13,
+      "dayOfWeek": "WEDNESDAY",
+      "startTime": "09:30:00",
+      "endTime": "10:30:00"
+    },
+    {
+      "id": 14,
+      "dayOfWeek": "WEDNESDAY",
+      "startTime": "10:30:00",
+      "endTime": "11:30:00"
+    },
+    {
+      "id": 15,
+      "dayOfWeek": "WEDNESDAY",
+      "startTime": "13:30:00",
+      "endTime": "14:30:00"
+    },
+    {
+      "id": 16,
+      "dayOfWeek": "WEDNESDAY",
+      "startTime": "14:30:00",
+      "endTime": "15:30:00"
+    },
+    {
+      "id": 17,
+      "dayOfWeek": "THURSDAY",
+      "startTime": "08:30:00",
+      "endTime": "09:30:00"
+    },
+    {
+      "id": 18,
+      "dayOfWeek": "THURSDAY",
+      "startTime": "09:30:00",
+      "endTime": "10:30:00"
+    },
+    {
+      "id": 19,
+      "dayOfWeek": "THURSDAY",
+      "startTime": "10:30:00",
+      "endTime": "11:30:00"
+    },
+    {
+      "id": 20,
+      "dayOfWeek": "THURSDAY",
+      "startTime": "13:30:00",
+      "endTime": "14:30:00"
+    },
+    {
+      "id": 21,
+      "dayOfWeek": "THURSDAY",
+      "startTime": "14:30:00",
+      "endTime": "15:30:00"
+    },
+    {
+      "id": 22,
+      "dayOfWeek": "FRIDAY",
+      "startTime": "08:30:00",
+      "endTime": "09:30:00"
+    },
+    {
+      "id": 23,
+      "dayOfWeek": "FRIDAY",
+      "startTime": "09:30:00",
+      "endTime": "10:30:00"
+    },
+    {
+      "id": 24,
+      "dayOfWeek": "FRIDAY",
+      "startTime": "10:30:00",
+      "endTime": "11:30:00"
+    },
+    {
+      "id": 25,
+      "dayOfWeek": "FRIDAY",
+      "startTime": "13:30:00",
+      "endTime": "14:30:00"
+    },
+    {
+      "id": 26,
+      "dayOfWeek": "FRIDAY",
+      "startTime": "14:30:00",
+      "endTime": "15:30:00"
+    }
+  ],
+  "rooms": [
+    {
+      "id": 2,
+      "name": "Room A",
+      "capacity": 31,
+      "building": "Precis"
+    },
+    {
+      "id": 3,
+      "name": "Room B",
+      "capacity": 31,
+      "building": "Precis"
+    },
+    {
+      "id": 4,
+      "name": "Room C",
+      "capacity": 31,
+      "building": "Precis"
+    },
+    {
+      "id": 5,
+      "name": "Room D",
+      "capacity": 31,
+      "building": "Precis"
+    },
+    {
+      "id": 6,
+      "name": "Room E",
+      "capacity": 31,
+      "building": "Precis"
+    },
+    {
+      "id": 7,
+      "name": "Room F",
+      "capacity": 31,
+      "building": "Precis"
+    }
+  ],
+  "lessons": [
+    {
+      "id": 1,
+      "subject": "Math",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": [
+          {
+            "dayOfWeek": "FRIDAY",
+            "startTime": "08:30:00",
+            "endTime": "09:30:00"
+          },
+          {
+            "dayOfWeek": "FRIDAY",
+            "startTime": "13:30:00",
+            "endTime": "14:30:00"
+          },
+          {
+            "dayOfWeek": "TUESDAY",
+            "startTime": "10:30:00",
+            "endTime": "11:30:00"
+          }
+        ]
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": 4,
+      "room": 2,
+      "pinned": true,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 2,
+      "subject": "Math",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 3,
+      "subject": "Physics",
+      "teacher": {
+        "id": 2,
+        "name": "M. Curie",
+        "preferredTimeslots": [
+          {
+            "dayOfWeek": "TUESDAY",
+            "startTime": "05:00:00",
+            "endTime": "20:00:00"
+          },
+          {
+            "dayOfWeek": "MONDAY",
+            "startTime": "10:30:00",
+            "endTime": "11:30:00"
+          }
+        ]
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 6,
+      "subject": "History",
+      "teacher": {
+        "id": 4,
+        "name": "I. Jones",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 7,
+      "subject": "English",
+      "teacher": {
+        "id": 4,
+        "name": "I. Jones",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 8,
+      "subject": "English",
+      "teacher": {
+        "id": 4,
+        "name": "I. Jones",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 9,
+      "subject": "Spanish",
+      "teacher": {
+        "id": 5,
+        "name": "P. Cruz",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 10,
+      "subject": "Spanish",
+      "teacher": {
+        "id": 5,
+        "name": "P. Cruz",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 11,
+      "subject": "Math",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 12,
+      "subject": "Math",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 13,
+      "subject": "Math",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 14,
+      "subject": "ICT",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 15,
+      "subject": "Physics",
+      "teacher": {
+        "id": 2,
+        "name": "M. Curie",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 16,
+      "subject": "Chemistry",
+      "teacher": {
+        "id": 2,
+        "name": "M. Curie",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 17,
+      "subject": "Biology",
+      "teacher": {
+        "id": 3,
+        "name": "C.Darwin",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 18,
+      "subject": "Geography",
+      "teacher": {
+        "id": 3,
+        "name": "C.Darwin",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 19,
+      "subject": "Geology",
+      "teacher": {
+        "id": 3,
+        "name": "C.Darwin",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 20,
+      "subject": "History",
+      "teacher": {
+        "id": 4,
+        "name": "I. Jones",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 21,
+      "subject": "English",
+      "teacher": {
+        "id": 4,
+        "name": "I. Jones",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 22,
+      "subject": "Drama",
+      "teacher": {
+        "id": 4,
+        "name": "I. Jones",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 23,
+      "subject": "Art",
+      "teacher": {
+        "id": 6,
+        "name": "S. Dali",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 24,
+      "subject": "Art",
+      "teacher": {
+        "id": 6,
+        "name": "S. Dali",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 25,
+      "subject": "Physical Education",
+      "teacher": {
+        "id": 8,
+        "name": "C. Lewis",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [
+        1
+      ],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 26,
+      "subject": "Physical Education",
+      "teacher": {
+        "id": 8,
+        "name": "C. Lewis",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [
+        1
+      ],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 27,
+      "subject": "Physical Education",
+      "teacher": {
+        "id": 8,
+        "name": "C. Lewis",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 5,
+        "year": "FIRST",
+        "name": "SSA",
+        "studentGroup": "SSA-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [
+        1
+      ],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 28,
+      "subject": "Math",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 29,
+      "subject": "Math",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 30,
+      "subject": "Math",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 31,
+      "subject": "Physics",
+      "teacher": {
+        "id": 2,
+        "name": "M. Curie",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 32,
+      "subject": "Chemistry",
+      "teacher": {
+        "id": 2,
+        "name": "M. Curie",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 33,
+      "subject": "French",
+      "teacher": {
+        "id": 2,
+        "name": "M. Curie",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 34,
+      "subject": "Geography",
+      "teacher": {
+        "id": 3,
+        "name": "C.Darwin",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 35,
+      "subject": "History",
+      "teacher": {
+        "id": 4,
+        "name": "I. Jones",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 36,
+      "subject": "Spanish",
+      "teacher": {
+        "id": 5,
+        "name": "P. Cruz",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 37,
+      "subject": "English",
+      "teacher": {
+        "id": 5,
+        "name": "P. Cruz",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 38,
+      "subject": "Math",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 39,
+      "subject": "Math",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 40,
+      "subject": "ICT",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 41,
+      "subject": "Physics",
+      "teacher": {
+        "id": 2,
+        "name": "M. Curie",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 42,
+      "subject": "Biology",
+      "teacher": {
+        "id": 3,
+        "name": "C.Darwin",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 43,
+      "subject": "Geology",
+      "teacher": {
+        "id": 3,
+        "name": "C.Darwin",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 44,
+      "subject": "History",
+      "teacher": {
+        "id": 4,
+        "name": "I. Jones",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 45,
+      "subject": "English",
+      "teacher": {
+        "id": 5,
+        "name": "P. Cruz",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 46,
+      "subject": "English",
+      "teacher": {
+        "id": 5,
+        "name": "P. Cruz",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 47,
+      "subject": "Drama",
+      "teacher": {
+        "id": 4,
+        "name": "I. Jones",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 48,
+      "subject": "Art",
+      "teacher": {
+        "id": 6,
+        "name": "S. Dali",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 49,
+      "subject": "Art",
+      "teacher": {
+        "id": 6,
+        "name": "S. Dali",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 50,
+      "subject": "Physical Education",
+      "teacher": {
+        "id": 8,
+        "name": "C. Lewis",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [
+        1
+      ],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 51,
+      "subject": "Physical Education",
+      "teacher": {
+        "id": 8,
+        "name": "C. Lewis",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [
+        1
+      ],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 52,
+      "subject": "Physical Education",
+      "teacher": {
+        "id": 8,
+        "name": "C. Lewis",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 6,
+        "year": "FIRST",
+        "name": "SRIC",
+        "studentGroup": "SRIC-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [
+        1
+      ],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 53,
+      "subject": "Math",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 54,
+      "subject": "Math",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 55,
+      "subject": "Math",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 56,
+      "subject": "Math",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 57,
+      "subject": "Math",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 58,
+      "subject": "ICT",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 59,
+      "subject": "Physics",
+      "teacher": {
+        "id": 2,
+        "name": "M. Curie",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 60,
+      "subject": "Chemistry",
+      "teacher": {
+        "id": 2,
+        "name": "M. Curie",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 61,
+      "subject": "French",
+      "teacher": {
+        "id": 2,
+        "name": "M. Curie",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 62,
+      "subject": "Physics",
+      "teacher": {
+        "id": 2,
+        "name": "M. Curie",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 63,
+      "subject": "Geography",
+      "teacher": {
+        "id": 3,
+        "name": "C.Darwin",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 64,
+      "subject": "Biology",
+      "teacher": {
+        "id": 3,
+        "name": "C.Darwin",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 65,
+      "subject": "Geology",
+      "teacher": {
+        "id": 3,
+        "name": "C.Darwin",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 66,
+      "subject": "History",
+      "teacher": {
+        "id": 4,
+        "name": "I. Jones",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 67,
+      "subject": "History",
+      "teacher": {
+        "id": 4,
+        "name": "I. Jones",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 68,
+      "subject": "English",
+      "teacher": {
+        "id": 5,
+        "name": "P. Cruz",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 69,
+      "subject": "English",
+      "teacher": {
+        "id": 5,
+        "name": "P. Cruz",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 70,
+      "subject": "English",
+      "teacher": {
+        "id": 5,
+        "name": "P. Cruz",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 71,
+      "subject": "Spanish",
+      "teacher": {
+        "id": 5,
+        "name": "P. Cruz",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 72,
+      "subject": "Drama",
+      "teacher": {
+        "id": 5,
+        "name": "P. Cruz",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 73,
+      "subject": "Art",
+      "teacher": {
+        "id": 6,
+        "name": "S. Dali",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 74,
+      "subject": "Art",
+      "teacher": {
+        "id": 6,
+        "name": "S. Dali",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 75,
+      "subject": "Physical Education",
+      "teacher": {
+        "id": 8,
+        "name": "C. Lewis",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [
+        1
+      ],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 76,
+      "subject": "Physical Education",
+      "teacher": {
+        "id": 8,
+        "name": "C. Lewis",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [
+        1
+      ],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 77,
+      "subject": "Physical Education",
+      "teacher": {
+        "id": 8,
+        "name": "C. Lewis",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 7,
+        "year": "FIRST",
+        "name": "MTI",
+        "studentGroup": "MTI-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [
+        1
+      ],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 78,
+      "subject": "Math",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 79,
+      "subject": "Math",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 80,
+      "subject": "Math",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 81,
+      "subject": "Math",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 82,
+      "subject": "Math",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 83,
+      "subject": "ICT",
+      "teacher": {
+        "id": 1,
+        "name": "A. Turing",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 84,
+      "subject": "Physics",
+      "teacher": {
+        "id": 2,
+        "name": "M. Curie",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 85,
+      "subject": "Chemistry",
+      "teacher": {
+        "id": 2,
+        "name": "M. Curie",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 86,
+      "subject": "French",
+      "teacher": {
+        "id": 2,
+        "name": "M. Curie",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 87,
+      "subject": "Physics",
+      "teacher": {
+        "id": 2,
+        "name": "M. Curie",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 88,
+      "subject": "Geography",
+      "teacher": {
+        "id": 3,
+        "name": "C.Darwin",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 89,
+      "subject": "Biology",
+      "teacher": {
+        "id": 3,
+        "name": "C.Darwin",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 90,
+      "subject": "Geology",
+      "teacher": {
+        "id": 3,
+        "name": "C.Darwin",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 91,
+      "subject": "History",
+      "teacher": {
+        "id": 4,
+        "name": "I. Jones",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 92,
+      "subject": "History",
+      "teacher": {
+        "id": 4,
+        "name": "I. Jones",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 93,
+      "subject": "English",
+      "teacher": {
+        "id": 5,
+        "name": "P. Cruz",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 94,
+      "subject": "English",
+      "teacher": {
+        "id": 5,
+        "name": "P. Cruz",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 96,
+      "subject": "Spanish",
+      "teacher": {
+        "id": 5,
+        "name": "P. Cruz",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 97,
+      "subject": "Drama",
+      "teacher": {
+        "id": 5,
+        "name": "P. Cruz",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 100,
+      "subject": "Physical Education",
+      "teacher": {
+        "id": 8,
+        "name": "C. Lewis",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [
+        1
+      ],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 102,
+      "subject": "Physical Education",
+      "teacher": {
+        "id": 8,
+        "name": "C. Lewis",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [
+        1
+      ],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 95,
+      "subject": "English",
+      "teacher": {
+        "id": 5,
+        "name": "P. Cruz",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 98,
+      "subject": "Art",
+      "teacher": {
+        "id": 6,
+        "name": "S. Dali",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 99,
+      "subject": "Art",
+      "teacher": {
+        "id": 6,
+        "name": "S. Dali",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [],
+      "weekParity": "WEEKLY"
+    },
+    {
+      "id": 101,
+      "subject": "Physical Education",
+      "teacher": {
+        "id": 8,
+        "name": "C. Lewis",
+        "preferredTimeslots": []
+      },
+      "studentGroup": {
+        "id": 8,
+        "year": "FIRST",
+        "name": "ABD",
+        "studentGroup": "ABD-A",
+        "semiGroup": "SEMI_GROUP0",
+        "numberOfStudents": 15
+      },
+      "lessonType": "COURSE",
+      "year": "FIRST",
+      "duration": 1,
+      "timeslot": null,
+      "room": null,
+      "pinned": false,
+      "appliedRuleIds": [
+        1
+      ],
+      "weekParity": "WEEKLY"
+    }
+  ],
+  "timetableConstraintConfiguration": {
+    "roomConflict": "1hard/0medium/0soft",
+    "teacherConflict": "1hard/0medium/0soft",
+    "studentGroupConflictWithGroupBy": "1hard/0medium/0soft",
+    "capacityRoomConflict": "0hard/0medium/0soft",
+    "courseStudentsGroupedInTheSameRoom": "0hard/0medium/0soft",
+    "seminarStudentsGroupedInTheSameRoom": "0hard/0medium/0soft",
+    "labsStudentsGroupedInTheSameRoom": "0hard/0medium/0soft",
+    "roomConflictUniversity": "0hard/0medium/0soft",
+    "teacherConflictUniversity": "0hard/0medium/0soft",
+    "overlappingTimeslot": "0hard/0medium/0soft",
+    "sportLessonInSportRoom": "0hard/0medium/0soft",
+    "lessonDurationConflict": "1hard/0medium/0soft",
+    "maximumCoursesForStudents": "0hard/0medium/0soft",
+    "coursesGroupedInTheSameTimeslot": "0hard/0medium/0soft",
+    "seminarsGroupedInTheSameTimeslot": "0hard/0medium/0soft",
+    "maximmumCoursesTeached": "0hard/0medium/0soft",
+    "maximizePreferredTimeslotAssignments": "0hard/0medium/0soft",
+    "teacherRoomStability": "0hard/0medium/1soft",
+    "teacherTimeEfficiency": "0hard/0medium/1soft",
+    "studentGroupVariety": "0hard/0medium/1soft",
+    "gapsLongerThan4Hours": "0hard/0medium/0soft",
+    "labsGroupedInTheSameTimeslot": "0hard/0medium/0soft",
+    "coursesInTheSameBuilding": "0hard/0medium/0soft",
+    "labAfterSeminar": "0hard/0medium/0soft"
+  },
+  "score": null,
+  "solverStatus": null,
+  "duration": 2,
+  "restrictionRules": [
+    {
+      "id": 1,
+      "name": "Sport Room Only",
+      "targetType": "ROOM",
+      "criteriaField": "NAME",
+      "operator": "IN",
+      "criteriaValue": "Room F, Room E",
+      "active": true
+    },
+    {
+      "id": 2,
+      "name": "Morning Lesson",
+      "targetType": "TIMESLOT",
+      "criteriaField": "START_TIME",
+      "operator": "LESS_THAN_OR_EQUAL",
+      "criteriaValue": "12:00",
+      "active": false
+    },
+    {
+      "id": 3,
+      "name": "random rule",
+      "targetType": "ROOM",
+      "criteriaField": "CAPACITY",
+      "operator": "LESS_THAN",
+      "criteriaValue": "40",
+      "active": false
+    }
+  ]
 }

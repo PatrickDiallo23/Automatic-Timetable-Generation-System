@@ -9,6 +9,7 @@ import com.patrick.timetableappbackend.model.Teacher;
 import com.patrick.timetableappbackend.model.TeacherTimeslot;
 import com.patrick.timetableappbackend.model.Timeslot;
 import com.patrick.timetableappbackend.model.Timetable;
+import com.patrick.timetableappbackend.model.WeekParity;
 import com.patrick.timetableappbackend.model.Year;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,6 +102,72 @@ public class TimetableConstraintProviderTest {
         constraintVerifier.verifyThat(TimetableConstraintProvider::studentGroupConflictWithGroupBy)
                 .given(firstLesson, conflictingLesson, nonConflictingLesson)
                 .penalizesBy(1);
+    }
+
+    // ── Week Parity Tests ──────────────────────────────────────────────────────
+
+    @Test
+    void roomConflictUniversity_noConflictWithDifferentParity() {
+        // ODD vs EVEN in the same timeslot/room → no penalty
+        Lesson oddLesson = new Lesson(1, "Subject1", LessonType.COURSE, new Teacher(1L, "Teacher1", null),
+                new StudentGroup(1L, Year.FIRST, "Group1", "1", 30L), TIMESLOT1, ROOM1);
+        oddLesson.setWeekParity(WeekParity.ODD);
+
+        Lesson evenLesson = new Lesson(2, "Subject2", LessonType.LABORATORY, new Teacher(2L, "Teacher2", null),
+                new StudentGroup(2L, Year.FIRST, "Group1", "1", 30L), TIMESLOT1, ROOM1);
+        evenLesson.setWeekParity(WeekParity.EVEN);
+
+        constraintVerifier.verifyThat(TimetableConstraintProvider::roomConflictUniversity)
+                .given(oddLesson, evenLesson)
+                .penalizesBy(0);
+    }
+
+    @Test
+    void roomConflictUniversity_conflictWithWeeklyParity() {
+        // WEEKLY vs ODD in the same timeslot/room → conflict
+        Lesson weeklyLesson = new Lesson(1, "Subject1", LessonType.LABORATORY, new Teacher(1L, "Teacher1", null),
+                new StudentGroup(1L, Year.FIRST, "Group1", "1", 30L), TIMESLOT1, ROOM1);
+        weeklyLesson.setWeekParity(WeekParity.WEEKLY);
+
+        Lesson oddLesson = new Lesson(2, "Subject2", LessonType.SEMINAR, new Teacher(2L, "Teacher2", null),
+                new StudentGroup(2L, Year.FIRST, "Group2", "2", 30L), TIMESLOT1, ROOM1);
+        oddLesson.setWeekParity(WeekParity.ODD);
+
+        constraintVerifier.verifyThat(TimetableConstraintProvider::roomConflictUniversity)
+                .given(weeklyLesson, oddLesson)
+                .penalizesBy(1);
+    }
+
+    @Test
+    void teacherConflictUniversity_noConflictWithDifferentParity() {
+        Teacher sharedTeacher = new Teacher(1L, "Teacher1", null);
+
+        Lesson oddLesson = new Lesson(1, "Subject1", LessonType.SEMINAR, sharedTeacher,
+                new StudentGroup(1L, Year.FIRST, "Group1", "1A", 30L), TIMESLOT1, ROOM1);
+        oddLesson.setWeekParity(WeekParity.ODD);
+
+        Lesson evenLesson = new Lesson(2, "Subject2", LessonType.SEMINAR, sharedTeacher,
+                new StudentGroup(2L, Year.FIRST, "Group2", "2A", 30L), TIMESLOT1, ROOM2);
+        evenLesson.setWeekParity(WeekParity.EVEN);
+
+        constraintVerifier.verifyThat(TimetableConstraintProvider::teacherConflictUniversity)
+                .given(oddLesson, evenLesson)
+                .penalizesBy(0);
+    }
+
+    @Test
+    void studentGroupConflict_noConflictWithDifferentParity() {
+        StudentGroup sharedGroup = new StudentGroup(1L, "Group1", 30L);
+
+        Lesson oddLesson = new Lesson(1, "Subject1", new Teacher(1L, "Teacher1", null), sharedGroup, TIMESLOT1, ROOM1);
+        oddLesson.setWeekParity(WeekParity.ODD);
+
+        Lesson evenLesson = new Lesson(2, "Subject2", new Teacher(2L, "Teacher2", null), sharedGroup, TIMESLOT1, ROOM2);
+        evenLesson.setWeekParity(WeekParity.EVEN);
+
+        constraintVerifier.verifyThat(TimetableConstraintProvider::studentGroupConflict)
+                .given(oddLesson, evenLesson)
+                .penalizesBy(0);
     }
 
     @Test

@@ -59,6 +59,7 @@ public class LessonService {
                     }
                     existingLesson.setLessonType(updatedLesson.getLessonType());
                     existingLesson.setYear(updatedLesson.getYear());
+                    existingLesson.setWeekParity(updatedLesson.getWeekParity());
                     existingLesson.setDuration(updatedLesson.getDuration());
                     existingLesson.setPinned(updatedLesson.isPinned());
                     

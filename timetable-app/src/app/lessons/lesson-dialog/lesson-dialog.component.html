@@ -61,6 +61,17 @@
             <input matInput type="number" placeholder="2" formControlName="duration">
         </mat-form-field>
 
+        <br>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Week Parity</mat-label>
+            <mat-select formControlName="weekParity">
+                <mat-option *ngFor="let parity of weekParityOptions" [value]="parity">
+                    {{ parity }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
         <!-- Pinning Section -->
         <mat-divider class="pinning-divider"></mat-divider>
         

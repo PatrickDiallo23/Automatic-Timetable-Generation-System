@@ -8,7 +8,7 @@ import { StudentGroupService } from 'src/app/student-group/student-group.service
 import { TimeslotService } from 'src/app/timeslots/timeslot.service';
 import { RoomService } from 'src/app/rooms/room.service';
 import { Observable, map, startWith } from 'rxjs';
-import { LessonType, RestrictionRule, Room, StudentGroup, Teacher, Timeslot, Year } from 'src/app/model/timetableEntities';
+import { LessonType, RestrictionRule, Room, StudentGroup, Teacher, Timeslot, WeekParity, Year } from 'src/app/model/timetableEntities';
 import { RestrictionRuleService } from 'src/app/restriction-rules/restriction-rule.service';
 
 @Component({
@@ -54,6 +54,11 @@ export class LessonDialogComponent implements OnInit {
     LessonType.PROJECT,
     LessonType.SEMINAR
   ];
+  weekParityOptions: WeekParity[] = [
+    WeekParity.WEEKLY,
+    WeekParity.ODD,
+    WeekParity.EVEN
+  ];
 
   hasAddedItem = false;
 
@@ -75,6 +80,7 @@ export class LessonDialogComponent implements OnInit {
       studentGroup: null,
       lessonType: '',
       year: '',
+      weekParity: WeekParity.WEEKLY,
       duration: null,
       pinned: false,
       timeslot: null,
@@ -92,6 +98,7 @@ export class LessonDialogComponent implements OnInit {
         studentGroup: this.data.studentGroup,
         lessonType: this.data.lessonType,
         year: this.data.year,
+        weekParity: this.data.weekParity || WeekParity.WEEKLY,
         duration: this.data.duration,
         pinned: this.data.pinned || false,
         // Extract IDs for timeslot and room - they may come as objects or IDs
@@ -213,6 +220,7 @@ export class LessonDialogComponent implements OnInit {
         studentGroup: formValue.studentGroup,
         lessonType: formValue.lessonType,
         year: formValue.year,
+        weekParity: formValue.weekParity,
         duration: formValue.duration,
         pinned: formValue.pinned || false,
         appliedRuleIds: formValue.appliedRuleIds || [],

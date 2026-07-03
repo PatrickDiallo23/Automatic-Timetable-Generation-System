@@ -69,6 +69,10 @@ public class Lesson {
     @Enumerated(EnumType.STRING)
     private Year year;
 
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private WeekParity weekParity = WeekParity.WEEKLY;
+
     private int duration;
 
     @PlanningPin
@@ -242,5 +246,9 @@ public class Lesson {
                 .filter(RestrictionRule::isActive)
                 .filter(rule -> rule.getTargetType() == targetType)
                 .toList();
+    }
+
+    public WeekParity getWeekParity() {
+        return weekParity == null ? WeekParity.WEEKLY : weekParity;
     }
 }

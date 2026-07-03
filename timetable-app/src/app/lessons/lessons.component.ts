@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CoreService } from '../core/core.service';
 import { LessonService } from './lesson.service';
 import { LessonDialogComponent } from './lesson-dialog/lesson-dialog.component';
-import { Lesson, LessonType, Year } from '../model/timetableEntities';
+import { Lesson, LessonType, WeekParity, Year } from '../model/timetableEntities';
 
 @Component({
   selector: 'app-lessons',
@@ -20,6 +20,7 @@ export class LessonsComponent implements OnInit {
     studentGroup: {},
     lessonType: LessonType.COURSE, // Default value
     year: Year.FIRST,
+    weekParity: WeekParity.WEEKLY,
     duration: 2,
     pinned: false
   };
@@ -30,6 +31,7 @@ export class LessonsComponent implements OnInit {
     'studentGroup',
     'lessonType',
     'year',
+    'weekParity',
     'duration',
     'pinned',
     'rules',
@@ -46,6 +48,7 @@ export class LessonsComponent implements OnInit {
     studentGroup: '',
     lessonType: '',
     year: '',
+    weekParity: '',
     pinned: null
   };
 
@@ -105,6 +108,7 @@ export class LessonsComponent implements OnInit {
         studentGroup: {},
         lessonType: LessonType.COURSE,
         year: Year.FIRST,
+        weekParity: WeekParity.WEEKLY,
         duration: 2,
         pinned: false
       };
@@ -135,7 +139,9 @@ export class LessonsComponent implements OnInit {
         
         const pinnedMatch = !searchTerms.pinned || (data.pinned === true);
 
-        return Boolean(subjectMatch && teacherMatch && groupMatch && typeMatch && yearMatch && pinnedMatch);
+        const weekParityMatch = !searchTerms.weekParity || (data.weekParity === searchTerms.weekParity);
+
+        return Boolean(subjectMatch && teacherMatch && groupMatch && typeMatch && yearMatch && pinnedMatch && weekParityMatch);
       };
     });
   }
@@ -156,6 +162,7 @@ export class LessonsComponent implements OnInit {
       studentGroup: '',
       lessonType: '',
       year: '',
+      weekParity: '',
       pinned: null
     };
     this.dataSource.filter = JSON.stringify(this.filterValues);

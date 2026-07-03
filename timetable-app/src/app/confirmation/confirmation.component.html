@@ -246,6 +246,10 @@
               <span class="detail-label">Type:</span>
               <span class="detail-value">{{ lesson.lessonType }}</span>
             </div>
+            <div class="entity-item-details" *ngIf="lesson.weekParity && lesson.weekParity !== 'WEEKLY'">
+              <span class="detail-label">Parity:</span>
+              <span class="detail-value">{{ lesson.weekParity }}</span>
+            </div>
             <div class="entity-item-details">
               <span class="detail-label">Duration:</span>
               <span class="detail-value">{{ lesson.duration }} hours</span>

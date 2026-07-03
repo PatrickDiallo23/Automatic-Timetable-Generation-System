@@ -35,6 +35,7 @@ export interface Lesson {
   studentGroup: StudentGroup;
   lessonType: LessonType;
   year: Year;
+  weekParity: WeekParity;
   duration: number;
   timeslot?: any // Timeslot or number
   room?: any; //Room or number
@@ -47,6 +48,12 @@ export enum LessonType {
   COURSE = 'COURSE',
   LABORATORY = 'LABORATORY',
   PROJECT = 'PROJECT',
+}
+
+export enum WeekParity {
+  EVEN = 'EVEN',
+  ODD = 'ODD',
+  WEEKLY = 'WEEKLY',
 }
 
 export interface Timeslot {
@@ -119,7 +126,7 @@ export interface Constraint {
 export interface TimetableConstraintConfiguration {
   roomConflict: HardMediumSoftScore;
   teacherConflict: HardMediumSoftScore;
-//   studentGroupConflict: HardMediumSoftScore;
+  studentGroupConflict: HardMediumSoftScore;
   studentGroupConflictAdvanced: HardMediumSoftScore;
   capacityRoomConflict: HardMediumSoftScore;
   courseStudentsGroupedInTheSameRoom: HardMediumSoftScore;

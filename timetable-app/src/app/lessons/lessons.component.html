@@ -86,6 +86,11 @@
         <mat-cell *matCellDef="let lesson">{{ lesson.year }}</mat-cell>
     </ng-container>
 
+    <ng-container matColumnDef="weekParity">
+        <mat-header-cell *matHeaderCellDef>Week Parity</mat-header-cell>
+        <mat-cell *matCellDef="let lesson">{{ lesson.weekParity }}</mat-cell>
+    </ng-container>
+
     <ng-container matColumnDef="duration">
         <mat-header-cell *matHeaderCellDef>Duration</mat-header-cell>
         <mat-cell *matCellDef="let lesson">{{ lesson.duration }}</mat-cell>
